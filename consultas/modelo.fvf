@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<consulta>
+	<tabelas>
+		<TB_PERFIL_USUARIO 	ID_USUARIO="" 	ID_PERFIL="" 										alias-f="perfil_usr" />
+		<TB_PESSOA_JURIDICA ID_PESSOA_JURIDICA="" 												alias-f="pessoaJ" />
+		<TB_PESSOA_FISICA 	ID_PESSOA_FISICA="" 												alias-f="pessoaF" />
+		<TB_PESSOA_SPQM 	ID_PESSOA="" 														alias-f="pessoa" />
+		<TB_PERFIL 			ID_PERFIL="" 														alias-f="perfil" />
+		<TB_ANEXO 			ID_ANEXO="" 		ID_REQUERIMENTO="" 								alias-f="anexo" />
+		<TB_USUARIO 		ID_USUARIO="20" 	EE_EMAIL_LOGIN="'florenciovieira@gmail.com'" 	alias-f="usr" />
+		<TB_REQUERIMENTO 	ID_REQUERIMENTO="1" 												alias-f="req" />
+		<TB_ENDERECO 		ID_ENDERECO="" 														alias-f="end" />
+	</tabelas>
+
+	<refs>
+		<obj alias="req">
+			<obj preJoin="LEFT" alias="anexo" />
+		</obj>
+
+		<obj alias="usr">
+			<obj alias="perfil_usr" fk="0">
+				<obj alias="perfil" fk="1" inverso="true" />
+			</obj>
+		</obj>
+	</refs>
+</consulta>
