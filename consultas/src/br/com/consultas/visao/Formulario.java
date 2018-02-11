@@ -34,7 +34,7 @@ public class Formulario extends JFrame {
 	public Formulario(File file) throws Exception {
 		XML.processar(file, tabelas, referencias);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setSize(500, 300);
+		setSize(300, 300);
 		setLocationRelativeTo(null);
 		montarLayout();
 		setVisible(true);
@@ -42,7 +42,7 @@ public class Formulario extends JFrame {
 
 	private void montarLayout() {
 		arvore = new JTree(new ModeloArvore(referencias));
-		arvore.setRootVisible(false);
+		//arvore.setRootVisible(false);
 		arvore.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		arvore.addMouseListener(new OuvinteArvore());
 		setLayout(new BorderLayout());
