@@ -25,6 +25,10 @@ public class Util {
 		}
 	}
 
+	public static String getString(String string) {
+		return bundle.getString(string);
+	}
+
 	public static List<Campo> criarCampos(Attributes attributes) {
 		List<Campo> resposta = new ArrayList<>();
 
