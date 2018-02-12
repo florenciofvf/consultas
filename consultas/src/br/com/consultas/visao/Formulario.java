@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -27,6 +28,7 @@ public class Formulario extends JFrame {
 	private JMenuItem itemSQL = new JMenuItem("GERAR SQL");
 	private JMenuItem itemMeuSQL = new JMenuItem("DADOS");
 	private final Tabelas tabelas = new Tabelas();
+	private JTextArea textArea = new JTextArea();
 	private JPopupMenu popup = new JPopupMenu();
 	private Referencia selecionado;
 	private JTree arvore;
@@ -47,19 +49,20 @@ public class Formulario extends JFrame {
 		arvore.addMouseListener(new OuvinteArvore());
 		setLayout(new BorderLayout());
 		add(BorderLayout.CENTER, new JScrollPane(arvore));
+		add(BorderLayout.SOUTH, textArea);
 		popup.add(itemMeuSQL);
 		popup.addSeparator();
 		popup.add(itemSQL);
 		itemMeuSQL.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(selecionado.gerarConsultaDados(tabelas));
+				textArea.setText(selecionado.gerarConsultaDados(tabelas));
 			}
 		});
 		itemSQL.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(selecionado.gerarConsulta(tabelas));
+				textArea.setText(selecionado.gerarConsulta(tabelas));
 			}
 		});
 	}

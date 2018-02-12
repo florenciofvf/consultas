@@ -39,7 +39,7 @@
 		<obj alias="usr">
 			<obj alias="perfil_usr" fk="0">
 				<obj alias="perfil" fk="1" inverso="true">
-					<obj alias="perfil_func"
+					<obj alias="perfil_func" />
 				</obj>
 			</obj>
 		</obj>

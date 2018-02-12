@@ -8,8 +8,15 @@ import br.com.consultas.visao.Formulario;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
-		UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-//		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		String os = System.getProperty("os.name");
+		if(os == null) {
+			os = "";
+		}
+		if(os.toLowerCase().indexOf("indows") > 0) {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} else {
+			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+		}
 		new Formulario(new File("modelo.fvf"));
 	}
 }

@@ -78,6 +78,7 @@ public class Referencia {
 			}
 		}
 
+		sb.delete(sb.length() - QUEBRA_LINHA.length(), sb.length()).append(";").append(QUEBRA_LINHA);
 		return sb.toString();
 	}
 
@@ -99,6 +100,7 @@ public class Referencia {
 
 		filtros(sb, tabelas);
 
+		sb.delete(sb.length() - QUEBRA_LINHA.length(), sb.length()).append(";").append(QUEBRA_LINHA);
 		return sb.toString();
 	}
 
