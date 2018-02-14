@@ -57,13 +57,14 @@ class XMLHander extends DefaultHandler {
 			} else if(lendoReferencias) {
 				if(qName.equals("obj")) {
 
-					String alias = Util.getString(attributes, "alias", null);
-					boolean invs = Util.getBoolean(attributes, "inverso", false);
-					final int pk = Util.getInteger(attributes, "pk", 0);
-					final int fk = Util.getInteger(attributes, "fk", 1);
-					String preJn = Util.getString(attributes, "preJoin", null);
+					String alias = 		Util.getString(attributes, "alias", null);
+					String aliasAlt= 	Util.getString(attributes, "alias-alt", null);
+					boolean invs = 		Util.getBoolean(attributes, "inverso", false);
+					final int pk = 		Util.getInteger(attributes, "pk", 0);
+					final int fk = 		Util.getInteger(attributes, "fk", 1);
+					String preJn = 		Util.getString(attributes, "preJoin", null);
 
-					Referencia ref = new Referencia(alias, invs, pk, fk, preJn);
+					Referencia ref = new Referencia(alias, aliasAlt, invs, pk, fk, preJn);
 
 					if(selecionado == null) {
 						referencias.add(ref);

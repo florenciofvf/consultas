@@ -9,15 +9,17 @@ public class Referencia {
 	private static final String QUEBRA_LINHA = "\n";
 	private final List<Referencia> referencias;
 	private final boolean inverso;
+	private final String aliasAlt;
 	private final String preJoin;
 	private final String alias;
 	private Referencia pai;
 	private final int pk;
 	private final int fk;
 
-	public Referencia(String alias, boolean inverso, int pk, int fk, String preJoin) {
+	public Referencia(String alias, String aliasAlt, boolean inverso, int pk, int fk, String preJoin) {
 		Util.checarVazio(alias, "alias.invalido", true);
 		referencias = new ArrayList<>();
+		this.aliasAlt = aliasAlt;
 		this.inverso = inverso;
 		this.preJoin = preJoin;
 		this.alias = alias;
@@ -47,7 +49,7 @@ public class Referencia {
 	}
 
 	public String getAlias() {
-		return alias;
+		return !Util.ehVazio(aliasAlt) ? aliasAlt : alias;
 	}
 
 	public Referencia getPai() {
@@ -66,15 +68,19 @@ public class Referencia {
 		return fk;
 	}
 
+	public String getAliasAlt() {
+		return aliasAlt;
+	}
+
 	public String gerarConsultaDados(Tabelas tabelas) {
 		Tabela tab = tabelas.get(alias);
-		StringBuilder sb = new StringBuilder("SELECT " + alias + ".* FROM " + tab.getNome() + " " + alias + QUEBRA_LINHA);
+		StringBuilder sb = new StringBuilder("SELECT " + getAlias() + ".* FROM " + tab.getNome() + " " + getAlias() + QUEBRA_LINHA);
 
 		sb.append(" WHERE 1=1" + QUEBRA_LINHA);
 
 		for (Campo c : tab.getCampos()) {
 			if (!Util.ehVazio(c.getValor())) {
-				sb.append(" AND " + alias + "." + c.getNome() + "=" + c.getValor() + QUEBRA_LINHA);
+				sb.append(" AND " + getAlias() + "." + c.getNome() + "=" + c.getValor() + QUEBRA_LINHA);
 			}
 		}
 
@@ -88,12 +94,12 @@ public class Referencia {
 		}
 
 		Tabela tab = tabelas.get(alias);
-		StringBuilder sb = new StringBuilder("SELECT " + alias + ".* FROM");
+		StringBuilder sb = new StringBuilder("SELECT " + getAlias() + ".* FROM");
 
 		if (pai != null) {
 			completarConsulta(sb, tabelas);
 		} else {
-			sb.append(" " + tab.getNome() + " " + alias + QUEBRA_LINHA);
+			sb.append(" " + tab.getNome() + " " + getAlias() + QUEBRA_LINHA);
 		}
 
 		sb.append(" WHERE 1=1" + QUEBRA_LINHA);
@@ -113,7 +119,7 @@ public class Referencia {
 
 		for (Campo c : tab.getCampos()) {
 			if (!Util.ehVazio(c.getValor())) {
-				sb.append(" AND " + alias + "." + c.getNome() + "=" + c.getValor() + QUEBRA_LINHA);
+				sb.append(" AND " + getAlias() + "." + c.getNome() + "=" + c.getValor() + QUEBRA_LINHA);
 			}
 		}
 	}
@@ -122,12 +128,12 @@ public class Referencia {
 		Tabela tab = tabelas.get(alias);
 
 		if (pai == null) {
-			sb.append(" " + tab.getNome() + " " + alias + QUEBRA_LINHA);
+			sb.append(" " + tab.getNome() + " " + getAlias() + QUEBRA_LINHA);
 			return;
 		}
 
 		pai.completarConsulta(sb, tabelas);
-		sb.append(" " + getPreJoin() + " JOIN " + tab.getNome() + " " + alias);
+		sb.append(" " + getPreJoin() + " JOIN " + tab.getNome() + " " + getAlias());
 
 		Campo campoFK = null;
 		Campo campoPK = null;
@@ -136,12 +142,12 @@ public class Referencia {
 		if (!inverso) {
 			campoPK = tabPai.get(pk);
 			campoFK = tab.get(fk);
-			sb.append(" ON " + pai.alias + "." + campoPK.getNome() + " = " + alias + "." + campoFK.getNome()
+			sb.append(" ON " + pai.getAlias() + "." + campoPK.getNome() + " = " + getAlias() + "." + campoFK.getNome()
 					+ QUEBRA_LINHA);
 		} else {
 			campoPK = tab.get(pk);
 			campoFK = tabPai.get(fk);
-			sb.append(" ON " + alias + "." + campoPK.getNome() + " = " + pai.alias + "." + campoFK.getNome()
+			sb.append(" ON " + getAlias() + "." + campoPK.getNome() + " = " + pai.getAlias() + "." + campoFK.getNome()
 					+ QUEBRA_LINHA);
 		}
 	}

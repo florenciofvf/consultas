@@ -2,12 +2,12 @@
 
 <consulta>
 	<tabelas>
-		<TB_PESSOA_SPQM 			ID_PESSOA="" 																alias-f="pessoa" />
+		<TB_PESSOA_ 				ID_PESSOA="" 																alias-f="pessoa" />
 		<TB_PESSOA_FISICA 			ID_PESSOA_FISICA="" 														alias-f="pessoaF" />
 		<TB_PESSOA_JURIDICA 		ID_PESSOA_JURIDICA="" 														alias-f="pessoaJ" />
 
 		<TB_REQUERIMENTO 			ID_REQUERIMENTO="1" 														alias-f="req" />
-		<TB_ENDERECO 				ID_ENDERECO="" 																alias-f="end" />
+		<TB_ENDERECO 				ID_ENDERECO="" 				ID_ENDERECO_ORIGEM=""							alias-f="end" />
 		<TB_ANEXO 					ID_ANEXO="" 				ID_REQUERIMENTO="" 								alias-f="anexo" />
 		<TB_ANEXO_QUADRO_SOCIAL 	ID_ANEXO_QUADRO_SOCIAL="" 	ID_ANEXO="" 									alias-f="anexo_qs" />
 
@@ -26,6 +26,10 @@
 	</tabelas>
 
 	<refs>
+		<obj alias="end" alias-alt="end1">
+			<obj alias="end" alias-alt="end2" />
+		</obj>
+	
 		<obj alias="req">
 			<obj alias="anexo" preJoin="LEFT">
 				<obj alias="anexo_qs" />

@@ -42,7 +42,7 @@ public class Formulario extends JFrame {
 	public Formulario(File file) throws Exception {
 		XML.processar(file, tabelas, referencias);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setSize(300, 300);
+		setSize(800, 1000);
 		setLocationRelativeTo(null);
 		montarLayout();
 		setVisible(true);
