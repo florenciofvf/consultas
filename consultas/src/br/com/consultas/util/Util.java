@@ -9,6 +9,7 @@ import org.xml.sax.Attributes;
 import br.com.consultas.Campo;
 
 public class Util {
+	private static ResourceBundle bundleConfig = ResourceBundle.getBundle("config");
 	private static ResourceBundle bundle = ResourceBundle.getBundle("mensagens");
 
 	public static void checarVazio(String s, String chave, boolean trim) {
@@ -25,8 +26,16 @@ public class Util {
 		}
 	}
 
-	public static String getString(String string) {
-		return bundle.getString(string);
+	public static String getString(String chave) {
+		return bundle.getString(chave);
+	}
+
+	public static String getStringConfig(String chave) {
+		return bundleConfig.getString(chave);
+	}
+
+	public static boolean getBooleanConfig(String chave) {
+		return Boolean.parseBoolean(getStringConfig(chave));
 	}
 
 	public static List<Campo> criarCampos(Attributes attributes) {
