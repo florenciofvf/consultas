@@ -12,16 +12,20 @@ public class Referencia {
 	private final String aliasAlt;
 	private final String preJoin;
 	private final String alias;
+	private final String pkNome;
+	private final String fkNome;
 	private Referencia pai;
 	private final int pk;
 	private final int fk;
 
-	public Referencia(String alias, String aliasAlt, boolean inverso, int pk, int fk, String preJoin) {
+	public Referencia(String alias, String aliasAlt, boolean inverso, int pk, String pkNome, int fk, String fkNome, String preJoin) {
 		Util.checarVazio(alias, "alias.invalido", true);
 		referencias = new ArrayList<>();
 		this.aliasAlt = aliasAlt;
 		this.inverso = inverso;
 		this.preJoin = preJoin;
+		this.pkNome = pkNome;
+		this.fkNome = fkNome;
 		this.alias = alias;
 		this.pk = pk;
 		this.fk = fk;
@@ -140,13 +144,13 @@ public class Referencia {
 		Tabela tabPai = tabelas.get(pai.alias);
 
 		if (!inverso) {
-			campoPK = tabPai.get(pk);
-			campoFK = tab.get(fk);
+			campoPK = Util.ehVazio(pkNome) ? tabPai.get(pk) : tabPai.get(pkNome);
+			campoFK = Util.ehVazio(fkNome) ? tab.get(fk) : tab.get(fkNome);
 			sb.append(" ON " + pai.getAlias() + "." + campoPK.getNome() + " = " + getAlias() + "." + campoFK.getNome()
 					+ QUEBRA_LINHA);
 		} else {
-			campoPK = tab.get(pk);
-			campoFK = tabPai.get(fk);
+			campoPK = Util.ehVazio(pkNome) ? tab.get(pk) : tab.get(pkNome);
+			campoFK = Util.ehVazio(fkNome) ? tabPai.get(fk) : tabPai.get(fkNome);
 			sb.append(" ON " + getAlias() + "." + campoPK.getNome() + " = " + pai.getAlias() + "." + campoFK.getNome()
 					+ QUEBRA_LINHA);
 		}

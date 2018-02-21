@@ -45,6 +45,15 @@ public class Tabela {
 		return campos.get(i);
 	}
 
+	public Campo get(String nome) {
+		for(Campo c : campos) {
+			if (c.getNome().equalsIgnoreCase(nome)) {
+				return c;
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public String toString() {
 		return nome;

@@ -83,4 +83,17 @@ public class Util {
 	public static boolean ehVazio(String s) {
 		return s == null || s.trim().length() == 0;
 	}
+
+	public static boolean ehSomenteNumeros(String s) {
+		if(ehVazio(s)) {
+			return false;
+		}
+		for(char c : s.toCharArray()) {
+			boolean ehNumero = c >= '0' && c <= '9';
+			if(!ehNumero) {
+				return false;
+			}
+		}
+		return true;
+	}
 }
