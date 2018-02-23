@@ -1,6 +1,8 @@
 package br.com.consultas;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Tabelas {
@@ -22,6 +24,10 @@ public class Tabelas {
 		}
 
 		return tabela;
+	}
+
+	public List<Tabela> getTabelas() {
+		return new ArrayList<>(tabelas.values());
 	}
 
 	@Override

@@ -3,8 +3,8 @@ package br.com.consultas;
 import br.com.consultas.util.Util;
 
 public class Campo {
-	private final String valor;
 	private final String nome;
+	private String valor;
 
 	public Campo(String nome, String valor) {
 		Util.checarVazio(nome, "nome.campo.vazio", true);
@@ -23,6 +23,10 @@ public class Campo {
 
 	public String getValor() {
 		return valor;
+	}
+
+	public void setValor(String valor) {
+		this.valor = valor;
 	}
 
 	@Override

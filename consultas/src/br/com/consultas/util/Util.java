@@ -1,12 +1,16 @@
 package br.com.consultas.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import org.xml.sax.Attributes;
 
 import br.com.consultas.Campo;
+import br.com.consultas.Referencia;
+import br.com.consultas.Tabela;
 
 public class Util {
 	private static ResourceBundle bundleConfig = ResourceBundle.getBundle("config");
@@ -41,7 +45,7 @@ public class Util {
 	public static List<Campo> criarCampos(Attributes attributes) {
 		List<Campo> resposta = new ArrayList<>();
 
-		for(int i=0; i<attributes.getLength(); i++) {
+		for (int i = 0; i < attributes.getLength(); i++) {
 			String nome = attributes.getQName(i);
 			String valor = attributes.getValue(i);
 			resposta.add(new Campo(nome, valor));
@@ -53,7 +57,7 @@ public class Util {
 	public static String getString(Attributes attributes, String nome, String padrao) {
 		String string = attributes.getValue(nome);
 
-		if(ehVazio(string)) {
+		if (ehVazio(string)) {
 			return padrao;
 		}
 
@@ -63,7 +67,7 @@ public class Util {
 	public static boolean getBoolean(Attributes attributes, String nome, boolean padrao) {
 		String string = attributes.getValue(nome);
 
-		if(ehVazio(string)) {
+		if (ehVazio(string)) {
 			return padrao;
 		}
 
@@ -73,7 +77,7 @@ public class Util {
 	public static int getInteger(Attributes attributes, String nome, int padrao) {
 		String string = attributes.getValue(nome);
 
-		if(ehVazio(string)) {
+		if (ehVazio(string)) {
 			return padrao;
 		}
 
@@ -85,15 +89,38 @@ public class Util {
 	}
 
 	public static boolean ehSomenteNumeros(String s) {
-		if(ehVazio(s)) {
+		if (ehVazio(s)) {
 			return false;
 		}
-		for(char c : s.toCharArray()) {
+		for (char c : s.toCharArray()) {
 			boolean ehNumero = c >= '0' && c <= '9';
-			if(!ehNumero) {
+			if (!ehNumero) {
 				return false;
 			}
 		}
 		return true;
+	}
+
+	public static List<Referencia> criarReferencias(List<Tabela> tabelas) {
+		List<Referencia> resposta = new ArrayList<>();
+
+		for (Tabela tabela : tabelas) {
+			Referencia ref = Referencia.criarReferenciaDados(tabela);
+			ref.setExibirTotalRegistros(true);
+			resposta.add(ref);
+		}
+
+		return resposta;
+	}
+
+	public static void ordenar(List<Referencia> referencias) {
+		Collections.sort(referencias, new Comparador());
+	}
+
+	static class Comparador implements Comparator<Referencia> {
+		@Override
+		public int compare(Referencia o1, Referencia o2) {
+			return o1.getAlias().compareTo(o2.getAlias());
+		}
 	}
 }

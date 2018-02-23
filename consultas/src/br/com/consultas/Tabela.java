@@ -46,7 +46,7 @@ public class Tabela {
 	}
 
 	public Campo get(String nome) {
-		for(Campo c : campos) {
+		for (Campo c : campos) {
 			if (c.getNome().equalsIgnoreCase(nome)) {
 				return c;
 			}
