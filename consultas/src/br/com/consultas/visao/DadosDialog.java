@@ -31,11 +31,11 @@ public class DadosDialog extends JFrame {
 	private JTable table = new JTable();
 
 	public DadosDialog(final Formulario formulario, String string, Tabela tabela) throws Exception {
+		setTitle(tabela != null ? tabela.getNome() : "");
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		processar(string, formulario.getGraphics());
 		add(new JScrollPane(table));
-		setTitle(tabela.getNome());
 		setAlwaysOnTop(true);
 		setSize(500, 500);
 		setLocationRelativeTo(formulario);
@@ -85,6 +85,14 @@ public class DadosDialog extends JFrame {
 			psmt.close();
 		}
 
+		conn.close();
+	}
+
+	public static void executeUpdate(String string) throws Exception {
+		Connection conn = getConnection();
+		PreparedStatement psmt = conn.prepareStatement(string);
+		psmt.executeUpdate();
+		psmt.close();
 		conn.close();
 	}
 

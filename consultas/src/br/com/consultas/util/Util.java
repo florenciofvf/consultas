@@ -123,4 +123,15 @@ public class Util {
 			return o1.getAlias().compareTo(o2.getAlias());
 		}
 	}
+
+	public static String getSQL(String s) {
+		if(ehVazio(s)) {
+			return null;
+		}
+		s = s.trim();
+		if(s.endsWith(";")) {
+			s = s.substring(0, s.length()-1);
+		}
+		return s;
+	}
 }

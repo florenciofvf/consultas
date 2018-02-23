@@ -1,6 +1,7 @@
 package br.com.consultas.visao;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -38,6 +40,8 @@ public class Formulario extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private final List<Referencia> referencias = new ArrayList<>();
 	private final JTabbedPane fichario = new JTabbedPane();
+	private final JButton buttonUpdate = new JButton(Util.getString("label.execute_update"));
+	private final JButton buttonQuery = new JButton(Util.getString("label.execute_query"));
 	private final JLabel labelStatus = new JLabel();
 	private final PainelConsultas painelConsultas;
 	private final Tabelas tabelas = new Tabelas();
@@ -59,7 +63,13 @@ public class Formulario extends JFrame {
 	private void montarLayout() {
 		setLayout(new BorderLayout());
 		add(BorderLayout.CENTER, fichario);
-		add(BorderLayout.SOUTH, labelStatus);
+
+		JPanel panelSul = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		panelSul.add(labelStatus);
+		panelSul.add(buttonUpdate);
+		panelSul.add(buttonQuery);
+
+		add(BorderLayout.SOUTH, panelSul);
 
 		fichario.addTab(Util.getString("label.consultas"), painelConsultas);
 		fichario.addTab(Util.getString("label.tabelas"), painelTabelas);
@@ -72,6 +82,28 @@ public class Formulario extends JFrame {
 			public void windowOpened(WindowEvent e) {
 				painelConsultas.windowOpened();
 				painelTabelas.windowOpened();
+			}
+		});
+
+		buttonUpdate.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(fichario.getSelectedIndex() == 0) {
+					painelConsultas.executeUpdate();
+				} else {
+					painelTabelas.executeUpdate();
+				}
+			}
+		});
+
+		buttonQuery.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(fichario.getSelectedIndex() == 0) {
+					painelConsultas.executeQuery();
+				} else {
+					painelTabelas.executeQuery();
+				}
 			}
 		});
 	}
@@ -172,10 +204,34 @@ public class Formulario extends JFrame {
 
 			if (chkAbrirDialog.isSelected()) {
 				try {
-					new DadosDialog(Formulario.this, string.substring(0, string.length() - 2), tabela);
+					new DadosDialog(Formulario.this, Util.getSQL(string), tabela);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+			}
+		}
+
+		void executeUpdate() {
+			String string = Util.getSQL(textArea.getText());
+			if(string == null) {
+				return;
+			}
+			try {
+				DadosDialog.executeUpdate(string);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		void executeQuery() {
+			String string = Util.getSQL(textArea.getText());
+			if(string == null) {
+				return;
+			}
+			try {
+				new DadosDialog(Formulario.this, string, null);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 
@@ -305,10 +361,34 @@ public class Formulario extends JFrame {
 
 			if (chkAbrirDialog.isSelected()) {
 				try {
-					new DadosDialog(Formulario.this, string.substring(0, string.length() - 2), tabela);
+					new DadosDialog(Formulario.this, Util.getSQL(string), tabela);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+			}
+		}
+
+		void executeUpdate() {
+			String string = Util.getSQL(textArea.getText());
+			if(string == null) {
+				return;
+			}
+			try {
+				DadosDialog.executeUpdate(string);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		void executeQuery() {
+			String string = Util.getSQL(textArea.getText());
+			if(string == null) {
+				return;
+			}
+			try {
+				new DadosDialog(Formulario.this, string, null);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 

@@ -13,7 +13,14 @@ public class Tabelas {
 	}
 
 	public void add(Tabela tabela) {
-		tabelas.put(tabela.getAlias().getValor(), tabela);
+		String alias = tabela.getAlias().getValor();
+
+		Tabela tmp = tabelas.get(alias);
+		if (tmp != null) {
+			throw new IllegalArgumentException("ALIAS EXISTENTE! " + alias);
+		}
+
+		tabelas.put(alias, tabela);
 	}
 
 	public Tabela get(String alias) {
