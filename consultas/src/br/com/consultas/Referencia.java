@@ -12,10 +12,11 @@ public class Referencia {
 	private final boolean inverso;
 	private final String aliasAlt;
 	private final String preJoin;
-	private final String alias;
+	private final String prefixo;
 	private final String pkNome;
 	private final String fkNome;
 	private int totalRegistros;
+	private final String alias;
 	private Referencia pai;
 	private final int pk;
 	private final int fk;
@@ -23,6 +24,7 @@ public class Referencia {
 	public Referencia(String alias, String aliasAlt, boolean inverso, int pk, String pkNome, int fk, String fkNome,
 			String preJoin) {
 		Util.checarVazio(alias, "alias.invalido", true);
+		prefixo = alias.substring(0, 1).toUpperCase();
 		referencias = new ArrayList<>();
 		this.aliasAlt = aliasAlt;
 		this.inverso = inverso;
@@ -183,7 +185,7 @@ public class Referencia {
 
 	@Override
 	public String toString() {
-		return alias + (exibirTotalRegistros ? " (" + totalRegistros + ")" : "");
+		return prefixo + " - " + alias + (exibirTotalRegistros ? " (" + totalRegistros + ")" : "");
 	}
 
 	public boolean isExibirTotalRegistros() {
