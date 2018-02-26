@@ -1,6 +1,7 @@
 package br.com.consultas;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import br.com.consultas.util.Util;
@@ -92,6 +93,27 @@ public class Referencia {
 	public String getConsultaCount(Tabelas tabelas) {
 		Tabela tab = tabelas.get(alias);
 		return "SELECT COUNT(*) AS total FROM " + tab.getNome();
+	}
+
+	public String gerarUpdate(Tabelas tabelas) {
+		Tabela tab = tabelas.get(alias);
+
+		Iterator<Campo> it = tab.getCampos().iterator();
+		if (it.hasNext()) {
+			it.next();
+		}
+
+		StringBuilder set = new StringBuilder();
+		while (it.hasNext()) {
+			Campo c = it.next();
+			set.append(" " + c.getNome() + "=" + c.getValor());
+		}
+
+		StringBuilder sb = new StringBuilder("UPDATE " + tab.getNome() + QUEBRA_LINHA);
+		sb.append(" SET " + set.toString().trim() + QUEBRA_LINHA);
+		sb.append(" WHERE " + tab.get(0).getNome() + "=" + tab.get(0).getValor() + QUEBRA_LINHA);
+
+		return sb.toString();
 	}
 
 	public String gerarConsultaDados(Tabelas tabelas) {

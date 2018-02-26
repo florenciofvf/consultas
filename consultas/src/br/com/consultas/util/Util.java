@@ -125,12 +125,12 @@ public class Util {
 	}
 
 	public static String getSQL(String s) {
-		if(ehVazio(s)) {
+		if (ehVazio(s)) {
 			return null;
 		}
 		s = s.trim();
-		if(s.endsWith(";")) {
-			s = s.substring(0, s.length()-1);
+		if (s.endsWith(";")) {
+			s = s.substring(0, s.length() - 1);
 		}
 		return s;
 	}

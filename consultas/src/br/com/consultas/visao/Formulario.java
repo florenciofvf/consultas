@@ -20,6 +20,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -42,6 +43,9 @@ public class Formulario extends JFrame {
 	private final JTabbedPane fichario = new JTabbedPane();
 	private final JButton buttonUpdate = new JButton(Util.getString("label.execute_update"));
 	private final JButton buttonQuery = new JButton(Util.getString("label.execute_query"));
+	private final JButton buttonLimpar = new JButton(Util.getString("label.limpar"));
+	private final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+	private final JTextArea textArea = new JTextArea();
 	private final JLabel labelStatus = new JLabel();
 	private final PainelConsultas painelConsultas;
 	private final Tabelas tabelas = new Tabelas();
@@ -62,14 +66,6 @@ public class Formulario extends JFrame {
 
 	private void montarLayout() {
 		setLayout(new BorderLayout());
-		add(BorderLayout.CENTER, fichario);
-
-		JPanel panelSul = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		panelSul.add(labelStatus);
-		panelSul.add(buttonUpdate);
-		panelSul.add(buttonQuery);
-
-		add(BorderLayout.SOUTH, panelSul);
 
 		fichario.addTab(Util.getString("label.consultas"), painelConsultas);
 		fichario.addTab(Util.getString("label.tabelas"), painelTabelas);
@@ -77,35 +73,78 @@ public class Formulario extends JFrame {
 		painelConsultas.config();
 		painelTabelas.config();
 
+		splitPane.setLeftComponent(fichario);
+		splitPane.setRightComponent(new JScrollPane(textArea));
+
+		splitPane.setOneTouchExpandable(true);
+		add(BorderLayout.CENTER, splitPane);
+
+		JPanel panelSul = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		panelSul.add(labelStatus);
+		panelSul.add(buttonLimpar);
+		panelSul.add(buttonUpdate);
+		panelSul.add(buttonQuery);
+		add(BorderLayout.SOUTH, panelSul);
+
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent e) {
+				splitPane.setDividerLocation(.80);
 				painelConsultas.windowOpened();
 				painelTabelas.windowOpened();
+			}
+		});
+
+		buttonLimpar.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				limpar();
 			}
 		});
 
 		buttonUpdate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(fichario.getSelectedIndex() == 0) {
-					painelConsultas.executeUpdate();
-				} else {
-					painelTabelas.executeUpdate();
-				}
+				executeUpdate();
 			}
 		});
 
 		buttonQuery.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(fichario.getSelectedIndex() == 0) {
-					painelConsultas.executeQuery();
-				} else {
-					painelTabelas.executeQuery();
-				}
+				executeQuery();
 			}
 		});
+	}
+
+	void executeUpdate() {
+		String string = Util.getSQL(textArea.getText());
+		if (string == null) {
+			return;
+		}
+		try {
+			DadosDialog.executeUpdate(string);
+			mensagem(Util.getString("label.sucesso"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			mensagem(Util.getString("label.erro"));
+		}
+	}
+
+	void executeQuery() {
+		String string = Util.getSQL(textArea.getText());
+		if (string == null) {
+			return;
+		}
+		try {
+			new DadosDialog(Formulario.this, string, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	void limpar() {
+		textArea.setText("");
 	}
 
 	void abrirJanela() {
@@ -121,6 +160,10 @@ public class Formulario extends JFrame {
 		}
 	}
 
+	private void mensagem(String string) {
+		JOptionPane.showMessageDialog(this, string);
+	}
+
 	private class PainelConsultas extends JPanel {
 		private static final long serialVersionUID = 1L;
 		final JCheckBox chkAreaTransferencia = new JCheckBox(Util.getString("label.area_transferencia"),
@@ -133,7 +176,6 @@ public class Formulario extends JFrame {
 				Util.getBooleanConfig("consultas.raiz_linha"));
 		final JMenuItem itemMeuSQL = new JMenuItem(Util.getString("label.gerar_dados"));
 		final JMenuItem itemSQL = new JMenuItem(Util.getString("label.gerar_sql"));
-		final JTextArea textArea = new JTextArea();
 		final JPopupMenu popup = new JPopupMenu();
 		Referencia selecionado;
 		final JTree arvore;
@@ -144,18 +186,14 @@ public class Formulario extends JFrame {
 			arvore.addMouseListener(new OuvinteArvore());
 			setLayout(new BorderLayout());
 
-			final JPanel panelNorte = new JPanel();
+			JPanel panelNorte = new JPanel();
 			panelNorte.add(chkAreaTransferencia);
 			panelNorte.add(chkAbrirDialog);
 			panelNorte.add(chkRaizVisivel);
 			panelNorte.add(chkLinhaRaiz);
 			add(BorderLayout.NORTH, panelNorte);
 
-			final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(arvore),
-					new JScrollPane(textArea));
-			add(BorderLayout.CENTER, splitPane);
-			splitPane.setOneTouchExpandable(true);
-			splitPane.setDividerLocation(1000);
+			add(BorderLayout.CENTER, new JScrollPane(arvore));
 		}
 
 		void config() {
@@ -211,30 +249,6 @@ public class Formulario extends JFrame {
 			}
 		}
 
-		void executeUpdate() {
-			String string = Util.getSQL(textArea.getText());
-			if(string == null) {
-				return;
-			}
-			try {
-				DadosDialog.executeUpdate(string);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		void executeQuery() {
-			String string = Util.getSQL(textArea.getText());
-			if(string == null) {
-				return;
-			}
-			try {
-				new DadosDialog(Formulario.this, string, null);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
 		void windowOpened() {
 			arvore.setShowsRootHandles(chkLinhaRaiz.isSelected());
 			arvore.setRootVisible(chkRaizVisivel.isSelected());
@@ -279,9 +293,9 @@ public class Formulario extends JFrame {
 				Util.getBooleanConfig("tabelas.raiz_visivel"));
 		final JCheckBox chkLinhaRaiz = new JCheckBox(Util.getString("label.raiz_linha"),
 				Util.getBooleanConfig("tabelas.raiz_linha"));
+		final JMenuItem itemUpdate = new JMenuItem(Util.getString("label.gerar_update"));
 		final JMenuItem itemMeuSQL = new JMenuItem(Util.getString("label.gerar_dados"));
 		final JMenuItem itemCampos = new JMenuItem(Util.getString("label.campos"));
-		final JTextArea textArea = new JTextArea();
 		final JPopupMenu popup = new JPopupMenu();
 		Referencia selecionado;
 		final JTree arvore;
@@ -301,24 +315,22 @@ public class Formulario extends JFrame {
 			arvore.addMouseListener(new OuvinteArvore());
 			setLayout(new BorderLayout());
 
-			final JPanel panelNorte = new JPanel();
+			JPanel panelNorte = new JPanel();
 			panelNorte.add(chkAreaTransferencia);
 			panelNorte.add(chkAbrirDialog);
 			panelNorte.add(chkRaizVisivel);
 			panelNorte.add(chkLinhaRaiz);
 			add(BorderLayout.NORTH, panelNorte);
 
-			final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(arvore),
-					new JScrollPane(textArea));
-			add(BorderLayout.CENTER, splitPane);
-			splitPane.setOneTouchExpandable(true);
-			splitPane.setDividerLocation(1000);
+			add(BorderLayout.CENTER, new JScrollPane(arvore));
 		}
 
 		void config() {
 			popup.add(itemMeuSQL);
 			popup.addSeparator();
 			popup.add(itemCampos);
+			popup.addSeparator();
+			popup.add(itemUpdate);
 
 			itemMeuSQL.addActionListener(new ActionListener() {
 				@Override
@@ -331,6 +343,13 @@ public class Formulario extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					new CampoDialog(Formulario.this, selecionado.getTabela(tabelas));
+				}
+			});
+
+			itemUpdate.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					textArea.setText(selecionado.gerarUpdate(tabelas));
 				}
 			});
 
@@ -365,30 +384,6 @@ public class Formulario extends JFrame {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
-		}
-
-		void executeUpdate() {
-			String string = Util.getSQL(textArea.getText());
-			if(string == null) {
-				return;
-			}
-			try {
-				DadosDialog.executeUpdate(string);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		void executeQuery() {
-			String string = Util.getSQL(textArea.getText());
-			if(string == null) {
-				return;
-			}
-			try {
-				new DadosDialog(Formulario.this, string, null);
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 

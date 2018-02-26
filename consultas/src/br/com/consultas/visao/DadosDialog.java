@@ -37,7 +37,7 @@ public class DadosDialog extends JFrame {
 		processar(string, formulario.getGraphics());
 		add(new JScrollPane(table));
 		setAlwaysOnTop(true);
-		setSize(500, 500);
+		setSize(formulario.getWidth() - 20, 500);
 		setLocationRelativeTo(formulario);
 		setVisible(true);
 
