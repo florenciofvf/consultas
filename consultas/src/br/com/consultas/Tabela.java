@@ -8,6 +8,7 @@ import br.com.consultas.util.Util;
 public class Tabela {
 	private final List<Campo> campos;
 	private final String nome;
+	private boolean destaque;
 	private Campo alias;
 
 	public Tabela(String nome) {
@@ -24,6 +25,8 @@ public class Tabela {
 		if (campo.isAlias()) {
 			Util.checarVazio(campo.getValor(), "valor.campo.invalido", true, nome + "[" + campo.getNome() + "]");
 			alias = campo;
+		} else if (campo.isDestaque()) {
+			destaque = Boolean.parseBoolean(campo.getValor());
 		} else {
 			campos.add(campo);
 		}
@@ -39,6 +42,10 @@ public class Tabela {
 
 	public void setAlias(Campo alias) {
 		this.alias = alias;
+	}
+
+	public boolean isDestaque() {
+		return destaque;
 	}
 
 	public Campo get(int i) {

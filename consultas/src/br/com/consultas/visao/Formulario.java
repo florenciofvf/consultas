@@ -39,27 +39,29 @@ import br.com.consultas.xml.XML;
 
 public class Formulario extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private final List<Referencia> referencias = new ArrayList<>();
-	private final JTabbedPane fichario = new JTabbedPane();
 	private final JButton buttonUpdate = new JButton(Util.getString("label.execute_update"));
 	private final JButton buttonQuery = new JButton(Util.getString("label.execute_query"));
 	private final JButton buttonLimpar = new JButton(Util.getString("label.limpar"));
 	private final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+	private final List<Referencia> referencias = new ArrayList<>();
+	private final JTabbedPane fichario = new JTabbedPane();
 	private final JTextArea textArea = new JTextArea();
 	private final JLabel labelStatus = new JLabel();
 	private final PainelConsultas painelConsultas;
 	private final Tabelas tabelas = new Tabelas();
+	private final PainelTabelas painelDestaques;
 	private final PainelTabelas painelTabelas;
 	private int janelas;
 
 	public Formulario(File file) throws Exception {
+		setExtendedState(Formulario.MAXIMIZED_BOTH);
 		XML.processar(file, tabelas, referencias);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		painelDestaques = new PainelTabelas(true);
+		painelTabelas = new PainelTabelas(false);
 		painelConsultas = new PainelConsultas();
-		painelTabelas = new PainelTabelas();
 		setAlwaysOnTop(true);
-		setSize(800, 1000);
-		setLocationRelativeTo(null);
+		setSize(500, 500);
 		montarLayout();
 		setVisible(true);
 	}
@@ -67,9 +69,11 @@ public class Formulario extends JFrame {
 	private void montarLayout() {
 		setLayout(new BorderLayout());
 
+		fichario.addTab(Util.getString("label.destaques"), painelDestaques);
 		fichario.addTab(Util.getString("label.consultas"), painelConsultas);
 		fichario.addTab(Util.getString("label.tabelas"), painelTabelas);
 
+		painelDestaques.config();
 		painelConsultas.config();
 		painelTabelas.config();
 
@@ -90,6 +94,7 @@ public class Formulario extends JFrame {
 			@Override
 			public void windowOpened(WindowEvent e) {
 				splitPane.setDividerLocation(.80);
+				painelDestaques.windowOpened();
 				painelConsultas.windowOpened();
 				painelTabelas.windowOpened();
 			}
@@ -293,6 +298,7 @@ public class Formulario extends JFrame {
 				Util.getBooleanConfig("tabelas.raiz_visivel"));
 		final JCheckBox chkLinhaRaiz = new JCheckBox(Util.getString("label.raiz_linha"),
 				Util.getBooleanConfig("tabelas.raiz_linha"));
+		final JMenuItem itemDelete = new JMenuItem(Util.getString("label.gerar_delete"));
 		final JMenuItem itemUpdate = new JMenuItem(Util.getString("label.gerar_update"));
 		final JMenuItem itemMeuSQL = new JMenuItem(Util.getString("label.gerar_dados"));
 		final JMenuItem itemCampos = new JMenuItem(Util.getString("label.campos"));
@@ -300,8 +306,11 @@ public class Formulario extends JFrame {
 		Referencia selecionado;
 		final JTree arvore;
 
-		PainelTabelas() {
-			final List<Referencia> referencias = Util.criarReferencias(tabelas.getTabelas());
+		PainelTabelas(boolean destaque) {
+			List<Referencia> referencias = Util.criarReferencias(tabelas.getTabelas());
+			if (destaque) {
+				Util.filtrarDestaques(referencias, tabelas);
+			}
 			try {
 				DadosDialog.atualizarTotalRegistros(referencias, tabelas);
 			} catch (Exception e) {
@@ -331,6 +340,8 @@ public class Formulario extends JFrame {
 			popup.add(itemCampos);
 			popup.addSeparator();
 			popup.add(itemUpdate);
+			popup.addSeparator();
+			popup.add(itemDelete);
 
 			itemMeuSQL.addActionListener(new ActionListener() {
 				@Override
@@ -350,6 +361,13 @@ public class Formulario extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					textArea.setText(selecionado.gerarUpdate(tabelas));
+				}
+			});
+
+			itemDelete.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					textArea.setText(selecionado.gerarDelete(tabelas));
 				}
 			});
 

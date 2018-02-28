@@ -17,6 +17,10 @@ public class Campo {
 		return "alias-f".equals(nome.toLowerCase());
 	}
 
+	public boolean isDestaque() {
+		return "destaque-f".equals(nome.toLowerCase());
+	}
+
 	public String getNome() {
 		return nome;
 	}

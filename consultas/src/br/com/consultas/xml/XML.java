@@ -47,14 +47,13 @@ class XMLHander extends DefaultHandler {
 
 		} else {
 			if (lendoTabelas) {
-
 				Tabela tab = new Tabela(qName);
 				List<Campo> campos = Util.criarCampos(attributes);
 				for (Campo c : campos) {
 					tab.add(c);
 				}
-				tabelas.add(tab);
 
+				tabelas.add(tab);
 			} else if (lendoReferencias) {
 				if (qName.equals("obj")) {
 					final String pkStr = Util.getString(attributes, "pk", null);

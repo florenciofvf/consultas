@@ -90,9 +90,23 @@ public class Referencia {
 		return tabelas.get(alias);
 	}
 
+	public boolean isDestaque(Tabelas tabelas) {
+		Tabela tab = tabelas.get(alias);
+		return tab.isDestaque();
+	}
+
 	public String getConsultaCount(Tabelas tabelas) {
 		Tabela tab = tabelas.get(alias);
 		return "SELECT COUNT(*) AS total FROM " + tab.getNome();
+	}
+
+	public String gerarDelete(Tabelas tabelas) {
+		Tabela tab = tabelas.get(alias);
+
+		StringBuilder sb = new StringBuilder("DELETE FROM " + tab.getNome() + QUEBRA_LINHA);
+		sb.append(" WHERE " + tab.get(0).getNome() + "=" + tab.get(0).getValor() + QUEBRA_LINHA);
+
+		return sb.toString();
 	}
 
 	public String gerarUpdate(Tabelas tabelas) {

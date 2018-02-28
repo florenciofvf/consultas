@@ -3,6 +3,7 @@ package br.com.consultas.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -11,6 +12,7 @@ import org.xml.sax.Attributes;
 import br.com.consultas.Campo;
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
+import br.com.consultas.Tabelas;
 
 public class Util {
 	private static ResourceBundle bundleConfig = ResourceBundle.getBundle("config");
@@ -111,6 +113,17 @@ public class Util {
 		}
 
 		return resposta;
+	}
+
+	public static void filtrarDestaques(List<Referencia> referencias, Tabelas tabelas) {
+		Iterator<Referencia> it = referencias.iterator();
+
+		while (it.hasNext()) {
+			Referencia ref = it.next();
+			if (!ref.isDestaque(tabelas)) {
+				it.remove();
+			}
+		}
 	}
 
 	public static void ordenar(List<Referencia> referencias) {
