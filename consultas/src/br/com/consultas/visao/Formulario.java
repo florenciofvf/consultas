@@ -179,7 +179,10 @@ public class Formulario extends JFrame {
 				Util.getBooleanConfig("consultas.raiz_visivel"));
 		final JCheckBox chkLinhaRaiz = new JCheckBox(Util.getString("label.raiz_linha"),
 				Util.getBooleanConfig("consultas.raiz_linha"));
+		final JMenuItem itemDelete = new JMenuItem(Util.getString("label.gerar_delete"));
+		final JMenuItem itemUpdate = new JMenuItem(Util.getString("label.gerar_update"));
 		final JMenuItem itemMeuSQL = new JMenuItem(Util.getString("label.gerar_dados"));
+		final JMenuItem itemCampos = new JMenuItem(Util.getString("label.campos"));
 		final JMenuItem itemSQL = new JMenuItem(Util.getString("label.gerar_sql"));
 		final JPopupMenu popup = new JPopupMenu();
 		Referencia selecionado;
@@ -205,6 +208,12 @@ public class Formulario extends JFrame {
 			popup.add(itemMeuSQL);
 			popup.addSeparator();
 			popup.add(itemSQL);
+			popup.addSeparator();
+			popup.add(itemCampos);
+			popup.addSeparator();
+			popup.add(itemUpdate);
+			popup.addSeparator();
+			popup.add(itemDelete);
 
 			itemMeuSQL.addActionListener(new ActionListener() {
 				@Override
@@ -217,6 +226,27 @@ public class Formulario extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					texto(selecionado.gerarConsulta(tabelas), selecionado.getTabela(tabelas));
+				}
+			});
+
+			itemCampos.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					new CampoDialog(Formulario.this, selecionado.getTabela(tabelas));
+				}
+			});
+
+			itemUpdate.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					textArea.setText(selecionado.gerarUpdate(tabelas));
+				}
+			});
+
+			itemDelete.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					textArea.setText(selecionado.gerarDelete(tabelas));
 				}
 			});
 
