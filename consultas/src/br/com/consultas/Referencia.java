@@ -10,17 +10,17 @@ public class Referencia {
 	private static final String QUEBRA_LINHA = "\n";
 	private final List<Referencia> referencias;
 	private boolean exibirTotalRegistros;
-	private final boolean inverso;
-	private final String aliasAlt;
-	private final String preJoin;
 	private final String prefixo;
-	private final String pkNome;
-	private final String fkNome;
 	private int totalRegistros;
 	private final String alias;
+	private boolean inverso;
+	private String aliasAlt;
+	private String preJoin;
+	private String pkNome;
+	private String fkNome;
 	private Referencia pai;
-	private final int pk;
-	private final int fk;
+	private int pk;
+	private int fk;
 
 	public Referencia(String alias, String aliasAlt, boolean inverso, int pk, String pkNome, int fk, String fkNome,
 			String preJoin) {
@@ -59,11 +59,19 @@ public class Referencia {
 	}
 
 	public String getPreJoin() {
-		return preJoin == null ? "INNER" : preJoin;
+		return Util.ehVazio(preJoin) ? "INNER" : preJoin.trim();
+	}
+
+	public void setPreJoin(String preJoin) {
+		this.preJoin = preJoin;
 	}
 
 	public String getAlias() {
 		return !Util.ehVazio(aliasAlt) ? aliasAlt : alias;
+	}
+
+	public String getAlias2() {
+		return alias;
 	}
 
 	public Referencia getPai() {
@@ -74,16 +82,48 @@ public class Referencia {
 		return inverso;
 	}
 
+	public void setInverso(boolean inverso) {
+		this.inverso = inverso;
+	}
+
 	public int getPk() {
 		return pk;
+	}
+
+	public void setPk(int pk) {
+		this.pk = pk;
 	}
 
 	public int getFk() {
 		return fk;
 	}
 
+	public void setFk(int fk) {
+		this.fk = fk;
+	}
+
+	public String getPkNome() {
+		return pkNome;
+	}
+
+	public void setPkNome(String pkNome) {
+		this.pkNome = pkNome;
+	}
+
+	public String getFkNome() {
+		return fkNome;
+	}
+
+	public void setFkNome(String fkNome) {
+		this.fkNome = fkNome;
+	}
+
 	public String getAliasAlt() {
 		return aliasAlt;
+	}
+
+	public void setAliasAlt(String aliasAlt) {
+		this.aliasAlt = aliasAlt;
 	}
 
 	public Tabela getTabela(Tabelas tabelas) {
@@ -104,7 +144,7 @@ public class Referencia {
 		Tabela tab = tabelas.get(alias);
 
 		StringBuilder sb = new StringBuilder("DELETE FROM " + tab.getNome() + QUEBRA_LINHA);
-		sb.append(" WHERE " + tab.get(0).getNome() + "=" + tab.get(0).getValor() + QUEBRA_LINHA);
+		sb.append(" WHERE " + Util.fragmentoFiltroCampo(tab.get(0)) + QUEBRA_LINHA);
 
 		return sb.toString();
 	}
@@ -120,12 +160,12 @@ public class Referencia {
 		StringBuilder set = new StringBuilder();
 		while (it.hasNext()) {
 			Campo c = it.next();
-			set.append(" " + c.getNome() + "=" + c.getValor());
+			set.append(" " + Util.fragmentoFiltroCampo(c));
 		}
 
 		StringBuilder sb = new StringBuilder("UPDATE " + tab.getNome() + QUEBRA_LINHA);
 		sb.append(" SET " + set.toString().trim() + QUEBRA_LINHA);
-		sb.append(" WHERE " + tab.get(0).getNome() + "=" + tab.get(0).getValor() + QUEBRA_LINHA);
+		sb.append(" WHERE " + Util.fragmentoFiltroCampo(tab.get(0)) + QUEBRA_LINHA);
 
 		return sb.toString();
 	}
@@ -139,7 +179,7 @@ public class Referencia {
 
 		for (Campo c : tab.getCampos()) {
 			if (!Util.ehVazio(c.getValor())) {
-				sb.append(" AND " + getAlias() + "." + c.getNome() + "=" + c.getValor() + QUEBRA_LINHA);
+				sb.append(" AND " + getAlias() + "." + Util.fragmentoFiltroCampo(c) + QUEBRA_LINHA);
 			}
 		}
 
@@ -151,7 +191,7 @@ public class Referencia {
 
 	public String gerarConsulta(Tabelas tabelas) {
 		if (inverso && pai == null) {
-			throw new IllegalStateException(alias + " INVERSO");
+			throw new IllegalStateException(alias + ": INVERSO");
 		}
 
 		Tabela tab = tabelas.get(alias);
@@ -186,7 +226,7 @@ public class Referencia {
 
 		for (Campo c : tab.getCampos()) {
 			if (!Util.ehVazio(c.getValor())) {
-				sb.append(" AND " + getAlias() + "." + c.getNome() + "=" + c.getValor() + QUEBRA_LINHA);
+				sb.append(" AND " + getAlias() + "." + Util.fragmentoFiltroCampo(c) + QUEBRA_LINHA);
 			}
 		}
 	}
@@ -217,6 +257,10 @@ public class Referencia {
 			sb.append(" ON " + getAlias() + "." + campoPK.getNome() + " = " + pai.getAlias() + "." + campoFK.getNome()
 					+ QUEBRA_LINHA);
 		}
+	}
+
+	public String getPrefixo() {
+		return prefixo;
 	}
 
 	@Override

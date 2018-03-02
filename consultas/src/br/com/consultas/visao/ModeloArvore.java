@@ -13,8 +13,8 @@ public class ModeloArvore implements TreeModel {
 	private final String raiz;
 
 	public ModeloArvore(List<Referencia> referencias, String raiz) {
+		this.raiz = raiz + " (" + referencias.size() + ")";
 		this.referencias = referencias;
-		this.raiz = raiz;
 	}
 
 	public List<Referencia> getReferencias() {

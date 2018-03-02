@@ -1,11 +1,14 @@
 package br.com.consultas.util;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import javax.swing.JOptionPane;
 
 import org.xml.sax.Attributes;
 
@@ -15,8 +18,11 @@ import br.com.consultas.Tabela;
 import br.com.consultas.Tabelas;
 
 public class Util {
-	private static ResourceBundle bundleConfig = ResourceBundle.getBundle("config");
-	private static ResourceBundle bundle = ResourceBundle.getBundle("mensagens");
+	private static final String PREFIXO_FILTRO_CAMPO = "${";
+	private static final String SUFIXO_FILTRO_CAMPO = "}";
+
+	public static ResourceBundle bundleConfig = ResourceBundle.getBundle("config");
+	public static ResourceBundle bundleMsg = ResourceBundle.getBundle("mensagens");
 
 	public static void checarVazio(String s, String chave, boolean trim) {
 		checarVazio(s, chave, trim, null);
@@ -24,16 +30,16 @@ public class Util {
 
 	public static void checarVazio(String s, String chave, boolean trim, String posMsg) {
 		if (s == null) {
-			throw new IllegalArgumentException(bundle.getString(chave) + (posMsg == null ? "" : posMsg));
+			throw new IllegalArgumentException(bundleMsg.getString(chave) + (posMsg == null ? "" : posMsg));
 		}
 
 		if (trim && s.trim().length() == 0) {
-			throw new IllegalArgumentException(bundle.getString(chave) + (posMsg == null ? "" : posMsg));
+			throw new IllegalArgumentException(bundleMsg.getString(chave) + (posMsg == null ? "" : posMsg));
 		}
 	}
 
 	public static String getString(String chave) {
-		return bundle.getString(chave);
+		return bundleMsg.getString(chave);
 	}
 
 	public static String getStringConfig(String chave) {
@@ -126,6 +132,17 @@ public class Util {
 		}
 	}
 
+	public static void filtrarRegistros(List<Referencia> referencias, Tabelas tabelas) {
+		Iterator<Referencia> it = referencias.iterator();
+
+		while (it.hasNext()) {
+			Referencia ref = it.next();
+			if (ref.getTotalRegistros() == 0) {
+				it.remove();
+			}
+		}
+	}
+
 	public static void ordenar(List<Referencia> referencias) {
 		Collections.sort(referencias, new Comparador());
 	}
@@ -146,5 +163,42 @@ public class Util {
 			s = s.substring(0, s.length() - 1);
 		}
 		return s;
+	}
+
+	public static Tabela criarTabela() {
+		return new Tabela("CAMPOS");
+	}
+
+	public static Referencia criarReferencia() {
+		return new Referencia("CAMPOS", null, false, -1, null, -1, null, null);
+	}
+
+	public static String fragmentoFiltroCampo(Campo campo) {
+		StringBuilder sb = new StringBuilder(campo.getNome());
+		String valor = campo.getValor();
+
+		if (ehVazio(valor)) {
+			sb.append("=" + valor);
+		} else {
+			if (valor.startsWith(PREFIXO_FILTRO_CAMPO) && valor.endsWith(SUFIXO_FILTRO_CAMPO)) {
+				int posIni = valor.indexOf(PREFIXO_FILTRO_CAMPO);
+				int posFim = valor.lastIndexOf(SUFIXO_FILTRO_CAMPO);
+				valor = valor.substring(posIni + PREFIXO_FILTRO_CAMPO.length(), posFim);
+				sb.append(" " + valor.trim());
+			} else {
+				sb.append("=" + valor.trim());
+			}
+		}
+
+		return sb.toString();
+	}
+
+	public static void mensagem(Component componente, String string) {
+		JOptionPane.showMessageDialog(componente, string);
+	}
+
+	public static boolean confirmarUpdate(Component componente) {
+		return JOptionPane.showConfirmDialog(componente, getString("label.confirmar_update"),
+				getString("label.atencao"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION;
 	}
 }
