@@ -37,6 +37,29 @@ public class Referencia {
 		this.fk = fk;
 	}
 
+	public Referencia clonar() {
+		return new Referencia(alias, aliasAlt, inverso, pk, pkNome, fk, fkNome, preJoin);
+	}
+
+	public Referencia clonarCaminho() {
+		Referencia clone = clonar();
+		for (Referencia r : referencias) {
+			clone.add(r.clonar());
+		}
+
+		Referencia pai = this.pai;
+
+		while(pai != null) {
+			Referencia clonePai = pai.clonar();
+			clonePai.add(clone);
+
+			clone = clonePai;
+			pai = pai.pai;
+		}
+
+		return clone;
+	}
+
 	public static Referencia criarReferenciaDados(Tabela tabela) {
 		return new Referencia(tabela.getAlias().getValor(), null, false, -1, null, -1, null, null);
 	}

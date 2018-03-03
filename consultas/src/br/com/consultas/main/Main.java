@@ -17,6 +17,6 @@ public class Main {
 		} else {
 			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		}
-		new Formulario(new File("modelo.fvf"));
+		new Formulario(new File("siproquim.xml"));
 	}
 }

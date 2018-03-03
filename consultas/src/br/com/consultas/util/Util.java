@@ -16,6 +16,7 @@ import br.com.consultas.Campo;
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
 import br.com.consultas.Tabelas;
+import br.com.consultas.visao.SQL;
 
 public class Util {
 	private static final String PREFIXO_FILTRO_CAMPO = "${";
@@ -143,6 +144,36 @@ public class Util {
 		}
 	}
 
+	public static List<Referencia> pesquisarReferencias(List<Referencia> referencias, String alias) {
+		List<Referencia> container = new ArrayList<>();
+
+		for (Referencia r : referencias) {
+			if (r.getAlias2().equals(alias)) {
+				container.add(r);
+			} else {
+				refs(container, r, alias);
+			}
+		}
+
+		List<Referencia> resposta = new ArrayList<>();
+
+		for(Referencia ref : container) {
+			resposta.add(ref.clonarCaminho());
+		}
+
+		return resposta;
+	}
+
+	private static void refs(List<Referencia> resposta, Referencia ref, String alias) {
+		for (Referencia r : ref.getReferencias()) {
+			if (r.getAlias2().equals(alias)) {
+				resposta.add(r);
+			} else {
+				refs(resposta, r, alias);
+			}
+		}
+	}
+
 	public static void ordenar(List<Referencia> referencias) {
 		Collections.sort(referencias, new Comparador());
 	}
@@ -200,5 +231,16 @@ public class Util {
 	public static boolean confirmarUpdate(Component componente) {
 		return JOptionPane.showConfirmDialog(componente, getString("label.confirmar_update"),
 				getString("label.atencao"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION;
+	}
+
+	public static SQL criarSQL(Referencia ref, Tabelas tabelas) {
+		SQL sql = new SQL();
+
+		sql.dados = ref.gerarConsultaDados(tabelas);
+		sql.select = ref.gerarConsulta(tabelas);
+		sql.delete = ref.gerarDelete(tabelas);
+		sql.update = ref.gerarUpdate(tabelas);
+
+		return sql;
 	}
 }

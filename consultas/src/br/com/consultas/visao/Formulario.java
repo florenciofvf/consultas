@@ -53,8 +53,8 @@ public class Formulario extends JFrame {
 	private final JTabbedPane fichario = new JTabbedPane();
 	private final JTextArea textArea = new JTextArea();
 	private final JLabel labelStatus = new JLabel();
+	protected final Tabelas tabelas = new Tabelas();
 	private final PainelConsultas painelConsultas;
-	private final Tabelas tabelas = new Tabelas();
 	private final PainelTabelas painelRegistros;
 	private final PainelTabelas painelDestaques;
 	private final PainelTabelas painelTabelas;
@@ -253,7 +253,7 @@ public class Formulario extends JFrame {
 			itemMeuSQL.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					SQL sql = criarSQL(selecionado, tabelas);
+					SQL sql = Util.criarSQL(selecionado, tabelas);
 					texto(sql.dados, sql.update, sql.delete, selecionado.getTabela(tabelas));
 				}
 			});
@@ -261,7 +261,7 @@ public class Formulario extends JFrame {
 			itemSQL.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					SQL sql = criarSQL(selecionado, tabelas);
+					SQL sql = Util.criarSQL(selecionado, tabelas);
 					texto(sql.select, sql.update, sql.delete, selecionado.getTabela(tabelas));
 				}
 			});
@@ -405,24 +405,6 @@ public class Formulario extends JFrame {
 		}
 	}
 
-	class SQL {
-		String select;
-		String update;
-		String delete;
-		String dados;
-	}
-
-	private SQL criarSQL(Referencia ref, Tabelas tabelas) {
-		SQL sql = new SQL();
-
-		sql.dados = ref.gerarConsultaDados(tabelas);
-		sql.select = ref.gerarConsulta(tabelas);
-		sql.delete = ref.gerarDelete(tabelas);
-		sql.update = ref.gerarUpdate(tabelas);
-
-		return sql;
-	}
-
 	private class PainelTabelas extends JPanel {
 		private static final long serialVersionUID = 1L;
 		final JCheckBox chkAreaTransferencia = new JCheckBox(Util.getString("label.area_transferencia"),
@@ -489,7 +471,7 @@ public class Formulario extends JFrame {
 			itemMeuSQL.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					SQL sql = criarSQL(selecionado, tabelas);
+					SQL sql = Util.criarSQL(selecionado, tabelas);
 					texto(sql.dados, sql.update, sql.delete, selecionado.getTabela(tabelas));
 				}
 			});
