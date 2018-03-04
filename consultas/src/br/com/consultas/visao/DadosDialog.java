@@ -311,8 +311,8 @@ public class DadosDialog extends JFrame {
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
 				int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-			setBackground(Color.DARK_GRAY);
 			setForeground(Color.WHITE);
+			setBackground(Color.GRAY);
 			return this;
 		}
 	}

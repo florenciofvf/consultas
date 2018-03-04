@@ -25,6 +25,8 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -46,16 +48,20 @@ import br.com.consultas.xml.XML;
 
 public class Formulario extends JFrame {
 	private static final long serialVersionUID = 1L;
+	private final JMenuItem itemLimparIds = new JMenuItem(Util.getString("label.limpar_ids"));
 	private final JButton buttonUpdate = new JButton(Util.getString("label.execute_update"));
 	private final JButton buttonQuery = new JButton(Util.getString("label.execute_query"));
+	private final JMenuItem itemFechar = new JMenuItem(Util.getString("label.fechar"));
 	private final JButton buttonLimpar = new JButton(Util.getString("label.limpar"));
 	private final JButton buttonFechar = new JButton(Util.getString("label.fechar"));
 	private final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+	private final JMenu menuArquivo = new JMenu(Util.getString("label.arquivo"));
 	protected final List<Referencia> referencias = new ArrayList<>();
 	private final JTabbedPane fichario = new JTabbedPane();
 	private final JTextArea textArea = new JTextArea();
 	private final JLabel labelStatus = new JLabel();
 	protected final Tabelas tabelas = new Tabelas();
+	private final JMenuBar menuBar = new JMenuBar();
 	private final PainelConsultas painelConsultas;
 	private final PainelTabelas painelRegistros;
 	private final PainelTabelas painelDestaques;
@@ -117,6 +123,28 @@ public class Formulario extends JFrame {
 		painelSul.add(buttonUpdate);
 		painelSul.add(buttonQuery);
 		add(BorderLayout.SOUTH, painelSul);
+
+		setJMenuBar(menuBar);
+		menuBar.add(menuArquivo);
+		menuArquivo.add(itemLimparIds);
+		menuArquivo.addSeparator();
+		menuArquivo.add(itemFechar);
+
+		itemLimparIds.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (Tabela t : tabelas.getTabelas()) {
+					t.get(0).setValor("");
+				}
+			}
+		});
+
+		itemFechar.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
 
 		addWindowListener(new WindowAdapter() {
 			@Override
