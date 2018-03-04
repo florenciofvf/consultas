@@ -1,6 +1,8 @@
 package br.com.consultas.visao;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
@@ -26,6 +28,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -58,6 +61,7 @@ public class ReferenciaDialog extends JFrame {
 		List<Referencia> caminhos = Util.pesquisarReferencias(referencias, alias);
 		arvore = new JTree(new ModeloArvore(caminhos, Util.getString("label.caminho")));
 		arvore.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		arvore.setCellRenderer(new TreeCellRenderer());
 		arvore.addMouseListener(new OuvinteArvore());
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLayout(new BorderLayout());
@@ -106,15 +110,15 @@ public class ReferenciaDialog extends JFrame {
 	}
 
 	private void config() {
-//		popup.add(itemMeuSQL);
-//		popup.addSeparator();
-		popup.add(itemSQL);
-//		popup.addSeparator();
-//		popup.add(itemCampos);
-//		popup.addSeparator();
-//		popup.add(itemUpdate);
-//		popup.addSeparator();
-//		popup.add(itemDelete);
+		// popup.add(itemMeuSQL);
+		// popup.addSeparator();
+		// popup.add(itemSQL);
+		// popup.addSeparator();
+		// popup.add(itemCampos);
+		// popup.addSeparator();
+		// popup.add(itemUpdate);
+		// popup.addSeparator();
+		// popup.add(itemDelete);
 
 		itemMeuSQL.addActionListener(new ActionListener() {
 			@Override
@@ -169,7 +173,7 @@ public class ReferenciaDialog extends JFrame {
 	}
 
 	void texto(String consulta, String atualizacao, String exclusao, Tabela tabela) {
-//		textArea.setText(consulta);
+		// textArea.setText(consulta);
 
 		if (chkAreaTransferencia.isSelected()) {
 			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -180,8 +184,8 @@ public class ReferenciaDialog extends JFrame {
 
 		if (chkAbrirDialog.isSelected()) {
 			try {
-				new DadosDialog(formulario, Util.getSQL(consulta), Util.getSQL(atualizacao),
-						Util.getSQL(exclusao), tabela);
+				new DadosDialog(formulario, Util.getSQL(consulta), Util.getSQL(atualizacao), Util.getSQL(exclusao),
+						tabela);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -236,6 +240,28 @@ public class ReferenciaDialog extends JFrame {
 				selecionado = (Referencia) path.getLastPathComponent();
 				popup.show(arvore, e.getX(), e.getY());
 			}
+		}
+	}
+
+	class TreeCellRenderer extends DefaultTreeCellRenderer {
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
+				boolean leaf, int row, boolean hasFocus) {
+			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+			// DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+			// Object objeto = node.getUserObject();
+			Object objeto = value;
+			if (objeto instanceof Referencia) {
+				Referencia ref = (Referencia) objeto;
+				if (ref.isEspecial()) {
+					setForeground(hasFocus ? Color.WHITE : Color.BLUE);
+				} else {
+					setForeground(hasFocus ? Color.WHITE : Color.BLACK);
+				}
+			}
+			return this;
 		}
 	}
 }

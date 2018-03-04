@@ -13,6 +13,7 @@ public class Referencia {
 	private final String prefixo;
 	private int totalRegistros;
 	private final String alias;
+	private boolean especial;
 	private boolean inverso;
 	private String aliasAlt;
 	private String preJoin;
@@ -38,7 +39,9 @@ public class Referencia {
 	}
 
 	public Referencia clonar() {
-		return new Referencia(alias, aliasAlt, inverso, pk, pkNome, fk, fkNome, preJoin);
+		Referencia r = new Referencia(alias, aliasAlt, inverso, pk, pkNome, fk, fkNome, preJoin);
+		r.especial = especial;
+		return r;
 	}
 
 	public Referencia clonarCaminho() {
@@ -305,5 +308,13 @@ public class Referencia {
 
 	public void setTotalRegistros(int totalRegistros) {
 		this.totalRegistros = totalRegistros;
+	}
+
+	public boolean isEspecial() {
+		return especial;
+	}
+
+	public void setEspecial(boolean especial) {
+		this.especial = especial;
 	}
 }
