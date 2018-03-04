@@ -57,16 +57,16 @@ public class ReferenciaDialog extends JFrame {
 	private Referencia selecionado;
 	private final JTree arvore;
 
-	public ReferenciaDialog(final Formulario formulario, List<Referencia> referencias, String alias) {
-		List<Referencia> caminhos = Util.pesquisarReferencias(referencias, alias);
+	public ReferenciaDialog(final Formulario formulario, List<Referencia> referencias, Tabela tabela) {
+		List<Referencia> caminhos = Util.pesquisarReferencias(referencias, tabela.getAlias().getValor());
 		arvore = new JTree(new ModeloArvore(caminhos, Util.getString("label.caminho")));
 		arvore.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		setTitle(tabela.getNome() + " - " + tabela.getAlias().getValor());
 		arvore.setCellRenderer(new TreeCellRenderer());
 		arvore.addMouseListener(new OuvinteArvore());
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLayout(new BorderLayout());
 		this.formulario = formulario;
-		setTitle(alias);
 
 		JPanel painelNorte = new JPanel();
 		painelNorte.add(chkAreaTransferencia);
