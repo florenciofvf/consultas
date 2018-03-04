@@ -1,6 +1,7 @@
 package br.com.consultas.visao;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -17,6 +18,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.util.EventObject;
 import java.util.List;
 import java.util.Vector;
 
@@ -30,10 +32,16 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.EventListenerList;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
@@ -46,11 +54,15 @@ public class DadosDialog extends JFrame {
 	private final JTextArea textAreaAtualiza = new JTextArea();
 	private final JTextArea textAreaExclusao = new JTextArea();
 	private final JTabbedPane fichario = new JTabbedPane();
+	private final Formulario formulario;
 	private JTable table = new JTable();
+	private final Tabela tabela;
 	private final String TITLE;
 
 	public DadosDialog(final Formulario formulario, String consulta, String atualizacao, String exclusao, Tabela tabela)
 			throws Exception {
+		this.formulario = formulario;
+		this.tabela = tabela;
 		TITLE = tabela != null ? tabela.getNome() : "";
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		processar(consulta, formulario.getGraphics());
@@ -65,6 +77,7 @@ public class DadosDialog extends JFrame {
 		textAreaAtualiza.setText(atualizacao);
 		textAreaConsulta.setText(consulta);
 		textAreaExclusao.setText(exclusao);
+		this.formulario = formulario;
 		setAlwaysOnTop(true);
 		setSize(formulario.getWidth() - 20, 500);
 		setLocationRelativeTo(formulario);
@@ -255,6 +268,12 @@ public class DadosDialog extends JFrame {
 
 		int[] is = table.getSelectedRows();
 		table.setModel(new DefaultTableModel(dados, colunas));
+		if (tabela != null) {
+			TableColumnModel columnModel = table.getColumnModel();
+			TableColumn column = columnModel.getColumn(0);
+			column.setCellRenderer(new CellColor());
+			column.setCellEditor(new CellEditor());
+		}
 		ajustar(table, graphics);
 
 		if (is != null) {
@@ -283,6 +302,94 @@ public class DadosDialog extends JFrame {
 
 			TableColumn column = columnModel.getColumn(icoluna);
 			column.setPreferredWidth(width + 7);
+		}
+	}
+
+	class CellColor extends DefaultTableCellRenderer {
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+				int row, int column) {
+			super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			setBackground(Color.DARK_GRAY);
+			setForeground(Color.WHITE);
+			return this;
+		}
+	}
+
+	class CellRenderer extends DefaultTableCellRenderer {
+		private static final long serialVersionUID = 1L;
+	}
+
+	class CellEditor extends CellRenderer implements TableCellEditor {
+		private static final long serialVersionUID = 1L;
+		private EventListenerList listenerList = new EventListenerList();
+		private ChangeEvent changeEvent = new ChangeEvent(this);
+		private Object valor;
+
+		@Override
+		public Object getCellEditorValue() {
+			return valor;
+		}
+
+		@Override
+		public boolean isCellEditable(EventObject anEvent) {
+			return true;
+		}
+
+		@Override
+		public boolean shouldSelectCell(EventObject anEvent) {
+			// new ReferenciaDialog(Formulario.this, referencias, "pessoa");
+			return true;
+		}
+
+		@Override
+		public boolean stopCellEditing() {
+			fireEditingStopped();
+			return true;
+		}
+
+		@Override
+		public void cancelCellEditing() {
+			fireEditingCanceled();
+		}
+
+		@Override
+		public void addCellEditorListener(CellEditorListener l) {
+			listenerList.add(CellEditorListener.class, l);
+		}
+
+		@Override
+		public void removeCellEditorListener(CellEditorListener l) {
+			listenerList.remove(CellEditorListener.class, l);
+		}
+
+		@Override
+		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
+				int column) {
+			valor = value;
+			return super.getTableCellRendererComponent(table, value, isSelected, true, row, column);
+		}
+
+		private void fireEditingStopped() {
+			Object[] listeners = listenerList.getListenerList();
+
+			for (int i = listeners.length - 2; i >= 0; i -= 2) {
+				if (listeners[i] == CellEditorListener.class) {
+					((CellEditorListener) listeners[i + 1]).editingStopped(changeEvent);
+				}
+			}
+		}
+
+		private void fireEditingCanceled() {
+			Object[] listeners = listenerList.getListenerList();
+
+			for (int i = listeners.length - 2; i >= 0; i -= 2) {
+				if (listeners[i] == CellEditorListener.class) {
+					((CellEditorListener) listeners[i + 1]).editingCanceled(changeEvent);
+				}
+			}
 		}
 	}
 }

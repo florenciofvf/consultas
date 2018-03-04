@@ -314,7 +314,6 @@ public class Formulario extends JFrame {
 		}
 
 		void texto(String consulta, String atualizacao, String exclusao, Tabela tabela) {
-			// new ReferenciaDialog(Formulario.this, referencias, "pessoa");
 			textArea.setText(consulta);
 
 			if (chkAreaTransferencia.isSelected()) {
