@@ -267,7 +267,6 @@ public class Util {
 			List<Object> lista = new ArrayList<>();
 			r.caminho(lista);
 			lista.add(0, raiz);
-			System.out.println(lista);
 			TreePath path = new TreePath(lista.toArray(new Object[] {}));
 			tree.expandPath(path);
 		}

@@ -83,7 +83,6 @@ public class Referencia {
 			referencias.add(0, pai);
 			pai = pai.pai;
 		}
-		referencias.add(this);
 	}
 
 	public List<Referencia> getReferencias() {
