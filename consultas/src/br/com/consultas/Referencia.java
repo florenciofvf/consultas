@@ -52,7 +52,7 @@ public class Referencia {
 
 		Referencia pai = this.pai;
 
-		while(pai != null) {
+		while (pai != null) {
 			Referencia clonePai = pai.clonar();
 			clonePai.add(clone);
 

@@ -159,7 +159,7 @@ public class Util {
 
 		List<Referencia> resposta = new ArrayList<>();
 
-		for(Referencia ref : container) {
+		for (Referencia ref : container) {
 			resposta.add(ref.clonarCaminho());
 		}
 

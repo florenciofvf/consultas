@@ -136,26 +136,26 @@ public class ReferenciaDialog extends JFrame {
 			}
 		});
 
-//		itemCampos.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				new CampoDialog(Formulario.this, selecionado.getTabela(tabelas));
-//			}
-//		});
+		// itemCampos.addActionListener(new ActionListener() {
+		// @Override
+		// public void actionPerformed(ActionEvent e) {
+		// new CampoDialog(Formulario.this, selecionado.getTabela(tabelas));
+		// }
+		// });
 
-//		itemUpdate.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				textArea.setText(selecionado.gerarUpdate(tabelas));
-//			}
-//		});
+		// itemUpdate.addActionListener(new ActionListener() {
+		// @Override
+		// public void actionPerformed(ActionEvent e) {
+		// textArea.setText(selecionado.gerarUpdate(tabelas));
+		// }
+		// });
 
-//		itemDelete.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				textArea.setText(selecionado.gerarDelete(tabelas));
-//			}
-//		});
+		// itemDelete.addActionListener(new ActionListener() {
+		// @Override
+		// public void actionPerformed(ActionEvent e) {
+		// textArea.setText(selecionado.gerarDelete(tabelas));
+		// }
+		// });
 
 		chkRaizVisivel.addActionListener(new ActionListener() {
 			@Override
