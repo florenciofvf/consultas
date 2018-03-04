@@ -99,8 +99,8 @@ public class Formulario extends JFrame {
 
 		fichario.addTab(Util.getString("label.destaques"), painelDestaques);
 		fichario.addTab(Util.getString("label.tabRegtros"), painelRegistros);
-		fichario.addTab(Util.getString("label.consultas"), painelConsultas);
 		fichario.addTab(Util.getString("label.tabelas"), painelTabelas);
+		fichario.addTab(Util.getString("label.consultas"), painelConsultas);
 		fichario.addTab(Util.getString("label.config"),
 				new JScrollPane(new JTable(new ModeloBundle(Util.bundleConfig))));
 		fichario.addTab(Util.getString("label.mensagens"),
