@@ -354,7 +354,11 @@ public class DadosDialog extends JFrame {
 
 		@Override
 		public boolean shouldSelectCell(EventObject anEvent) {
-			new ReferenciaDialog(formulario, formulario.referencias, tabela);
+			if (Util.getBooleanConfig("dados_dialog.abrir_dialog_referencia")) {
+				new ReferenciaDialog(formulario, formulario.referencias, tabela);
+			} else {
+				fichario.setSelectedIndex(fichario.getTabCount() - 1);
+			}
 			return true;
 		}
 
