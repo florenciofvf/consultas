@@ -49,7 +49,7 @@ public class Formulario extends JFrame {
 	private final JButton buttonLimpar = new JButton(Util.getString("label.limpar"));
 	private final JButton buttonFechar = new JButton(Util.getString("label.fechar"));
 	private final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-	private final List<Referencia> referencias = new ArrayList<>();
+	protected final List<Referencia> referencias = new ArrayList<>();
 	private final JTabbedPane fichario = new JTabbedPane();
 	private final JTextArea textArea = new JTextArea();
 	private final JLabel labelStatus = new JLabel();

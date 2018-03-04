@@ -339,7 +339,7 @@ public class DadosDialog extends JFrame {
 
 		@Override
 		public boolean shouldSelectCell(EventObject anEvent) {
-			// new ReferenciaDialog(Formulario.this, referencias, "pessoa");
+			new ReferenciaDialog(formulario, formulario.referencias, tabela.getAlias().getValor());
 			return true;
 		}
 
@@ -368,6 +368,7 @@ public class DadosDialog extends JFrame {
 		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
 				int column) {
 			valor = value;
+			tabela.get(0).setValor(valor.toString());
 			return super.getTableCellRendererComponent(table, value, isSelected, true, row, column);
 		}
 
