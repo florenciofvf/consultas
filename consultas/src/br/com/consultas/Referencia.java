@@ -186,7 +186,11 @@ public class Referencia {
 		StringBuilder set = new StringBuilder();
 		while (it.hasNext()) {
 			Campo c = it.next();
-			set.append(" " + Util.fragmentoFiltroCampo(c));
+			set.append(" " + Util.fragmentoFiltroCampo(c) + ", ");
+		}
+
+		if(set.length() > 0) {
+			set.delete(set.length() - 2, set.length());
 		}
 
 		StringBuilder sb = new StringBuilder("UPDATE " + tab.getNome() + QUEBRA_LINHA);
