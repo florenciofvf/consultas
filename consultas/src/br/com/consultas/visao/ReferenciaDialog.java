@@ -81,7 +81,7 @@ public class ReferenciaDialog extends JFrame {
 		add(BorderLayout.CENTER, new JScrollPane(arvore));
 		add(BorderLayout.SOUTH, new PainelControle());
 		setAlwaysOnTop(true);
-		setSize(400, 400);
+		setSize(600, 400);
 		setLocationRelativeTo(formulario);
 		config();
 		setVisible(true);
