@@ -36,6 +36,12 @@ public class Tabela {
 		return campos;
 	}
 
+	public void limparCampos() {
+		for (Campo c : campos) {
+			c.setValor("");
+		}
+	}
+
 	public Campo getAlias() {
 		return alias;
 	}

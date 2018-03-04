@@ -8,9 +8,13 @@ import java.awt.FlowLayout;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
@@ -24,13 +28,17 @@ import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
@@ -42,6 +50,9 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
@@ -70,6 +81,10 @@ public class DadosDialog extends JFrame {
 		fichario.addTab(Util.getString("label.consulta"), new JScrollPane(textAreaConsulta));
 		fichario.addTab(Util.getString("label.atualiza"), new JScrollPane(textAreaAtualiza));
 		fichario.addTab(Util.getString("label.exclusao"), new JScrollPane(textAreaExclusao));
+		if (tabela != null) {
+			fichario.addTab(Util.getString("label.consultas"),
+					new PainelReferencia(formulario, formulario.referencias, tabela));
+		}
 		setLayout(new BorderLayout());
 		add(BorderLayout.CENTER, fichario);
 		add(BorderLayout.SOUTH, new PainelControle());
@@ -389,6 +404,144 @@ public class DadosDialog extends JFrame {
 				if (listeners[i] == CellEditorListener.class) {
 					((CellEditorListener) listeners[i + 1]).editingCanceled(changeEvent);
 				}
+			}
+		}
+	}
+
+	class PainelReferencia extends JPanel {
+		private static final long serialVersionUID = 1L;
+		private final JCheckBox chkAreaTransferencia = new JCheckBox(Util.getString("label.area_transferencia"),
+				Util.getBooleanConfig("consultas.area_transferencia"));
+		private final JCheckBox chkAbrirDialog = new JCheckBox(Util.getString("label.abrir_dialog"),
+				Util.getBooleanConfig("consultas.abrir_dialog"));
+		private final JCheckBox chkRaizVisivel = new JCheckBox(Util.getString("label.raiz_visivel"),
+				Util.getBooleanConfig("consultas.raiz_visivel"));
+		private final JCheckBox chkLinhaRaiz = new JCheckBox(Util.getString("label.raiz_linha"),
+				Util.getBooleanConfig("consultas.raiz_linha"));
+		private final JMenuItem itemMeuSQL = new JMenuItem(Util.getString("label.gerar_dados"));
+		private final JMenuItem itemSQL = new JMenuItem(Util.getString("label.gerar_sql"));
+		private final JPopupMenu popup = new JPopupMenu();
+		private Referencia selecionado;
+		private final JTree arvore;
+
+		public PainelReferencia(final Formulario formulario, List<Referencia> referencias, Tabela tabela) {
+			List<Referencia> caminhos = Util.pesquisarReferencias(referencias, tabela.getAlias().getValor());
+			arvore = new JTree(new ModeloArvore(caminhos, Util.getString("label.caminho")));
+			arvore.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+			arvore.setCellRenderer(new TreeCellRenderer());
+			arvore.addMouseListener(new OuvinteArvore());
+			setLayout(new BorderLayout());
+
+			JPanel painelNorte = new JPanel();
+			painelNorte.add(chkAreaTransferencia);
+			painelNorte.add(chkAbrirDialog);
+			painelNorte.add(chkRaizVisivel);
+			painelNorte.add(chkLinhaRaiz);
+			add(BorderLayout.NORTH, painelNorte);
+
+			add(BorderLayout.CENTER, new JScrollPane(arvore));
+			config();
+		}
+
+		private void config() {
+			popup.add(itemMeuSQL);
+			popup.addSeparator();
+			popup.add(itemSQL);
+
+			itemMeuSQL.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					SQL sql = Util.criarSQL(selecionado, formulario.tabelas);
+					texto(sql.dados, sql.update, sql.delete, selecionado.getTabela(formulario.tabelas));
+				}
+			});
+
+			itemSQL.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					SQL sql = Util.criarSQL(selecionado, formulario.tabelas);
+					texto(sql.select, sql.update, sql.delete, selecionado.getTabela(formulario.tabelas));
+				}
+			});
+
+			chkRaizVisivel.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					arvore.setRootVisible(chkRaizVisivel.isSelected());
+				}
+			});
+
+			chkLinhaRaiz.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					arvore.setShowsRootHandles(chkLinhaRaiz.isSelected());
+				}
+			});
+		}
+
+		void texto(String consulta, String atualizacao, String exclusao, Tabela tabela) {
+			if (chkAreaTransferencia.isSelected()) {
+				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+				if (clipboard != null) {
+					clipboard.setContents(new StringSelection(consulta), null);
+				}
+			}
+
+			if (chkAbrirDialog.isSelected()) {
+				try {
+					new DadosDialog(formulario, Util.getSQL(consulta), Util.getSQL(atualizacao), Util.getSQL(exclusao),
+							tabela);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		class OuvinteArvore extends MouseAdapter {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				processar(e);
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				processar(e);
+			}
+
+			private void processar(MouseEvent e) {
+				if (!e.isPopupTrigger()) {
+					return;
+				}
+
+				TreePath path = arvore.getSelectionPath();
+				if (path == null) {
+					return;
+				}
+
+				if (path.getLastPathComponent() instanceof Referencia) {
+					selecionado = (Referencia) path.getLastPathComponent();
+					popup.show(arvore, e.getX(), e.getY());
+				}
+			}
+		}
+
+		class TreeCellRenderer extends DefaultTreeCellRenderer {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
+					boolean leaf, int row, boolean hasFocus) {
+				super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+				Object objeto = value;
+				if (objeto instanceof Referencia) {
+					Referencia ref = (Referencia) objeto;
+					if (ref.isEspecial()) {
+						setForeground(hasFocus ? Color.WHITE : Color.BLUE);
+					} else {
+						setForeground(hasFocus ? Color.WHITE : Color.BLACK);
+					}
+				}
+				return this;
 			}
 		}
 	}

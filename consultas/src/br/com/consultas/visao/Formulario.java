@@ -48,6 +48,7 @@ import br.com.consultas.xml.XML;
 
 public class Formulario extends JFrame {
 	private static final long serialVersionUID = 1L;
+	private final JMenuItem itemLimparCampos = new JMenuItem(Util.getString("label.limpar_campos"));
 	private final JMenuItem itemLimparIds = new JMenuItem(Util.getString("label.limpar_ids"));
 	private final JButton buttonUpdate = new JButton(Util.getString("label.execute_update"));
 	private final JButton buttonQuery = new JButton(Util.getString("label.execute_query"));
@@ -128,7 +129,18 @@ public class Formulario extends JFrame {
 		menuBar.add(menuArquivo);
 		menuArquivo.add(itemLimparIds);
 		menuArquivo.addSeparator();
+		menuArquivo.add(itemLimparCampos);
+		menuArquivo.addSeparator();
 		menuArquivo.add(itemFechar);
+
+		itemLimparCampos.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (Tabela t : tabelas.getTabelas()) {
+					t.limparCampos();
+				}
+			}
+		});
 
 		itemLimparIds.addActionListener(new ActionListener() {
 			@Override

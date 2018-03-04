@@ -189,7 +189,7 @@ public class Referencia {
 			set.append(" " + Util.fragmentoFiltroCampo(c) + ", ");
 		}
 
-		if(set.length() > 0) {
+		if (set.length() > 0) {
 			set.delete(set.length() - 2, set.length());
 		}
 
