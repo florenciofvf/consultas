@@ -38,20 +38,22 @@ import br.com.consultas.util.Util;
 
 public class ReferenciaDialog extends JFrame {
 	private static final long serialVersionUID = 1L;
-	final JCheckBox chkAreaTransferencia = new JCheckBox(Util.getString("label.area_transferencia"),
+	private final JCheckBox chkAreaTransferencia = new JCheckBox(Util.getString("label.area_transferencia"),
 			Util.getBooleanConfig("consultas.area_transferencia"));
-	final JCheckBox chkAbrirDialog = new JCheckBox(Util.getString("label.abrir_dialog"),
+	private final JCheckBox chkAbrirDialog = new JCheckBox(Util.getString("label.abrir_dialog"),
 			Util.getBooleanConfig("consultas.abrir_dialog"));
-	final JCheckBox chkRaizVisivel = new JCheckBox(Util.getString("label.raiz_visivel"),
+	private final JCheckBox chkRaizVisivel = new JCheckBox(Util.getString("label.raiz_visivel"),
 			Util.getBooleanConfig("consultas.raiz_visivel"));
-	final JCheckBox chkLinhaRaiz = new JCheckBox(Util.getString("label.raiz_linha"),
+	private final JCheckBox chkLinhaRaiz = new JCheckBox(Util.getString("label.raiz_linha"),
 			Util.getBooleanConfig("consultas.raiz_linha"));
-	final JMenuItem itemDelete = new JMenuItem(Util.getString("label.gerar_delete"));
-	final JMenuItem itemUpdate = new JMenuItem(Util.getString("label.gerar_update"));
-	final JMenuItem itemMeuSQL = new JMenuItem(Util.getString("label.gerar_dados"));
-	final JMenuItem itemCampos = new JMenuItem(Util.getString("label.campos"));
-	final JMenuItem itemSQL = new JMenuItem(Util.getString("label.gerar_sql"));
-
+	// private final JMenuItem itemDelete = new
+	// JMenuItem(Util.getString("label.gerar_delete"));
+	// private final JMenuItem itemUpdate = new
+	// JMenuItem(Util.getString("label.gerar_update"));
+	private final JMenuItem itemMeuSQL = new JMenuItem(Util.getString("label.gerar_dados"));
+	// private final JMenuItem itemCampos = new
+	// JMenuItem(Util.getString("label.campos"));
+	private final JMenuItem itemSQL = new JMenuItem(Util.getString("label.gerar_sql"));
 	private final JPopupMenu popup = new JPopupMenu();
 	private final Formulario formulario;
 	private Referencia selecionado;
