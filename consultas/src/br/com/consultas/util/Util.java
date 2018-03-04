@@ -28,6 +28,9 @@ public class Util {
 	public static ResourceBundle bundleConfig = ResourceBundle.getBundle("config");
 	public static ResourceBundle bundleMsg = ResourceBundle.getBundle("mensagens");
 
+	private Util() {
+	}
+
 	public static void checarVazio(String s, String chave, boolean trim) {
 		checarVazio(s, chave, trim, null);
 	}
