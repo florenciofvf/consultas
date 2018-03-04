@@ -3,15 +3,15 @@
 <consulta>
 
 	<tabelas>
-		<eleicao		ID=""						alias-f="ele" />
-		<candidato		ID=""	ID_ELEICAO=""		alias-f="can" />
-		<endereco		ID=""	ID_CANDIDATO=""		alias-f="end" />
+		<eleicao		ID=""						alias-f="eleicao" />
+		<candidato		ID=""	ID_ELEICAO=""		alias-f="candidato" />
+		<endereco		ID=""	ID_CANDIDATO=""		alias-f="endereco" />
 	</tabelas>
 
 	<refs>
-		<obj alias="ele">
-			<obj alias="can">
-				<obj alias="end" />
+		<obj alias="eleicao">
+			<obj alias="candidato">
+				<obj alias="endereco" />
 			</obj>
 		</obj>
 	</refs>
