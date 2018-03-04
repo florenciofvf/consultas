@@ -44,6 +44,13 @@ public class Referencia {
 		return r;
 	}
 
+	public void especial(boolean b) {
+		especial = b;
+		for (Referencia r : referencias) {
+			r.especial(b);
+		}
+	}
+
 	public Referencia clonarCaminho() {
 		Referencia clone = clonar();
 		for (Referencia r : referencias) {

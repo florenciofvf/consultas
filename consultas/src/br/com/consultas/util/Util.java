@@ -154,11 +154,14 @@ public class Util {
 		List<Referencia> container = new ArrayList<>();
 
 		for (Referencia r : referencias) {
+			r.especial(false);
+		}
+
+		for (Referencia r : referencias) {
 			if (r.getAlias2().equals(alias)) {
 				r.setEspecial(true);
 				container.add(r);
 			} else {
-				r.setEspecial(false);
 				refs(container, r, alias);
 			}
 		}
@@ -178,7 +181,6 @@ public class Util {
 				r.setEspecial(true);
 				resposta.add(r);
 			} else {
-				r.setEspecial(false);
 				refs(resposta, r, alias);
 			}
 		}
