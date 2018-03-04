@@ -77,7 +77,6 @@ public class DadosDialog extends JFrame {
 		textAreaAtualiza.setText(atualizacao);
 		textAreaConsulta.setText(consulta);
 		textAreaExclusao.setText(exclusao);
-		this.formulario = formulario;
 		setAlwaysOnTop(true);
 		setSize(formulario.getWidth() - 20, 500);
 		setLocationRelativeTo(formulario);
