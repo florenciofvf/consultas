@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
+import javax.swing.JTree;
+import javax.swing.tree.TreePath;
 
 import org.xml.sax.Attributes;
 
@@ -16,6 +18,7 @@ import br.com.consultas.Campo;
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
 import br.com.consultas.Tabelas;
+import br.com.consultas.visao.ModeloArvore;
 import br.com.consultas.visao.SQL;
 
 public class Util {
@@ -246,5 +249,27 @@ public class Util {
 		sql.update = ref.gerarUpdate(tabelas);
 
 		return sql;
+	}
+
+	public static void expandir(JTree tree) {
+		ModeloArvore modelo = (ModeloArvore) tree.getModel();
+		String raiz = (String) modelo.getRoot();
+		int filhos = modelo.getChildCount(raiz);
+
+		List<Referencia> folhas = new ArrayList<>();
+
+		for (int i = 0; i < filhos; i++) {
+			Referencia ref = (Referencia) modelo.getChild(raiz, i);
+			ref.addFolha(folhas);
+		}
+
+		for (Referencia r : folhas) {
+			List<Object> lista = new ArrayList<>();
+			r.caminho(lista);
+			lista.add(0, raiz);
+			System.out.println(lista);
+			TreePath path = new TreePath(lista.toArray(new Object[] {}));
+			tree.expandPath(path);
+		}
 	}
 }

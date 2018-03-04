@@ -67,6 +67,25 @@ public class Referencia {
 		return new Referencia(tabela.getAlias().getValor(), null, false, -1, null, -1, null, null);
 	}
 
+	public void addFolha(List<Referencia> referencias) {
+		if (getCount() == 0) {
+			referencias.add(this);
+		} else {
+			for (Referencia r : getReferencias()) {
+				r.addFolha(referencias);
+			}
+		}
+	}
+
+	public void caminho(List<Object> referencias) {
+		Referencia pai = this.pai;
+		while (pai != null) {
+			referencias.add(0, pai);
+			pai = pai.pai;
+		}
+		referencias.add(this);
+	}
+
 	public List<Referencia> getReferencias() {
 		return referencias;
 	}

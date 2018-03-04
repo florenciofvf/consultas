@@ -431,6 +431,7 @@ public class DadosDialog extends JFrame {
 		public PainelReferencia(final Formulario formulario, List<Referencia> referencias, Tabela tabela) {
 			List<Referencia> caminhos = Util.pesquisarReferencias(referencias, tabela.getAlias().getValor());
 			arvore = new JTree(new ModeloArvore(caminhos, Util.getString("label.caminho")));
+			Util.expandir(arvore);
 			arvore.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 			arvore.setCellRenderer(new TreeCellRenderer());
 			arvore.addMouseListener(new OuvinteArvore());

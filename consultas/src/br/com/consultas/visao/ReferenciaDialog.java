@@ -62,6 +62,7 @@ public class ReferenciaDialog extends JFrame {
 	public ReferenciaDialog(final Formulario formulario, List<Referencia> referencias, Tabela tabela) {
 		List<Referencia> caminhos = Util.pesquisarReferencias(referencias, tabela.getAlias().getValor());
 		arvore = new JTree(new ModeloArvore(caminhos, Util.getString("label.caminho")));
+		Util.expandir(arvore);
 		arvore.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		setTitle(tabela.getNome() + " - " + tabela.getAlias().getValor());
 		arvore.setCellRenderer(new TreeCellRenderer());
