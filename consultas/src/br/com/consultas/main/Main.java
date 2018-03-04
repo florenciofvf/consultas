@@ -17,6 +17,6 @@ public class Main {
 		} else {
 			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		}
-		new Formulario(new File("eleicao.xml"));
+		new Formulario(new File("projeto.xml"));
 	}
 }
