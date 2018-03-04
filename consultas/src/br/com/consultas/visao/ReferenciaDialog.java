@@ -6,8 +6,6 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -179,10 +177,7 @@ public class ReferenciaDialog extends JFrame {
 		// textArea.setText(consulta);
 
 		if (chkAreaTransferencia.isSelected()) {
-			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-			if (clipboard != null) {
-				clipboard.setContents(new StringSelection(consulta), null);
-			}
+			Util.setContentTransferer(consulta);
 		}
 
 		if (chkAbrirDialog.isSelected()) {

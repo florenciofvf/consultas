@@ -4,10 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -51,6 +48,7 @@ public class Formulario extends JFrame {
 	private final JMenuItem itemLimparCampos = new JMenuItem(Util.getString("label.limpar_campos"));
 	private final JMenuItem itemLimparIds = new JMenuItem(Util.getString("label.limpar_ids"));
 	private final JButton buttonUpdate = new JButton(Util.getString("label.execute_update"));
+	private final JButton buttonGetContent = new JButton(Util.getString("label.get_content"));
 	private final JButton buttonQuery = new JButton(Util.getString("label.execute_query"));
 	private final JMenuItem itemFechar = new JMenuItem(Util.getString("label.fechar"));
 	private final JButton buttonLimpar = new JButton(Util.getString("label.limpar"));
@@ -123,6 +121,7 @@ public class Formulario extends JFrame {
 		painelSul.add(buttonLimpar);
 		painelSul.add(buttonUpdate);
 		painelSul.add(buttonQuery);
+		painelSul.add(buttonGetContent);
 		add(BorderLayout.SOUTH, painelSul);
 
 		setJMenuBar(menuBar);
@@ -194,6 +193,13 @@ public class Formulario extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				executeQuery();
+			}
+		});
+
+		buttonGetContent.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				textArea.setText(Util.getContentTransferer());
 			}
 		});
 	}
@@ -370,10 +376,7 @@ public class Formulario extends JFrame {
 			textArea.setText(consulta);
 
 			if (chkAreaTransferencia.isSelected()) {
-				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-				if (clipboard != null) {
-					clipboard.setContents(new StringSelection(consulta), null);
-				}
+				Util.setContentTransferer(consulta);
 			}
 
 			if (chkAbrirDialog.isSelected()) {
@@ -580,10 +583,7 @@ public class Formulario extends JFrame {
 			textArea.setText(consulta);
 
 			if (chkAreaTransferencia.isSelected()) {
-				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-				if (clipboard != null) {
-					clipboard.setContents(new StringSelection(consulta), null);
-				}
+				Util.setContentTransferer(consulta);
 			}
 
 			if (chkAbrirDialog.isSelected()) {

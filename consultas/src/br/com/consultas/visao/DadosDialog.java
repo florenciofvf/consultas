@@ -8,8 +8,6 @@ import java.awt.FlowLayout;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -140,6 +138,7 @@ public class DadosDialog extends JFrame {
 
 	class PainelControle extends JPanel {
 		private static final long serialVersionUID = 1L;
+		JButton buttonGetContent = new JButton(Util.getString("label.get_content"));
 		JButton buttonUpdate = new JButton(Util.getString("label.execute_update"));
 		JButton buttonDelete = new JButton(Util.getString("label.execute_delete"));
 		JButton buttonQuery = new JButton(Util.getString("label.execute_query"));
@@ -151,6 +150,7 @@ public class DadosDialog extends JFrame {
 			add(buttonUpdate);
 			add(buttonDelete);
 			add(buttonQuery);
+			add(buttonGetContent);
 
 			buttonFechar.addActionListener(new ActionListener() {
 				@Override
@@ -177,6 +177,13 @@ public class DadosDialog extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					executeQuery();
+				}
+			});
+
+			buttonGetContent.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					textAreaConsulta.setText(Util.getContentTransferer());
 				}
 			});
 		}
@@ -495,10 +502,7 @@ public class DadosDialog extends JFrame {
 
 		void texto(String consulta, String atualizacao, String exclusao, Tabela tabela) {
 			if (chkAreaTransferencia.isSelected()) {
-				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-				if (clipboard != null) {
-					clipboard.setContents(new StringSelection(consulta), null);
-				}
+				Util.setContentTransferer(consulta);
 			}
 
 			if (chkAbrirDialog.isSelected()) {

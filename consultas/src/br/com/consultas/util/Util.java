@@ -1,6 +1,10 @@
 package br.com.consultas.util;
 
 import java.awt.Component;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -274,6 +278,28 @@ public class Util {
 			lista.add(0, raiz);
 			TreePath path = new TreePath(lista.toArray(new Object[] {}));
 			tree.expandPath(path);
+		}
+	}
+
+	public static String getContentTransferer() {
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		Object resposta = null;
+
+		if (clipboard != null) {
+			try {
+				resposta = clipboard.getData(DataFlavor.stringFlavor);
+			} catch (Exception e) {
+			}
+		}
+
+		return resposta != null ? resposta.toString() : "";
+	}
+
+	public static void setContentTransferer(String string) {
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+
+		if (clipboard != null) {
+			clipboard.setContents(new StringSelection(string), null);
 		}
 	}
 }
