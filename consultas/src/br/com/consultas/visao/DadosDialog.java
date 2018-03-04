@@ -61,6 +61,8 @@ import br.com.consultas.util.Util;
 
 public class DadosDialog extends JFrame {
 	private static final long serialVersionUID = 1L;
+	private final JCheckBox chkAbrirDialogReferencia = new JCheckBox(Util.getString("label.abrir_dialog_referencia"),
+			Util.getBooleanConfig("dados_dialog.abrir_dialog_referencia"));
 	private final JTextArea textAreaConsulta = new JTextArea();
 	private final JTextArea textAreaAtualiza = new JTextArea();
 	private final JTextArea textAreaExclusao = new JTextArea();
@@ -354,7 +356,7 @@ public class DadosDialog extends JFrame {
 
 		@Override
 		public boolean shouldSelectCell(EventObject anEvent) {
-			if (Util.getBooleanConfig("dados_dialog.abrir_dialog_referencia")) {
+			if (chkAbrirDialogReferencia.isSelected()) {
 				new ReferenciaDialog(formulario, formulario.referencias, tabela);
 			} else {
 				fichario.setSelectedIndex(fichario.getTabCount() - 1);
@@ -439,6 +441,7 @@ public class DadosDialog extends JFrame {
 
 			JPanel painelNorte = new JPanel();
 			painelNorte.add(chkAreaTransferencia);
+			painelNorte.add(chkAbrirDialogReferencia);
 			painelNorte.add(chkAbrirDialog);
 			painelNorte.add(chkRaizVisivel);
 			painelNorte.add(chkLinhaRaiz);
