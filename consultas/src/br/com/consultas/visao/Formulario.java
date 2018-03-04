@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
@@ -16,6 +17,7 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +73,17 @@ public class Formulario extends JFrame {
 		setAlwaysOnTop(true);
 		setSize(500, 500);
 		montarLayout();
+
+		if (System.getProperty("os.name").startsWith("Mac OS")) {
+			try {
+				Class<?> classe = Class.forName("com.apple.eawt.FullScreenUtilities");
+				Method method = classe.getMethod("setWindowCanFullScreen", Window.class, Boolean.TYPE);
+				method.invoke(classe, this, true);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
 		setVisible(true);
 	}
 

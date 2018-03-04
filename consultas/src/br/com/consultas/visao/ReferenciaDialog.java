@@ -110,9 +110,9 @@ public class ReferenciaDialog extends JFrame {
 	}
 
 	private void config() {
-		// popup.add(itemMeuSQL);
-		// popup.addSeparator();
-		// popup.add(itemSQL);
+		popup.add(itemMeuSQL);
+		popup.addSeparator();
+		popup.add(itemSQL);
 		// popup.addSeparator();
 		// popup.add(itemCampos);
 		// popup.addSeparator();
