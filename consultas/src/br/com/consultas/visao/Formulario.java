@@ -278,7 +278,7 @@ public class Formulario extends JFrame {
 			arvore.addMouseListener(new OuvinteArvore());
 			setLayout(new BorderLayout());
 
-			JPanel painelNorte = new JPanel();
+			JPanel painelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			painelNorte.add(chkAreaTransferencia);
 			painelNorte.add(chkAbrirDialog);
 			painelNorte.add(chkRaizVisivel);
@@ -498,7 +498,7 @@ public class Formulario extends JFrame {
 			arvore.addMouseListener(new OuvinteArvore());
 			setLayout(new BorderLayout());
 
-			JPanel painelNorte = new JPanel();
+			JPanel painelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			painelNorte.add(chkAreaTransferencia);
 			painelNorte.add(chkAbrirDialog);
 			painelNorte.add(chkRaizVisivel);

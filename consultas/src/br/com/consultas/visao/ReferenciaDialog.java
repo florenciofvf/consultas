@@ -71,7 +71,7 @@ public class ReferenciaDialog extends JFrame {
 		setLayout(new BorderLayout());
 		this.formulario = formulario;
 
-		JPanel painelNorte = new JPanel();
+		JPanel painelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		painelNorte.add(chkAreaTransferencia);
 		painelNorte.add(chkAbrirDialog);
 		painelNorte.add(chkRaizVisivel);

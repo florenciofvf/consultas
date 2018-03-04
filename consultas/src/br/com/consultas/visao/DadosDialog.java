@@ -79,7 +79,14 @@ public class DadosDialog extends JFrame {
 		TITLE = tabela != null ? tabela.getNome() : "";
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		processar(consulta, formulario.getGraphics());
-		fichario.addTab(Util.getString("label.registros"), new JScrollPane(table));
+
+		JPanel painelRegistros = new JPanel(new BorderLayout());
+		JPanel painelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		painelNorte.add(chkAbrirDialogReferencia);
+		painelRegistros.add(BorderLayout.NORTH, painelNorte);
+		painelRegistros.add(BorderLayout.CENTER, new JScrollPane(table));
+
+		fichario.addTab(Util.getString("label.registros"), painelRegistros);
 		fichario.addTab(Util.getString("label.consulta"), new JScrollPane(textAreaConsulta));
 		fichario.addTab(Util.getString("label.atualiza"), new JScrollPane(textAreaAtualiza));
 		fichario.addTab(Util.getString("label.exclusao"), new JScrollPane(textAreaExclusao));
@@ -439,9 +446,8 @@ public class DadosDialog extends JFrame {
 			arvore.addMouseListener(new OuvinteArvore());
 			setLayout(new BorderLayout());
 
-			JPanel painelNorte = new JPanel();
+			JPanel painelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			painelNorte.add(chkAreaTransferencia);
-			painelNorte.add(chkAbrirDialogReferencia);
 			painelNorte.add(chkAbrirDialog);
 			painelNorte.add(chkRaizVisivel);
 			painelNorte.add(chkLinhaRaiz);
