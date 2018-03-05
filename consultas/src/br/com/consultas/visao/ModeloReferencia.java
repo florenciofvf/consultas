@@ -28,6 +28,7 @@ public class ModeloReferencia implements TableModel {
 			campos.add(new CampoReferencia("pkNome"));
 			campos.add(new CampoReferencia("fkNome"));
 			campos.add(new CampoReferencia("preJoin", true));
+			campos.add(new CampoReferencia("resumo", true));
 		}
 	}
 
@@ -128,6 +129,9 @@ class CampoReferencia {
 
 		} else if ("preJoin".equals(nome)) {
 			return referencia.getPreJoin();
+
+		} else if ("resumo".equals(nome)) {
+			return referencia.getResumo();
 		}
 
 		return null;
@@ -156,6 +160,9 @@ class CampoReferencia {
 
 		} else if ("preJoin".equals(nome)) {
 			referencia.setPreJoin(valor);
+
+		} else if ("resumo".equals(nome)) {
+			referencia.setResumo(valor);
 		}
 	}
 

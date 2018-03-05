@@ -217,7 +217,7 @@ public class Util {
 	}
 
 	public static Referencia criarReferencia() {
-		return new Referencia("CAMPOS", null, false, -1, null, -1, null, null);
+		return new Referencia("CAMPOS", null, false, -1, null, -1, null, null, null);
 	}
 
 	public static String fragmentoFiltroCampo(Campo campo) {
@@ -281,7 +281,7 @@ public class Util {
 		}
 	}
 
-	public static String getContentTransferer() {
+	public static String getContentTransfered() {
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		Object resposta = null;
 
@@ -295,7 +295,7 @@ public class Util {
 		return resposta != null ? resposta.toString() : "";
 	}
 
-	public static void setContentTransferer(String string) {
+	public static void setContentTransfered(String string) {
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
 		if (clipboard != null) {

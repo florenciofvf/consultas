@@ -37,8 +37,11 @@ public class CampoDialog extends JFrame {
 		setAlwaysOnTop(true);
 		setSize(400, 400);
 		setLocationRelativeTo(formulario);
+		cfg(formulario);
 		setVisible(true);
+	}
 
+	private void cfg(final Formulario formulario) {
 		((JComponent) getContentPane()).getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
 				.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "esc");
 		((JComponent) getContentPane()).getActionMap().put("esc", new AbstractAction() {

@@ -1,8 +1,6 @@
 package br.com.consultas.visao;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
@@ -26,7 +24,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -36,22 +33,14 @@ import br.com.consultas.util.Util;
 
 public class ReferenciaDialog extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private final JCheckBox chkAreaTransferencia = new JCheckBox(Util.getString("label.area_transferencia"),
-			Util.getBooleanConfig("consultas.area_transferencia"));
-	private final JCheckBox chkAbrirDialog = new JCheckBox(Util.getString("label.abrir_dialog"),
-			Util.getBooleanConfig("consultas.abrir_dialog"));
 	private final JCheckBox chkRaizVisivel = new JCheckBox(Util.getString("label.raiz_visivel"),
 			Util.getBooleanConfig("consultas.raiz_visivel"));
 	private final JCheckBox chkLinhaRaiz = new JCheckBox(Util.getString("label.raiz_linha"),
 			Util.getBooleanConfig("consultas.raiz_linha"));
-	// private final JMenuItem itemDelete = new
-	// JMenuItem(Util.getString("label.gerar_delete"));
-	// private final JMenuItem itemUpdate = new
-	// JMenuItem(Util.getString("label.gerar_update"));
-	private final JMenuItem itemMeuSQL = new JMenuItem(Util.getString("label.gerar_dados"));
-	// private final JMenuItem itemCampos = new
-	// JMenuItem(Util.getString("label.campos"));
-	private final JMenuItem itemSQL = new JMenuItem(Util.getString("label.gerar_sql"));
+	private final JMenuItem itemMeuSQLDialogo = new JMenuItem(Util.getString("label.gerar_dados_dialogo"));
+	private final JMenuItem itemMeuSQLMemoria = new JMenuItem(Util.getString("label.gerar_dados_memoria"));
+	private final JMenuItem itemSQLDialogo = new JMenuItem(Util.getString("label.gerar_sql_dialogo"));
+	private final JMenuItem itemSQLMemoria = new JMenuItem(Util.getString("label.gerar_sql_memoria"));
 	private final JPopupMenu popup = new JPopupMenu();
 	private final Formulario formulario;
 	private Referencia selecionado;
@@ -70,8 +59,6 @@ public class ReferenciaDialog extends JFrame {
 		this.formulario = formulario;
 
 		JPanel painelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		painelNorte.add(chkAreaTransferencia);
-		painelNorte.add(chkAbrirDialog);
 		painelNorte.add(chkRaizVisivel);
 		painelNorte.add(chkLinhaRaiz);
 		add(BorderLayout.NORTH, painelNorte);
@@ -82,8 +69,11 @@ public class ReferenciaDialog extends JFrame {
 		setSize(600, 400);
 		setLocationRelativeTo(formulario);
 		config();
+		cfg();
 		setVisible(true);
+	}
 
+	private void cfg() {
 		((JComponent) getContentPane()).getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
 				.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "esc");
 		((JComponent) getContentPane()).getActionMap().put("esc", new AbstractAction() {
@@ -111,52 +101,43 @@ public class ReferenciaDialog extends JFrame {
 	}
 
 	private void config() {
-		popup.add(itemMeuSQL);
+		popup.add(itemMeuSQLDialogo);
+		popup.add(itemMeuSQLMemoria);
 		popup.addSeparator();
-		popup.add(itemSQL);
-		// popup.addSeparator();
-		// popup.add(itemCampos);
-		// popup.addSeparator();
-		// popup.add(itemUpdate);
-		// popup.addSeparator();
-		// popup.add(itemDelete);
+		popup.add(itemSQLDialogo);
+		popup.add(itemSQLMemoria);
 
-		itemMeuSQL.addActionListener(new ActionListener() {
+		itemMeuSQLDialogo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SQL sql = Util.criarSQL(selecionado, formulario.tabelas);
-				texto(sql.dados, sql.update, sql.delete, selecionado.getTabela(formulario.tabelas));
+				texto(sql.dados, sql.update, sql.delete, selecionado.getTabela(formulario.tabelas), true, true);
 			}
 		});
 
-		itemSQL.addActionListener(new ActionListener() {
+		itemMeuSQLMemoria.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SQL sql = Util.criarSQL(selecionado, formulario.tabelas);
-				texto(sql.select, sql.update, sql.delete, selecionado.getTabela(formulario.tabelas));
+				texto(sql.dados, sql.update, sql.delete, selecionado.getTabela(formulario.tabelas), true, false);
 			}
 		});
 
-		// itemCampos.addActionListener(new ActionListener() {
-		// @Override
-		// public void actionPerformed(ActionEvent e) {
-		// new CampoDialog(Formulario.this, selecionado.getTabela(tabelas));
-		// }
-		// });
+		itemSQLDialogo.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SQL sql = Util.criarSQL(selecionado, formulario.tabelas);
+				texto(sql.select, sql.update, sql.delete, selecionado.getTabela(formulario.tabelas), true, true);
+			}
+		});
 
-		// itemUpdate.addActionListener(new ActionListener() {
-		// @Override
-		// public void actionPerformed(ActionEvent e) {
-		// textArea.setText(selecionado.gerarUpdate(tabelas));
-		// }
-		// });
-
-		// itemDelete.addActionListener(new ActionListener() {
-		// @Override
-		// public void actionPerformed(ActionEvent e) {
-		// textArea.setText(selecionado.gerarDelete(tabelas));
-		// }
-		// });
+		itemSQLMemoria.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SQL sql = Util.criarSQL(selecionado, formulario.tabelas);
+				texto(sql.select, sql.update, sql.delete, selecionado.getTabela(formulario.tabelas), true, false);
+			}
+		});
 
 		chkRaizVisivel.addActionListener(new ActionListener() {
 			@Override
@@ -173,14 +154,14 @@ public class ReferenciaDialog extends JFrame {
 		});
 	}
 
-	void texto(String consulta, String atualizacao, String exclusao, Tabela tabela) {
-		// textArea.setText(consulta);
+	void texto(String consulta, String atualizacao, String exclusao, Tabela tabela, boolean chkAreaTransferencia,
+			boolean chkAbrirDialog) {
 
-		if (chkAreaTransferencia.isSelected()) {
-			Util.setContentTransferer(consulta);
+		if (chkAreaTransferencia) {
+			Util.setContentTransfered(consulta);
 		}
 
-		if (chkAbrirDialog.isSelected()) {
+		if (chkAbrirDialog) {
 			try {
 				new DadosDialog(formulario, Util.getSQL(consulta), Util.getSQL(atualizacao), Util.getSQL(exclusao),
 						tabela);
@@ -238,26 +219,6 @@ public class ReferenciaDialog extends JFrame {
 				selecionado = (Referencia) path.getLastPathComponent();
 				popup.show(arvore, e.getX(), e.getY());
 			}
-		}
-	}
-
-	class TreeCellRenderer extends DefaultTreeCellRenderer {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
-				boolean leaf, int row, boolean hasFocus) {
-			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-			Object objeto = value;
-			if (objeto instanceof Referencia) {
-				Referencia ref = (Referencia) objeto;
-				if (ref.isEspecial()) {
-					setForeground(hasFocus ? Color.WHITE : Color.BLUE);
-				} else {
-					setForeground(hasFocus ? Color.WHITE : Color.BLACK);
-				}
-			}
-			return this;
 		}
 	}
 }

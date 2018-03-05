@@ -17,6 +17,7 @@ public class Referencia {
 	private boolean inverso;
 	private String aliasAlt;
 	private String preJoin;
+	private String resumo;
 	private String pkNome;
 	private String fkNome;
 	private Referencia pai;
@@ -24,13 +25,14 @@ public class Referencia {
 	private int fk;
 
 	public Referencia(String alias, String aliasAlt, boolean inverso, int pk, String pkNome, int fk, String fkNome,
-			String preJoin) {
+			String preJoin, String resumo) {
 		Util.checarVazio(alias, "alias.invalido", true);
 		prefixo = alias.substring(0, 1).toUpperCase();
 		referencias = new ArrayList<>();
 		this.aliasAlt = aliasAlt;
 		this.inverso = inverso;
 		this.preJoin = preJoin;
+		this.resumo = resumo;
 		this.pkNome = pkNome;
 		this.fkNome = fkNome;
 		this.alias = alias;
@@ -39,7 +41,7 @@ public class Referencia {
 	}
 
 	public Referencia clonar() {
-		Referencia r = new Referencia(alias, aliasAlt, inverso, pk, pkNome, fk, fkNome, preJoin);
+		Referencia r = new Referencia(alias, aliasAlt, inverso, pk, pkNome, fk, fkNome, preJoin, resumo);
 		r.especial = especial;
 		return r;
 	}
@@ -71,7 +73,7 @@ public class Referencia {
 	}
 
 	public static Referencia criarReferenciaDados(Tabela tabela) {
-		return new Referencia(tabela.getAlias().getValor(), null, false, -1, null, -1, null, null);
+		return new Referencia(tabela.getAlias().getValor(), null, false, -1, null, -1, null, null, null);
 	}
 
 	public void addFolha(List<Referencia> referencias) {
@@ -209,13 +211,14 @@ public class Referencia {
 		}
 
 		StringBuilder set = new StringBuilder();
+		boolean ativado = false;
 		while (it.hasNext()) {
 			Campo c = it.next();
-			set.append(" " + Util.fragmentoFiltroCampo(c) + ", ");
-		}
-
-		if (set.length() > 0) {
-			set.delete(set.length() - 2, set.length());
+			if (ativado) {
+				set.append(", ");
+			}
+			set.append(Util.fragmentoFiltroCampo(c));
+			ativado = true;
 		}
 
 		StringBuilder sb = new StringBuilder("UPDATE " + tab.getNome() + QUEBRA_LINHA);
@@ -320,7 +323,8 @@ public class Referencia {
 
 	@Override
 	public String toString() {
-		return prefixo + " - " + alias + (exibirTotalRegistros ? " (" + totalRegistros + ")" : "");
+		return prefixo + " - " + alias + (exibirTotalRegistros ? " (" + totalRegistros + ")" : "")
+				+ (Util.ehVazio(resumo) ? "" : " <<" + resumo + ">>");
 	}
 
 	public boolean isExibirTotalRegistros() {
@@ -345,5 +349,13 @@ public class Referencia {
 
 	public void setEspecial(boolean especial) {
 		this.especial = especial;
+	}
+
+	public String getResumo() {
+		return resumo;
+	}
+
+	public void setResumo(String resumo) {
+		this.resumo = resumo;
 	}
 }

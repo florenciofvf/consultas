@@ -199,7 +199,7 @@ public class Formulario extends JFrame {
 		buttonGetContent.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				textArea.setText(Util.getContentTransferer());
+				textArea.setText(Util.getContentTransfered());
 			}
 		});
 	}
@@ -259,24 +259,22 @@ public class Formulario extends JFrame {
 
 	private class PainelConsultas extends JPanel {
 		private static final long serialVersionUID = 1L;
-		final JCheckBox chkAreaTransferencia = new JCheckBox(Util.getString("label.area_transferencia"),
-				Util.getBooleanConfig("consultas.area_transferencia"));
-		final JCheckBox chkAbrirDialog = new JCheckBox(Util.getString("label.abrir_dialog"),
-				Util.getBooleanConfig("consultas.abrir_dialog"));
-		final JCheckBox chkRaizVisivel = new JCheckBox(Util.getString("label.raiz_visivel"),
+		private final JCheckBox chkRaizVisivel = new JCheckBox(Util.getString("label.raiz_visivel"),
 				Util.getBooleanConfig("consultas.raiz_visivel"));
-		final JCheckBox chkLinhaRaiz = new JCheckBox(Util.getString("label.raiz_linha"),
+		private final JCheckBox chkLinhaRaiz = new JCheckBox(Util.getString("label.raiz_linha"),
 				Util.getBooleanConfig("consultas.raiz_linha"));
-		final JMenuItem itemDelete = new JMenuItem(Util.getString("label.gerar_delete"));
-		final JMenuItem itemUpdate = new JMenuItem(Util.getString("label.gerar_update"));
-		final JMenuItem itemMeuSQL = new JMenuItem(Util.getString("label.gerar_dados"));
-		final JMenuItem itemCampos = new JMenuItem(Util.getString("label.campos"));
-		final JMenuItem itemSQL = new JMenuItem(Util.getString("label.gerar_sql"));
-		final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		final JTable tableCampos = new JTable(new ModeloReferencia(null));
-		final JPopupMenu popup = new JPopupMenu();
+		private final JMenuItem itemMeuSQLDialogo = new JMenuItem(Util.getString("label.gerar_dados_dialogo"));
+		private final JMenuItem itemMeuSQLMemoria = new JMenuItem(Util.getString("label.gerar_dados_memoria"));
+		private final JMenuItem itemSQLDialogo = new JMenuItem(Util.getString("label.gerar_sql_dialogo"));
+		private final JMenuItem itemSQLMemoria = new JMenuItem(Util.getString("label.gerar_sql_memoria"));
+		private final JMenuItem itemDelete = new JMenuItem(Util.getString("label.gerar_delete"));
+		private final JMenuItem itemUpdate = new JMenuItem(Util.getString("label.gerar_update"));
+		private final JMenuItem itemCampos = new JMenuItem(Util.getString("label.campos"));
+		private final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		private final JTable tableCampos = new JTable(new ModeloReferencia(null));
+		private final JPopupMenu popup = new JPopupMenu();
+		private final JTree arvore;
 		Referencia selecionado;
-		final JTree arvore;
 
 		PainelConsultas() {
 			arvore = new JTree(new ModeloArvore(referencias, Util.getString("label.consultas")));
@@ -285,8 +283,6 @@ public class Formulario extends JFrame {
 			setLayout(new BorderLayout());
 
 			JPanel painelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			painelNorte.add(chkAreaTransferencia);
-			painelNorte.add(chkAbrirDialog);
 			painelNorte.add(chkRaizVisivel);
 			painelNorte.add(chkLinhaRaiz);
 			add(BorderLayout.NORTH, painelNorte);
@@ -299,9 +295,11 @@ public class Formulario extends JFrame {
 		}
 
 		void config() {
-			popup.add(itemMeuSQL);
+			popup.add(itemMeuSQLDialogo);
+			popup.add(itemMeuSQLMemoria);
 			popup.addSeparator();
-			popup.add(itemSQL);
+			popup.add(itemSQLDialogo);
+			popup.add(itemSQLMemoria);
 			popup.addSeparator();
 			popup.add(itemCampos);
 			popup.addSeparator();
@@ -309,19 +307,35 @@ public class Formulario extends JFrame {
 			popup.addSeparator();
 			popup.add(itemDelete);
 
-			itemMeuSQL.addActionListener(new ActionListener() {
+			itemMeuSQLDialogo.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
-					texto(sql.dados, sql.update, sql.delete, selecionado.getTabela(tabelas));
+					texto(sql.dados, sql.update, sql.delete, selecionado.getTabela(tabelas), true, true);
 				}
 			});
 
-			itemSQL.addActionListener(new ActionListener() {
+			itemMeuSQLMemoria.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
-					texto(sql.select, sql.update, sql.delete, selecionado.getTabela(tabelas));
+					texto(sql.dados, sql.update, sql.delete, selecionado.getTabela(tabelas), true, false);
+				}
+			});
+
+			itemSQLDialogo.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					SQL sql = Util.criarSQL(selecionado, tabelas);
+					texto(sql.select, sql.update, sql.delete, selecionado.getTabela(tabelas), true, true);
+				}
+			});
+
+			itemSQLMemoria.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					SQL sql = Util.criarSQL(selecionado, tabelas);
+					texto(sql.select, sql.update, sql.delete, selecionado.getTabela(tabelas), true, false);
 				}
 			});
 
@@ -372,14 +386,15 @@ public class Formulario extends JFrame {
 			});
 		}
 
-		void texto(String consulta, String atualizacao, String exclusao, Tabela tabela) {
+		void texto(String consulta, String atualizacao, String exclusao, Tabela tabela, boolean chkAreaTransferencia,
+				boolean chkAbrirDialog) {
 			textArea.setText(consulta);
 
-			if (chkAreaTransferencia.isSelected()) {
-				Util.setContentTransferer(consulta);
+			if (chkAreaTransferencia) {
+				Util.setContentTransfered(consulta);
 			}
 
-			if (chkAbrirDialog.isSelected()) {
+			if (chkAbrirDialog) {
 				try {
 					new DadosDialog(Formulario.this, Util.getSQL(consulta), Util.getSQL(atualizacao),
 							Util.getSQL(exclusao), tabela);
@@ -463,37 +478,38 @@ public class Formulario extends JFrame {
 
 	private class PainelTabelas extends JPanel {
 		private static final long serialVersionUID = 1L;
-		final JCheckBox chkAreaTransferencia = new JCheckBox(Util.getString("label.area_transferencia"),
-				Util.getBooleanConfig("tabelas.area_transferencia"));
-		final JCheckBox chkAbrirDialog = new JCheckBox(Util.getString("label.abrir_dialog"),
-				Util.getBooleanConfig("tabelas.abrir_dialog"));
-		final JCheckBox chkRaizVisivel = new JCheckBox(Util.getString("label.raiz_visivel"),
+		private final JCheckBox chkRaizVisivel = new JCheckBox(Util.getString("label.raiz_visivel"),
 				Util.getBooleanConfig("tabelas.raiz_visivel"));
-		final JCheckBox chkLinhaRaiz = new JCheckBox(Util.getString("label.raiz_linha"),
+		private final JCheckBox chkLinhaRaiz = new JCheckBox(Util.getString("label.raiz_linha"),
 				Util.getBooleanConfig("tabelas.raiz_linha"));
-		final JMenuItem itemDelete = new JMenuItem(Util.getString("label.gerar_delete"));
-		final JMenuItem itemUpdate = new JMenuItem(Util.getString("label.gerar_update"));
-		final JMenuItem itemMeuSQL = new JMenuItem(Util.getString("label.gerar_dados"));
-		final JMenuItem itemCampos = new JMenuItem(Util.getString("label.campos"));
-		final JTable tableCampos = new JTable(new ModeloCampo(Util.criarTabela()));
-		final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		final JPopupMenu popup = new JPopupMenu();
+		private final JMenuItem itemMeuSQLDialogo = new JMenuItem(Util.getString("label.gerar_dados_dialogo"));
+		private final JMenuItem itemMeuSQLMemoria = new JMenuItem(Util.getString("label.gerar_dados_memoria"));
+		private final JMenuItem itemDelete = new JMenuItem(Util.getString("label.gerar_delete"));
+		private final JMenuItem itemUpdate = new JMenuItem(Util.getString("label.gerar_update"));
+		private final JMenuItem itemCampos = new JMenuItem(Util.getString("label.campos"));
+		private final JTable tableCampos = new JTable(new ModeloCampo(Util.criarTabela()));
+		private final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		private final JPopupMenu popup = new JPopupMenu();
+		private final JTree arvore;
 		Referencia selecionado;
-		final JTree arvore;
 
 		PainelTabelas(boolean destaque, boolean comRegistros) {
 			List<Referencia> referencias = Util.criarReferencias(tabelas.getTabelas());
+
 			if (destaque) {
 				Util.filtrarDestaques(referencias, tabelas);
 			}
+
 			try {
 				DadosDialog.atualizarTotalRegistros(referencias, tabelas);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+
 			if (comRegistros) {
 				Util.filtrarRegistros(referencias, tabelas);
 			}
+
 			Util.ordenar(referencias);
 			labelStatus.setText(Util.getString("label.total_tabelas") + referencias.size());
 			arvore = new JTree(new ModeloArvore(referencias, Util.getString("label.tabelas")));
@@ -502,8 +518,6 @@ public class Formulario extends JFrame {
 			setLayout(new BorderLayout());
 
 			JPanel painelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			painelNorte.add(chkAreaTransferencia);
-			painelNorte.add(chkAbrirDialog);
 			painelNorte.add(chkRaizVisivel);
 			painelNorte.add(chkLinhaRaiz);
 			add(BorderLayout.NORTH, painelNorte);
@@ -516,7 +530,8 @@ public class Formulario extends JFrame {
 		}
 
 		void config() {
-			popup.add(itemMeuSQL);
+			popup.add(itemMeuSQLDialogo);
+			popup.add(itemMeuSQLMemoria);
 			popup.addSeparator();
 			popup.add(itemCampos);
 			popup.addSeparator();
@@ -524,11 +539,19 @@ public class Formulario extends JFrame {
 			popup.addSeparator();
 			popup.add(itemDelete);
 
-			itemMeuSQL.addActionListener(new ActionListener() {
+			itemMeuSQLDialogo.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
-					texto(sql.dados, sql.update, sql.delete, selecionado.getTabela(tabelas));
+					texto(sql.dados, sql.update, sql.delete, selecionado.getTabela(tabelas), true, true);
+				}
+			});
+
+			itemMeuSQLMemoria.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					SQL sql = Util.criarSQL(selecionado, tabelas);
+					texto(sql.dados, sql.update, sql.delete, selecionado.getTabela(tabelas), true, false);
 				}
 			});
 
@@ -579,14 +602,15 @@ public class Formulario extends JFrame {
 			});
 		}
 
-		void texto(String consulta, String atualizacao, String exclusao, Tabela tabela) {
+		void texto(String consulta, String atualizacao, String exclusao, Tabela tabela, boolean chkAreaTransferencia,
+				boolean chkAbrirDialog) {
 			textArea.setText(consulta);
 
-			if (chkAreaTransferencia.isSelected()) {
-				Util.setContentTransferer(consulta);
+			if (chkAreaTransferencia) {
+				Util.setContentTransfered(consulta);
 			}
 
-			if (chkAbrirDialog.isSelected()) {
+			if (chkAbrirDialog) {
 				try {
 					new DadosDialog(Formulario.this, Util.getSQL(consulta), Util.getSQL(atualizacao),
 							Util.getSQL(exclusao), tabela);

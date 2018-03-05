@@ -67,11 +67,12 @@ class XMLHander extends DefaultHandler {
 					final int fk = Util.ehSomenteNumeros(fkStr) ? Util.getInteger(attributes, "fk", 1)
 							: Util.ehVazio(fkStr) ? 1 : -1;
 					final String preJn = Util.getString(attributes, "preJoin", null);
+					final String resumo = Util.getString(attributes, "resumo", null);
 
 					final String pkNome = !Util.ehVazio(pkStr) && !Util.ehSomenteNumeros(pkStr) ? pkStr : null;
 					final String fkNome = !Util.ehVazio(fkStr) && !Util.ehSomenteNumeros(fkStr) ? fkStr : null;
 
-					Referencia ref = new Referencia(alias, aliasAlt, invs, pk, pkNome, fk, fkNome, preJn);
+					Referencia ref = new Referencia(alias, aliasAlt, invs, pk, pkNome, fk, fkNome, preJn, resumo);
 
 					if (selecionado == null) {
 						referencias.add(ref);
