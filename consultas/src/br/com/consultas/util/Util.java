@@ -213,11 +213,11 @@ public class Util {
 	}
 
 	public static Tabela criarTabela() {
-		return new Tabela("CAMPOS");
+		return new Tabela("Campos");
 	}
 
 	public static Referencia criarReferencia() {
-		return new Referencia("CAMPOS", null, false, -1, null, -1, null, null, null);
+		return new Referencia("Campos", null, false, -1, null, -1, null, null, null);
 	}
 
 	public static String fragmentoFiltroCampo(Campo campo) {
