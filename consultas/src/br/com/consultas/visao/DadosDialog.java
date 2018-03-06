@@ -53,6 +53,8 @@ public class DadosDialog extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private final JCheckBox chkAbrirDialogReferencia = new JCheckBox(Util.getString("label.abrir_dialog_referencia"),
 			Util.getBooleanConfig("dados_dialog.abrir_dialog_referencia"));
+	private final JCheckBox chkAbrirAbaReferencia = new JCheckBox(Util.getString("label.abrir_aba_referencia"),
+			Util.getBooleanConfig("dados_dialog.abrir_aba_referencia"));
 	private final JTextArea textAreaConsulta = new JTextArea();
 	private final JTextArea textAreaAtualiza = new JTextArea();
 	private final JTextArea textAreaExclusao = new JTextArea();
@@ -114,6 +116,7 @@ public class DadosDialog extends JFrame {
 
 			JPanel painelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			painelNorte.add(chkAbrirDialogReferencia);
+			painelNorte.add(chkAbrirAbaReferencia);
 			labelStatus.setForeground(Color.BLUE);
 			add(BorderLayout.NORTH, painelNorte);
 			labelValor.setForeground(Color.RED);
@@ -376,8 +379,8 @@ public class DadosDialog extends JFrame {
 		public boolean shouldSelectCell(EventObject anEvent) {
 			if (chkAbrirDialogReferencia.isSelected()) {
 				new ReferenciaDialog(formulario, formulario.referencias, tabela);
-			} else {
-				// fichario.setSelectedIndex(fichario.getTabCount() - 1);
+			} else if (chkAbrirAbaReferencia.isSelected()) {
+				fichario.setSelectedIndex(fichario.getTabCount() - 1);
 			}
 			return true;
 		}
