@@ -1,17 +1,15 @@
 package br.com.consultas.visao;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
@@ -28,28 +26,24 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JMenuItem;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.EventListenerList;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 
+import br.com.consultas.Campo;
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
 import br.com.consultas.Tabelas;
@@ -63,6 +57,7 @@ public class DadosDialog extends JFrame {
 	private final JTextArea textAreaAtualiza = new JTextArea();
 	private final JTextArea textAreaExclusao = new JTextArea();
 	private final JTabbedPane fichario = new JTabbedPane();
+	private final PainelRegistros painelRegistros;
 	private final Formulario formulario;
 	private JTable table = new JTable();
 	private final Tabela tabela;
@@ -70,22 +65,25 @@ public class DadosDialog extends JFrame {
 
 	public DadosDialog(final Formulario formulario, String consulta, String atualizacao, String exclusao, Tabela tabela)
 			throws Exception {
-		this.formulario = formulario;
+		int largura = (int) (formulario.getWidth() * .8);
 		this.tabela = tabela;
+		this.formulario = formulario;
 		TITLE = tabela != null ? tabela.getNome() : "";
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		processar(consulta, formulario.getGraphics());
 
-		JPanel painelRegistros = new JPanel(new BorderLayout());
-		JPanel painelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		painelNorte.add(chkAbrirDialogReferencia);
-		painelRegistros.add(BorderLayout.NORTH, painelNorte);
-		painelRegistros.add(BorderLayout.CENTER, new JScrollPane(table));
+		if (tabela != null) {
+			painelRegistros = new PainelRegistros(largura);
+			fichario.addTab(Util.getString("label.consultas"), painelRegistros);
+		} else {
+			painelRegistros = null;
+			fichario.addTab(Util.getString("label.registros"), new JScrollPane(table));
+		}
 
-		fichario.addTab(Util.getString("label.registros"), painelRegistros);
 		fichario.addTab(Util.getString("label.consulta"), new JScrollPane(textAreaConsulta));
 		fichario.addTab(Util.getString("label.atualiza"), new JScrollPane(textAreaAtualiza));
 		fichario.addTab(Util.getString("label.exclusao"), new JScrollPane(textAreaExclusao));
+
 		if (tabela != null) {
 			fichario.addTab(Util.getString("label.consultas"),
 					new PainelReferencia(formulario, formulario.referencias, tabela));
@@ -99,10 +97,45 @@ public class DadosDialog extends JFrame {
 		textAreaConsulta.setText(consulta);
 		textAreaExclusao.setText(exclusao);
 		setAlwaysOnTop(true);
-		setSize((int) (formulario.getWidth() * .8), 500);
+		setSize(largura, 500);
 		setLocationRelativeTo(formulario);
 		cfg();
 		setVisible(true);
+	}
+
+	class PainelRegistros extends JPanel {
+		private static final long serialVersionUID = 1L;
+		final PainelReferencia painelReferencia;
+		JLabel labelStatus = new JLabel();
+		JLabel labelValor = new JLabel();
+
+		PainelRegistros(int largura) {
+			super(new BorderLayout());
+
+			JPanel painelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			painelNorte.add(chkAbrirDialogReferencia);
+			labelStatus.setForeground(Color.BLUE);
+			add(BorderLayout.NORTH, painelNorte);
+			labelValor.setForeground(Color.RED);
+			painelNorte.add(labelStatus);
+			painelNorte.add(labelValor);
+
+			JSplitPane splitPane = new JSplitPane();
+			splitPane.setDividerLocation(largura / 2);
+			splitPane.setOneTouchExpandable(true);
+			splitPane.setContinuousLayout(true);
+			splitPane.setLeftComponent(new JScrollPane(table));
+			painelReferencia = new PainelReferencia(formulario, formulario.referencias, tabela);
+			splitPane.setRightComponent(painelReferencia);
+
+			add(BorderLayout.CENTER, splitPane);
+		}
+
+		void setInfo(String status, String valor) {
+			// painelReferencia.setInfo(status, valor);
+			labelStatus.setText(status);
+			labelValor.setText(valor);
+		}
 	}
 
 	private void cfg() {
@@ -146,7 +179,7 @@ public class DadosDialog extends JFrame {
 		JButton buttonQuery = new JButton(Util.getString("label.execute_query"));
 		JButton buttonFechar = new JButton(Util.getString("label.fechar"));
 
-		public PainelControle() {
+		PainelControle() {
 			setLayout(new FlowLayout(FlowLayout.LEFT));
 			add(buttonFechar);
 			add(buttonUpdate);
@@ -300,13 +333,15 @@ public class DadosDialog extends JFrame {
 
 		int[] is = table.getSelectedRows();
 		table.setModel(new DefaultTableModel(dados, colunas));
+
 		if (tabela != null) {
 			TableColumnModel columnModel = table.getColumnModel();
 			TableColumn column = columnModel.getColumn(0);
 			column.setCellRenderer(new CellColor());
 			column.setCellEditor(new CellEditor());
 		}
-		ajustar(table, graphics);
+
+		Util.ajustar(table, graphics);
 
 		if (is != null) {
 			for (int i : is) {
@@ -314,26 +349,6 @@ public class DadosDialog extends JFrame {
 					table.addRowSelectionInterval(i, i);
 				}
 			}
-		}
-	}
-
-	private void ajustar(JTable table, Graphics graphics) {
-		DefaultTableColumnModel columnModel = (DefaultTableColumnModel) table.getColumnModel();
-		FontMetrics fontMetrics = graphics.getFontMetrics();
-
-		for (int icoluna = 0; icoluna < table.getColumnCount(); icoluna++) {
-			String columnName = table.getColumnName(icoluna);
-			int width = fontMetrics.stringWidth(columnName);
-
-			for (int line = 0; line < table.getRowCount(); line++) {
-				TableCellRenderer renderer = table.getCellRenderer(line, icoluna);
-				Component component = renderer.getTableCellRendererComponent(table, table.getValueAt(line, icoluna),
-						false, false, line, icoluna);
-				width = Math.max(width, component.getPreferredSize().width);
-			}
-
-			TableColumn column = columnModel.getColumn(icoluna);
-			column.setPreferredWidth(width + 7);
 		}
 	}
 
@@ -362,7 +377,7 @@ public class DadosDialog extends JFrame {
 			if (chkAbrirDialogReferencia.isSelected()) {
 				new ReferenciaDialog(formulario, formulario.referencias, tabela);
 			} else {
-				fichario.setSelectedIndex(fichario.getTabCount() - 1);
+				// fichario.setSelectedIndex(fichario.getTabCount() - 1);
 			}
 			return true;
 		}
@@ -379,6 +394,16 @@ public class DadosDialog extends JFrame {
 		}
 
 		@Override
+		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
+				int column) {
+			valor = value;
+			Campo campo = tabela.get(0);
+			campo.setValor(valor.toString());
+			painelRegistros.setInfo(TITLE + "." + campo.getNome(), "[" + campo.getValor() + "]");
+			return super.getTableCellRendererComponent(table, value, isSelected, true, row, column);
+		}
+
+		@Override
 		public void addCellEditorListener(CellEditorListener l) {
 			listenerList.add(CellEditorListener.class, l);
 		}
@@ -386,14 +411,6 @@ public class DadosDialog extends JFrame {
 		@Override
 		public void removeCellEditorListener(CellEditorListener l) {
 			listenerList.remove(CellEditorListener.class, l);
-		}
-
-		@Override
-		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
-				int column) {
-			valor = value;
-			tabela.get(0).setValor(valor.toString());
-			return super.getTableCellRendererComponent(table, value, isSelected, true, row, column);
 		}
 
 		private void fireEditingStopped() {
@@ -412,137 +429,6 @@ public class DadosDialog extends JFrame {
 			for (int i = listeners.length - 2; i >= 0; i -= 2) {
 				if (listeners[i] == CellEditorListener.class) {
 					((CellEditorListener) listeners[i + 1]).editingCanceled(changeEvent);
-				}
-			}
-		}
-	}
-
-	class PainelReferencia extends JPanel {
-		private static final long serialVersionUID = 1L;
-		private final JCheckBox chkRaizVisivel = new JCheckBox(Util.getString("label.raiz_visivel"),
-				Util.getBooleanConfig("consultas.raiz_visivel"));
-		private final JCheckBox chkLinhaRaiz = new JCheckBox(Util.getString("label.raiz_linha"),
-				Util.getBooleanConfig("consultas.raiz_linha"));
-		private final JMenuItem itemMeuSQLDialogo = new JMenuItem(Util.getString("label.gerar_dados_dialogo"));
-		private final JMenuItem itemMeuSQLMemoria = new JMenuItem(Util.getString("label.gerar_dados_memoria"));
-		private final JMenuItem itemSQLDialogo = new JMenuItem(Util.getString("label.gerar_sql_dialogo"));
-		private final JMenuItem itemSQLMemoria = new JMenuItem(Util.getString("label.gerar_sql_memoria"));
-		private final JPopupMenu popup = new JPopupMenu();
-		private Referencia selecionado;
-		private final JTree arvore;
-
-		public PainelReferencia(final Formulario formulario, List<Referencia> referencias, Tabela tabela) {
-			List<Referencia> caminhos = Util.pesquisarReferencias(referencias, tabela.getAlias().getValor());
-			arvore = new JTree(new ModeloArvore(caminhos, Util.getString("label.caminho")));
-			Util.expandir(arvore);
-			arvore.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-			arvore.setCellRenderer(new TreeCellRenderer());
-			arvore.addMouseListener(new OuvinteArvore());
-			setLayout(new BorderLayout());
-
-			JPanel painelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			painelNorte.add(chkRaizVisivel);
-			painelNorte.add(chkLinhaRaiz);
-			add(BorderLayout.NORTH, painelNorte);
-
-			add(BorderLayout.CENTER, new JScrollPane(arvore));
-			config();
-		}
-
-		private void config() {
-			popup.add(itemMeuSQLDialogo);
-			popup.add(itemMeuSQLMemoria);
-			popup.addSeparator();
-			popup.add(itemSQLDialogo);
-			popup.add(itemSQLMemoria);
-
-			itemMeuSQLDialogo.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					SQL sql = Util.criarSQL(selecionado, formulario.tabelas);
-					texto(sql.dados, sql.update, sql.delete, selecionado.getTabela(formulario.tabelas), true, true);
-				}
-			});
-
-			itemMeuSQLMemoria.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					SQL sql = Util.criarSQL(selecionado, formulario.tabelas);
-					texto(sql.dados, sql.update, sql.delete, selecionado.getTabela(formulario.tabelas), true, false);
-				}
-			});
-
-			itemSQLDialogo.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					SQL sql = Util.criarSQL(selecionado, formulario.tabelas);
-					texto(sql.select, sql.update, sql.delete, selecionado.getTabela(formulario.tabelas), true, true);
-				}
-			});
-
-			itemSQLMemoria.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					SQL sql = Util.criarSQL(selecionado, formulario.tabelas);
-					texto(sql.select, sql.update, sql.delete, selecionado.getTabela(formulario.tabelas), true, false);
-				}
-			});
-
-			chkRaizVisivel.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					arvore.setRootVisible(chkRaizVisivel.isSelected());
-				}
-			});
-
-			chkLinhaRaiz.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					arvore.setShowsRootHandles(chkLinhaRaiz.isSelected());
-				}
-			});
-		}
-
-		void texto(String consulta, String atualizacao, String exclusao, Tabela tabela, boolean chkAreaTransferencia,
-				boolean chkAbrirDialog) {
-			if (chkAreaTransferencia) {
-				Util.setContentTransfered(consulta);
-			}
-
-			if (chkAbrirDialog) {
-				try {
-					new DadosDialog(formulario, Util.getSQL(consulta), Util.getSQL(atualizacao), Util.getSQL(exclusao),
-							tabela);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		class OuvinteArvore extends MouseAdapter {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				processar(e);
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				processar(e);
-			}
-
-			private void processar(MouseEvent e) {
-				if (!e.isPopupTrigger()) {
-					return;
-				}
-
-				TreePath path = arvore.getSelectionPath();
-				if (path == null) {
-					return;
-				}
-
-				if (path.getLastPathComponent() instanceof Referencia) {
-					selecionado = (Referencia) path.getLastPathComponent();
-					popup.show(arvore, e.getX(), e.getY());
 				}
 			}
 		}

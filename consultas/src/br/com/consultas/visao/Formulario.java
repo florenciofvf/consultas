@@ -11,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -33,6 +34,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -65,6 +67,8 @@ public class Formulario extends JFrame {
 	private final PainelTabelas painelRegistros;
 	private final PainelTabelas painelDestaques;
 	private final PainelTabelas painelTabelas;
+	private final double DIVISAO2 = 0.6;
+	private final double DIVISAO = 0.8;
 	private int janelas;
 
 	public Formulario(File file) throws Exception {
@@ -104,15 +108,11 @@ public class Formulario extends JFrame {
 		fichario.addTab(Util.getString("label.mensagens"),
 				new JScrollPane(new JTable(new ModeloBundle(Util.bundleMsg))));
 
-		painelRegistros.config();
-		painelDestaques.config();
-		painelConsultas.config();
-		painelTabelas.config();
-
 		splitPane.setLeftComponent(fichario);
 		splitPane.setRightComponent(new JScrollPane(textArea));
 
 		splitPane.setOneTouchExpandable(true);
+		splitPane.setContinuousLayout(true);
 		add(BorderLayout.CENTER, splitPane);
 
 		JPanel painelSul = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -160,11 +160,27 @@ public class Formulario extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent e) {
-				splitPane.setDividerLocation(.80);
 				painelRegistros.windowOpened();
 				painelDestaques.windowOpened();
 				painelConsultas.windowOpened();
 				painelTabelas.windowOpened();
+			}
+		});
+
+		addWindowStateListener(new WindowStateListener() {
+			@Override
+			public void windowStateChanged(WindowEvent e) {
+				if ((e.getNewState() & MAXIMIZED_BOTH) == MAXIMIZED_BOTH) {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							splitPane.setDividerLocation((int) (getHeight() * DIVISAO));
+							painelRegistros.windowOpened();
+							painelDestaques.windowOpened();
+							painelConsultas.windowOpened();
+							painelTabelas.windowOpened();
+						}
+					});
+				}
 			}
 		});
 
@@ -257,7 +273,7 @@ public class Formulario extends JFrame {
 		}
 	}
 
-	private class PainelConsultas extends JPanel {
+	class PainelConsultas extends JPanel {
 		private static final long serialVersionUID = 1L;
 		private final JCheckBox chkRaizVisivel = new JCheckBox(Util.getString("label.raiz_visivel"),
 				Util.getBooleanConfig("consultas.raiz_visivel"));
@@ -291,10 +307,12 @@ public class Formulario extends JFrame {
 			splitPane.setRightComponent(new JScrollPane(tableCampos));
 
 			splitPane.setOneTouchExpandable(true);
+			splitPane.setContinuousLayout(true);
 			add(BorderLayout.CENTER, splitPane);
+			config();
 		}
 
-		void config() {
+		private void config() {
 			popup.add(itemMeuSQLDialogo);
 			popup.add(itemMeuSQLMemoria);
 			popup.addSeparator();
@@ -407,7 +425,7 @@ public class Formulario extends JFrame {
 		void windowOpened() {
 			arvore.setShowsRootHandles(chkLinhaRaiz.isSelected());
 			arvore.setRootVisible(chkRaizVisivel.isSelected());
-			splitPane.setDividerLocation(.50);
+			splitPane.setDividerLocation(DIVISAO2);
 		}
 
 		class OuvinteArvore extends MouseAdapter {
@@ -476,7 +494,7 @@ public class Formulario extends JFrame {
 		}
 	}
 
-	private class PainelTabelas extends JPanel {
+	class PainelTabelas extends JPanel {
 		private static final long serialVersionUID = 1L;
 		private final JCheckBox chkRaizVisivel = new JCheckBox(Util.getString("label.raiz_visivel"),
 				Util.getBooleanConfig("tabelas.raiz_visivel"));
@@ -526,10 +544,12 @@ public class Formulario extends JFrame {
 			splitPane.setRightComponent(new JScrollPane(tableCampos));
 
 			splitPane.setOneTouchExpandable(true);
+			splitPane.setContinuousLayout(true);
 			add(BorderLayout.CENTER, splitPane);
+			config();
 		}
 
-		void config() {
+		private void config() {
 			popup.add(itemMeuSQLDialogo);
 			popup.add(itemMeuSQLMemoria);
 			popup.addSeparator();
@@ -623,7 +643,7 @@ public class Formulario extends JFrame {
 		void windowOpened() {
 			arvore.setShowsRootHandles(chkLinhaRaiz.isSelected());
 			arvore.setRootVisible(chkRaizVisivel.isSelected());
-			splitPane.setDividerLocation(.50);
+			splitPane.setDividerLocation(DIVISAO2);
 		}
 
 		class OuvinteArvore extends MouseAdapter {

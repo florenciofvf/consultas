@@ -1,6 +1,8 @@
 package br.com.consultas.util;
 
 import java.awt.Component;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -13,7 +15,11 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.JTree;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import javax.swing.tree.TreePath;
 
 import org.xml.sax.Attributes;
@@ -300,6 +306,26 @@ public class Util {
 
 		if (clipboard != null) {
 			clipboard.setContents(new StringSelection(string), null);
+		}
+	}
+
+	public static void ajustar(JTable table, Graphics graphics) {
+		DefaultTableColumnModel columnModel = (DefaultTableColumnModel) table.getColumnModel();
+		FontMetrics fontMetrics = graphics.getFontMetrics();
+
+		for (int icoluna = 0; icoluna < table.getColumnCount(); icoluna++) {
+			String columnName = table.getColumnName(icoluna);
+			int width = fontMetrics.stringWidth(columnName);
+
+			for (int line = 0; line < table.getRowCount(); line++) {
+				TableCellRenderer renderer = table.getCellRenderer(line, icoluna);
+				Component component = renderer.getTableCellRendererComponent(table, table.getValueAt(line, icoluna),
+						false, false, line, icoluna);
+				width = Math.max(width, component.getPreferredSize().width);
+			}
+
+			TableColumn column = columnModel.getColumn(icoluna);
+			column.setPreferredWidth(width + 7);
 		}
 	}
 }

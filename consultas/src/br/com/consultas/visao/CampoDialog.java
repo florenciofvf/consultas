@@ -78,7 +78,7 @@ public class CampoDialog extends JFrame {
 		private static final long serialVersionUID = 1L;
 		JButton buttonFechar = new JButton(Util.getString("label.fechar"));
 
-		public PainelControle() {
+		PainelControle() {
 			setLayout(new FlowLayout(FlowLayout.LEFT));
 			add(buttonFechar);
 
