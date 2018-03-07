@@ -47,6 +47,9 @@ public class CampoReferencia {
 
 		} else if ("resumo".equals(nome)) {
 			return referencia.getResumo();
+
+		} else if ("campoID".equals(nome)) {
+			return referencia.getCampoID();
 		}
 
 		return null;
@@ -78,6 +81,9 @@ public class CampoReferencia {
 
 		} else if ("resumo".equals(nome)) {
 			referencia.setResumo(valor);
+
+		} else if ("campoID".equals(nome)) {
+			referencia.setCampoID(valor);
 		}
 	}
 

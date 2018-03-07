@@ -28,6 +28,7 @@ public class ModeloReferencia implements TableModel {
 			campos.add(new CampoReferencia("fkNome"));
 			campos.add(new CampoReferencia("preJoin", true));
 			campos.add(new CampoReferencia("resumo", true));
+			campos.add(new CampoReferencia("campoID", true));
 		}
 	}
 

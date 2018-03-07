@@ -77,6 +77,14 @@ public class Referencia {
 		return new Referencia(tabela.getAlias().getValor(), null, false, -1, null, -1, null, null, null);
 	}
 
+	public void setCampoID(String campoID) {
+		if (!Util.ehVazio(campoID)) {
+			this.campoID = campoID;
+		} else {
+			campoID = null;
+		}
+	}
+
 	public void setCampoID(Tabelas tabelas) {
 		Tabela tab = tabelas.get(alias);
 		Campo campo = tab.get(0);
