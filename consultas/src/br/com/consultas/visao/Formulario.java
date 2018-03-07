@@ -61,9 +61,9 @@ public class Formulario extends JFrame {
 	private final JTextArea textArea = new JTextArea();
 	protected final Tabelas tabelas = new Tabelas();
 	private final JMenuBar menuBar = new JMenuBar();
-	private final PainelConsultas painelConsultas;
 	private final PainelTabelas painelRegistros;
 	private final PainelTabelas painelDestaques;
+	private final PainelConsultas abaConsultas;
 	private final PainelTabelas painelTabelas;
 	private final double DIVISAO2 = 0.6;
 	private final double DIVISAO = 0.8;
@@ -75,7 +75,7 @@ public class Formulario extends JFrame {
 		painelRegistros = new PainelTabelas(false, true);
 		painelDestaques = new PainelTabelas(true, false);
 		painelTabelas = new PainelTabelas(false, false);
-		painelConsultas = new PainelConsultas();
+		abaConsultas = new PainelConsultas();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setAlwaysOnTop(true);
 		setSize(500, 500);
@@ -94,8 +94,8 @@ public class Formulario extends JFrame {
 		setVisible(true);
 	}
 
-	public void atualizarCampoID() {
-		painelConsultas.atualizarCampoID();
+	public void atualizarCampoIDForm() {
+		abaConsultas.atualizarCampoID();
 	}
 
 	private void montarLayout() {
@@ -104,7 +104,7 @@ public class Formulario extends JFrame {
 		fichario.addTab(Util.getString("label.destaques"), painelDestaques);
 		fichario.addTab(Util.getString("label.tabRegtros"), painelRegistros);
 		fichario.addTab(Util.getString("label.tabelas"), painelTabelas);
-		fichario.addTab(Util.getString("label.consultas"), painelConsultas);
+		fichario.addTab(Util.getString("label.consultas"), abaConsultas);
 		fichario.addTab(Util.getString("label.config"),
 				new JScrollPane(new JTable(new ModeloBundle(Util.bundleConfig))));
 		fichario.addTab(Util.getString("label.mensagens"),
@@ -133,6 +133,7 @@ public class Formulario extends JFrame {
 				for (Tabela t : tabelas.getTabelas()) {
 					t.limparCampos();
 				}
+				atualizarCampoIDForm();
 			}
 		});
 
@@ -140,8 +141,9 @@ public class Formulario extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				for (Tabela t : tabelas.getTabelas()) {
-					t.get(0).setValor("");
+					t.limparID();
 				}
+				atualizarCampoIDForm();
 			}
 		});
 
@@ -157,7 +159,7 @@ public class Formulario extends JFrame {
 			public void windowOpened(WindowEvent e) {
 				painelRegistros.windowOpened();
 				painelDestaques.windowOpened();
-				painelConsultas.windowOpened();
+				abaConsultas.windowOpened();
 				painelTabelas.windowOpened();
 			}
 		});
@@ -171,7 +173,7 @@ public class Formulario extends JFrame {
 							splitPane.setDividerLocation((int) (getHeight() * DIVISAO));
 							painelRegistros.windowOpened();
 							painelDestaques.windowOpened();
-							painelConsultas.windowOpened();
+							abaConsultas.windowOpened();
 							painelTabelas.windowOpened();
 						}
 					});
@@ -183,7 +185,7 @@ public class Formulario extends JFrame {
 	void divisao(int i) {
 		painelRegistros.splitPane.setDividerLocation(i);
 		painelDestaques.splitPane.setDividerLocation(i);
-		painelConsultas.splitPane.setDividerLocation(i);
+		abaConsultas.splitPane.setDividerLocation(i);
 		painelTabelas.splitPane.setDividerLocation(i);
 	}
 
@@ -279,7 +281,17 @@ public class Formulario extends JFrame {
 			popup.addSeparator();
 			popup.dml();
 
-			popup.itemMeuSQLDialogo.addActionListener(new ActionListener() {
+			popup.itemRegistrosDialogoLimpo.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					SQL sql = Util.criarSQL(selecionado, tabelas);
+					Tabela tabela = selecionado.getTabela(tabelas);
+					tabela.limparID();
+					texto(sql.dados, sql.update, sql.delete, tabela, true, true);
+				}
+			});
+
+			popup.itemRegistrosDialogo.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
@@ -287,7 +299,17 @@ public class Formulario extends JFrame {
 				}
 			});
 
-			popup.itemMeuSQLMemoria.addActionListener(new ActionListener() {
+			popup.itemRegistrosMemoriaLimpo.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					SQL sql = Util.criarSQL(selecionado, tabelas);
+					Tabela tabela = selecionado.getTabela(tabelas);
+					tabela.limparID();
+					texto(sql.dados, sql.update, sql.delete, tabela, true, false);
+				}
+			});
+
+			popup.itemRegistrosMemoria.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
@@ -295,7 +317,17 @@ public class Formulario extends JFrame {
 				}
 			});
 
-			popup.itemSQLDialogo.addActionListener(new ActionListener() {
+			popup.itemPesquisaDialogoLimpo.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					SQL sql = Util.criarSQL(selecionado, tabelas);
+					Tabela tabela = selecionado.getTabela(tabelas);
+					tabela.limparID();
+					texto(sql.select, sql.update, sql.delete, tabela, true, true);
+				}
+			});
+
+			popup.itemPesquisaDialogo.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
@@ -303,11 +335,37 @@ public class Formulario extends JFrame {
 				}
 			});
 
-			popup.itemSQLMemoria.addActionListener(new ActionListener() {
+			popup.itemPesquisaMemoriaLimpo.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					SQL sql = Util.criarSQL(selecionado, tabelas);
+					Tabela tabela = selecionado.getTabela(tabelas);
+					tabela.limparID();
+					texto(sql.select, sql.update, sql.delete, tabela, true, false);
+				}
+			});
+
+			popup.itemPesquisaMemoria.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
 					texto(sql.select, sql.update, sql.delete, selecionado.getTabela(tabelas), true, false);
+				}
+			});
+
+			popup.itemLimparCampos.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					selecionado.getTabela(tabelas).limparCampos();
+					atualizarCampoIDForm();
+				}
+			});
+
+			popup.itemLimparId.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					selecionado.getTabela(tabelas).limparID();
+					atualizarCampoIDForm();
 				}
 			});
 
@@ -505,7 +563,17 @@ public class Formulario extends JFrame {
 			popup.addSeparator();
 			popup.dml();
 
-			popup.itemMeuSQLDialogo.addActionListener(new ActionListener() {
+			popup.itemRegistrosDialogoLimpo.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					SQL sql = Util.criarSQL(selecionado, tabelas);
+					Tabela tabela = selecionado.getTabela(tabelas);
+					tabela.limparID();
+					texto(sql.dados, sql.update, sql.delete, tabela, true, true);
+				}
+			});
+
+			popup.itemRegistrosDialogo.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
@@ -513,11 +581,37 @@ public class Formulario extends JFrame {
 				}
 			});
 
-			popup.itemMeuSQLMemoria.addActionListener(new ActionListener() {
+			popup.itemRegistrosMemoriaLimpo.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					SQL sql = Util.criarSQL(selecionado, tabelas);
+					Tabela tabela = selecionado.getTabela(tabelas);
+					tabela.limparID();
+					texto(sql.dados, sql.update, sql.delete, tabela, true, false);
+				}
+			});
+
+			popup.itemRegistrosMemoria.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
 					texto(sql.dados, sql.update, sql.delete, selecionado.getTabela(tabelas), true, false);
+				}
+			});
+
+			popup.itemLimparCampos.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					selecionado.getTabela(tabelas).limparCampos();
+					atualizarCampoIDForm();
+				}
+			});
+
+			popup.itemLimparId.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					selecionado.getTabela(tabelas).limparID();
+					atualizarCampoIDForm();
 				}
 			});
 

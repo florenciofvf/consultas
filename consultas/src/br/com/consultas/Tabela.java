@@ -42,6 +42,10 @@ public class Tabela {
 		}
 	}
 
+	public void limparID() {
+		get(0).setValor("");
+	}
+
 	public Campo getAlias() {
 		return alias;
 	}

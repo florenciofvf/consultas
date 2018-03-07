@@ -207,7 +207,7 @@ public class Util {
 
 	public static void ordenar(List<Referencia> referencias) {
 		Collections.sort(referencias, new Comparador());
-		for(Referencia r : referencias) {
+		for (Referencia r : referencias) {
 			r.ordenar();
 		}
 	}

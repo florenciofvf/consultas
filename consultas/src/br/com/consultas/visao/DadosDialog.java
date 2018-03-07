@@ -59,8 +59,8 @@ public class DadosDialog extends JFrame {
 	private final JTextArea textAreaAtualiza = new JTextArea();
 	private final JTextArea textAreaExclusao = new JTextArea();
 	private final JTabbedPane fichario = new JTabbedPane();
-	private final PainelReferencia painelReferencia;
 	private final PainelRegistros painelRegistros;
+	private final PainelReferencia abaConsultas;
 	private final Formulario formulario;
 	private JTable table = new JTable();
 	private final Tabela tabela;
@@ -88,10 +88,10 @@ public class DadosDialog extends JFrame {
 		fichario.addTab(Util.getString("label.exclusao"), new JScrollPane(textAreaExclusao));
 
 		if (tabela != null) {
-			painelReferencia = new PainelReferencia(formulario, formulario.referencias, tabela);
-			fichario.addTab(Util.getString("label.consultas"), painelReferencia);
+			abaConsultas = new PainelReferencia(formulario, formulario.referencias, tabela);
+			fichario.addTab(Util.getString("label.consultas"), abaConsultas);
 		} else {
-			painelReferencia = null;
+			abaConsultas = null;
 		}
 
 		setLayout(new BorderLayout());
@@ -183,14 +183,14 @@ public class DadosDialog extends JFrame {
 			fichario.setSelectedIndex(0);
 
 			if (painelRegistros != null) {
-				painelRegistros.atualizarCampoID();
+				painelRegistros.painelReferencia.atualizarCampoID();
 			}
 
-			if (painelReferencia != null) {
-				painelReferencia.atualizarCampoID();
+			if (abaConsultas != null) {
+				abaConsultas.atualizarCampoID();
 			}
 
-			formulario.atualizarCampoID();
+			formulario.atualizarCampoIDForm();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -312,10 +312,6 @@ public class DadosDialog extends JFrame {
 			labelStatus.setText(status);
 			labelValor.setText(valor);
 		}
-
-		void atualizarCampoID() {
-			painelReferencia.atualizarCampoID();
-		}
 	}
 
 	class PainelControle extends JPanel {
@@ -420,9 +416,9 @@ public class DadosDialog extends JFrame {
 			Campo campo = tabela.get(0);
 			campo.setValor(valor.toString());
 
-			painelReferencia.atualizarCampoID();
-			painelRegistros.atualizarCampoID();
-			formulario.atualizarCampoID();
+			painelRegistros.painelReferencia.atualizarCampoID();
+			formulario.atualizarCampoIDForm();
+			abaConsultas.atualizarCampoID();
 
 			painelRegistros.setInfo(TITLE + "." + campo.getNome(), "[" + campo.getValor() + "]");
 
