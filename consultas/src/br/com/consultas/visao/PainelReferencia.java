@@ -40,15 +40,15 @@ public class PainelReferencia extends JPanel {
 	private Referencia selecionado;
 	private final JTree arvore;
 
-	public PainelReferencia(final Formulario formulario, List<Referencia> referencias, Tabela tabela) {
-		List<Referencia> caminhos = Util.pesquisarReferencias(referencias, tabela.getAlias().getValor());
+	public PainelReferencia(Formulario formulario, List<Referencia> referencias, Tabela tabela) {
+		List<Referencia> caminhos = Util.pesquisarReferencias(referencias, tabela, formulario.tabelas);
 		arvore = new JTree(new ModeloArvore(caminhos, Util.getString("label.caminho")));
 		arvore.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		arvore.setCellRenderer(new TreeCellRenderer());
 		arvore.addMouseListener(new OuvinteArvore());
+		Util.expandirRetrair(arvore, true);
 		setLayout(new BorderLayout());
 		this.formulario = formulario;
-		Util.expandir(arvore);
 
 		JPanel painelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		labelStatus.setForeground(Color.BLUE);
@@ -61,6 +61,14 @@ public class PainelReferencia extends JPanel {
 
 		add(BorderLayout.CENTER, new JScrollPane(arvore));
 		config();
+	}
+
+	public void atualizarCampoID() {
+		ModeloArvore modelo = (ModeloArvore) arvore.getModel();
+		List<Referencia> caminhos = modelo.getReferencias();
+		Util.atualizarCampoID(caminhos, formulario.tabelas);
+		arvore.setModel(new ModeloArvore(caminhos, Util.getString("label.caminho")));
+		Util.expandirRetrair(arvore, true);
 	}
 
 	public void setInfo(String status, String valor) {

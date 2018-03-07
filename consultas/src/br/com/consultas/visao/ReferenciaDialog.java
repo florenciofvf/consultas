@@ -26,7 +26,7 @@ public class ReferenciaDialog extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private final Formulario formulario;
 
-	public ReferenciaDialog(final Formulario formulario, List<Referencia> referencias, Tabela tabela) {
+	public ReferenciaDialog(Formulario formulario, List<Referencia> referencias, Tabela tabela) {
 		setTitle(tabela.getNome() + " - " + tabela.getAlias().getValor());
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLayout(new BorderLayout());

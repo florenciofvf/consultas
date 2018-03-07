@@ -65,7 +65,7 @@ public class DadosDialog extends JFrame {
 	private final Tabela tabela;
 	private final String TITLE;
 
-	public DadosDialog(final Formulario formulario, String consulta, String atualizacao, String exclusao, Tabela tabela)
+	public DadosDialog(Formulario formulario, String consulta, String atualizacao, String exclusao, Tabela tabela)
 			throws Exception {
 		int largura = (int) (formulario.getWidth() * .8);
 		this.tabela = tabela;
@@ -135,9 +135,12 @@ public class DadosDialog extends JFrame {
 		}
 
 		void setInfo(String status, String valor) {
-			// painelReferencia.setInfo(status, valor);
 			labelStatus.setText(status);
 			labelValor.setText(valor);
+		}
+
+		void atualizarCampoID() {
+			painelReferencia.atualizarCampoID();
 		}
 	}
 
@@ -402,6 +405,7 @@ public class DadosDialog extends JFrame {
 			valor = value;
 			Campo campo = tabela.get(0);
 			campo.setValor(valor.toString());
+			painelRegistros.atualizarCampoID();
 			painelRegistros.setInfo(TITLE + "." + campo.getNome(), "[" + campo.getValor() + "]");
 			return super.getTableCellRendererComponent(table, value, isSelected, true, row, column);
 		}

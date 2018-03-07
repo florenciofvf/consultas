@@ -26,7 +26,7 @@ public class CampoDialog extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private final JTable table;
 
-	public CampoDialog(final Formulario formulario, Tabela tabela) {
+	public CampoDialog(Formulario formulario, Tabela tabela) {
 		ModeloCampo modelo = new ModeloCampo(tabela);
 		table = new JTable(modelo);
 		setTitle(tabela.getNome() + " - REGISTROS [" + modelo.getRowCount() + "]");
@@ -41,7 +41,7 @@ public class CampoDialog extends JFrame {
 		setVisible(true);
 	}
 
-	private void cfg(final Formulario formulario) {
+	private void cfg(Formulario formulario) {
 		((JComponent) getContentPane()).getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
 				.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "esc");
 		((JComponent) getContentPane()).getActionMap().put("esc", new AbstractAction() {

@@ -160,7 +160,8 @@ public class Util {
 		}
 	}
 
-	public static List<Referencia> pesquisarReferencias(List<Referencia> referencias, String alias) {
+	public static List<Referencia> pesquisarReferencias(List<Referencia> referencias, Tabela tabela, Tabelas tabelas) {
+		final String alias = tabela.getAlias().getValor();
 		List<Referencia> container = new ArrayList<>();
 
 		for (Referencia r : referencias) {
@@ -182,7 +183,15 @@ public class Util {
 			resposta.add(ref.clonarCaminho());
 		}
 
+		atualizarCampoID(resposta, tabelas);
+
 		return resposta;
+	}
+
+	public static void atualizarCampoID(List<Referencia> referencias, Tabelas tabelas) {
+		for (Referencia ref : referencias) {
+			ref.setCampoID(tabelas);
+		}
 	}
 
 	private static void refs(List<Referencia> resposta, Referencia ref, String alias) {
@@ -266,7 +275,7 @@ public class Util {
 		return sql;
 	}
 
-	public static void expandir(JTree tree) {
+	public static void expandirRetrair(JTree tree, boolean expandir) {
 		ModeloArvore modelo = (ModeloArvore) tree.getModel();
 		String raiz = (String) modelo.getRoot();
 		int filhos = modelo.getChildCount(raiz);
@@ -283,7 +292,11 @@ public class Util {
 			r.caminho(lista);
 			lista.add(0, raiz);
 			TreePath path = new TreePath(lista.toArray(new Object[] {}));
-			tree.expandPath(path);
+			if (expandir) {
+				tree.expandPath(path);
+			} else {
+				tree.collapsePath(path);
+			}
 		}
 	}
 

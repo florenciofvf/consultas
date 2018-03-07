@@ -17,10 +17,11 @@ public class Referencia {
 	private boolean inverso;
 	private String aliasAlt;
 	private String preJoin;
+	private String campoID;
+	private Referencia pai;
 	private String resumo;
 	private String pkNome;
 	private String fkNome;
-	private Referencia pai;
 	private int pk;
 	private int fk;
 
@@ -74,6 +75,21 @@ public class Referencia {
 
 	public static Referencia criarReferenciaDados(Tabela tabela) {
 		return new Referencia(tabela.getAlias().getValor(), null, false, -1, null, -1, null, null, null);
+	}
+
+	public void setCampoID(Tabelas tabelas) {
+		Tabela tab = tabelas.get(alias);
+		Campo campo = tab.get(0);
+
+		if (!Util.ehVazio(campo.getValor())) {
+			campoID = campo.getValor();
+		} else {
+			campoID = null;
+		}
+
+		for (Referencia r : referencias) {
+			r.setCampoID(tabelas);
+		}
 	}
 
 	public void addFolha(List<Referencia> referencias) {
@@ -323,8 +339,21 @@ public class Referencia {
 
 	@Override
 	public String toString() {
-		return prefixo + " - " + alias + (exibirTotalRegistros ? " (" + totalRegistros + ")" : "")
-				+ (Util.ehVazio(resumo) ? "" : " <<" + resumo + ">>");
+		StringBuilder sb = new StringBuilder(prefixo + " - " + alias);
+
+		if (exibirTotalRegistros) {
+			sb.append(" (" + totalRegistros + ")");
+		}
+
+		if (!Util.ehVazio(campoID)) {
+			sb.append(" [" + campoID + "]");
+		}
+
+		if (!Util.ehVazio(resumo)) {
+			sb.append(" <<" + resumo + ">>");
+		}
+
+		return sb.toString();
 	}
 
 	public boolean isExibirTotalRegistros() {
