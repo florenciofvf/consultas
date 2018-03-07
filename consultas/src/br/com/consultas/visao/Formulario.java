@@ -94,6 +94,10 @@ public class Formulario extends JFrame {
 		setVisible(true);
 	}
 
+	public void atualizarCampoID() {
+		painelConsultas.atualizarCampoID();
+	}
+
 	private void montarLayout() {
 		setLayout(new BorderLayout());
 
@@ -259,6 +263,11 @@ public class Formulario extends JFrame {
 			splitPane.setContinuousLayout(true);
 			add(BorderLayout.CENTER, splitPane);
 			config();
+		}
+
+		public void atualizarCampoID() {
+			Util.atualizarCampoID(referencias, tabelas);
+			arvore.setModel(new ModeloArvore(referencias, Util.getString("label.consultas")));
 		}
 
 		private void config() {

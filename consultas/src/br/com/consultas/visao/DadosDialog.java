@@ -189,6 +189,8 @@ public class DadosDialog extends JFrame {
 			if (painelReferencia != null) {
 				painelReferencia.atualizarCampoID();
 			}
+
+			formulario.atualizarCampoID();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -417,8 +419,11 @@ public class DadosDialog extends JFrame {
 			valor = value;
 			Campo campo = tabela.get(0);
 			campo.setValor(valor.toString());
-			painelRegistros.atualizarCampoID();
+
 			painelReferencia.atualizarCampoID();
+			painelRegistros.atualizarCampoID();
+			formulario.atualizarCampoID();
+
 			painelRegistros.setInfo(TITLE + "." + campo.getNome(), "[" + campo.getValor() + "]");
 
 			Component c = getTableCellRendererComponent(table, value, isSelected, true, row, column);
