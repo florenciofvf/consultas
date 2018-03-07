@@ -356,6 +356,10 @@ public class Referencia {
 		return sb.toString();
 	}
 
+	public String getCampoID() {
+		return campoID;
+	}
+
 	public boolean isExibirTotalRegistros() {
 		return exibirTotalRegistros;
 	}
@@ -386,5 +390,9 @@ public class Referencia {
 
 	public void setResumo(String resumo) {
 		this.resumo = resumo;
+	}
+
+	public void ordenar() {
+		Util.ordenar(referencias);
 	}
 }

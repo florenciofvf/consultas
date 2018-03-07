@@ -21,6 +21,7 @@ import javax.swing.KeyStroke;
 
 import br.com.consultas.Tabela;
 import br.com.consultas.util.Util;
+import br.com.consultas.visao.modelo.ModeloCampo;
 
 public class CampoDialog extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -30,10 +31,10 @@ public class CampoDialog extends JFrame {
 		ModeloCampo modelo = new ModeloCampo(tabela);
 		table = new JTable(modelo);
 		setTitle(tabela.getNome() + " - REGISTROS [" + modelo.getRowCount() + "]");
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLayout(new BorderLayout());
 		add(BorderLayout.CENTER, new JScrollPane(table));
 		add(BorderLayout.SOUTH, new PainelControle());
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setAlwaysOnTop(true);
 		setSize(400, 400);
 		setLocationRelativeTo(formulario);
@@ -90,5 +91,4 @@ public class CampoDialog extends JFrame {
 			});
 		}
 	}
-
 }

@@ -28,8 +28,8 @@ import br.com.consultas.Campo;
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
 import br.com.consultas.Tabelas;
-import br.com.consultas.visao.ModeloArvore;
 import br.com.consultas.visao.SQL;
+import br.com.consultas.visao.modelo.ModeloArvore;
 
 public class Util {
 	private static final String PREFIXO_FILTRO_CAMPO = "${";
@@ -207,6 +207,9 @@ public class Util {
 
 	public static void ordenar(List<Referencia> referencias) {
 		Collections.sort(referencias, new Comparador());
+		for(Referencia r : referencias) {
+			r.ordenar();
+		}
 	}
 
 	static class Comparador implements Comparator<Referencia> {

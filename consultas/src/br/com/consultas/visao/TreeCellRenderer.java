@@ -15,15 +15,20 @@ public class TreeCellRenderer extends DefaultTreeCellRenderer {
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf,
 			int row, boolean hasFocus) {
 		super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+
 		Object objeto = value;
+
 		if (objeto instanceof Referencia) {
 			Referencia ref = (Referencia) objeto;
 			if (ref.isEspecial()) {
-				setForeground(hasFocus ? (sel ? Color.WHITE : Color.BLUE) : Color.BLUE);
+				setForeground(sel ? Color.WHITE : Color.BLUE);
+			} else if (ref.getCampoID() != null) {
+				setForeground(sel ? Color.WHITE : Color.LIGHT_GRAY);
 			} else {
-				setForeground(hasFocus ? (sel ? Color.WHITE : Color.BLACK) : Color.BLACK);
+				setForeground(sel ? Color.WHITE : Color.BLACK);
 			}
 		}
+
 		return this;
 	}
 }

@@ -59,6 +59,7 @@ public class DadosDialog extends JFrame {
 	private final JTextArea textAreaAtualiza = new JTextArea();
 	private final JTextArea textAreaExclusao = new JTextArea();
 	private final JTabbedPane fichario = new JTabbedPane();
+	private final PainelReferencia painelReferencia;
 	private final PainelRegistros painelRegistros;
 	private final Formulario formulario;
 	private JTable table = new JTable();
@@ -87,8 +88,10 @@ public class DadosDialog extends JFrame {
 		fichario.addTab(Util.getString("label.exclusao"), new JScrollPane(textAreaExclusao));
 
 		if (tabela != null) {
-			fichario.addTab(Util.getString("label.consultas"),
-					new PainelReferencia(formulario, formulario.referencias, tabela));
+			painelReferencia = new PainelReferencia(formulario, formulario.referencias, tabela);
+			fichario.addTab(Util.getString("label.consultas"), painelReferencia);
+		} else {
+			painelReferencia = null;
 		}
 
 		setLayout(new BorderLayout());
@@ -103,45 +106,6 @@ public class DadosDialog extends JFrame {
 		setLocationRelativeTo(formulario);
 		cfg();
 		setVisible(true);
-	}
-
-	class PainelRegistros extends JPanel {
-		private static final long serialVersionUID = 1L;
-		final PainelReferencia painelReferencia;
-		JLabel labelStatus = new JLabel();
-		JLabel labelValor = new JLabel();
-
-		PainelRegistros(int largura) {
-			super(new BorderLayout());
-
-			JPanel painelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			painelNorte.add(chkAbrirDialogReferencia);
-			painelNorte.add(chkAbrirAbaReferencia);
-			labelStatus.setForeground(Color.BLUE);
-			add(BorderLayout.NORTH, painelNorte);
-			labelValor.setForeground(Color.RED);
-			painelNorte.add(labelStatus);
-			painelNorte.add(labelValor);
-
-			JSplitPane splitPane = new JSplitPane();
-			splitPane.setDividerLocation(largura / 2);
-			splitPane.setOneTouchExpandable(true);
-			splitPane.setContinuousLayout(true);
-			splitPane.setLeftComponent(new JScrollPane(table));
-			painelReferencia = new PainelReferencia(formulario, formulario.referencias, tabela);
-			splitPane.setRightComponent(painelReferencia);
-
-			add(BorderLayout.CENTER, splitPane);
-		}
-
-		void setInfo(String status, String valor) {
-			labelStatus.setText(status);
-			labelValor.setText(valor);
-		}
-
-		void atualizarCampoID() {
-			painelReferencia.atualizarCampoID();
-		}
 	}
 
 	private void cfg() {
@@ -175,59 +139,6 @@ public class DadosDialog extends JFrame {
 		WindowEvent event = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
 		EventQueue systemEventQueue = Toolkit.getDefaultToolkit().getSystemEventQueue();
 		systemEventQueue.postEvent(event);
-	}
-
-	class PainelControle extends JPanel {
-		private static final long serialVersionUID = 1L;
-		JButton buttonGetContent = new JButton(Util.getString("label.get_content"));
-		JButton buttonUpdate = new JButton(Util.getString("label.execute_update"));
-		JButton buttonDelete = new JButton(Util.getString("label.execute_delete"));
-		JButton buttonQuery = new JButton(Util.getString("label.execute_query"));
-		JButton buttonFechar = new JButton(Util.getString("label.fechar"));
-
-		PainelControle() {
-			setLayout(new FlowLayout(FlowLayout.LEFT));
-			add(buttonFechar);
-			add(buttonUpdate);
-			add(buttonDelete);
-			add(buttonQuery);
-			add(buttonGetContent);
-
-			buttonFechar.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					fechar();
-				}
-			});
-
-			buttonUpdate.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					executeUpdate();
-				}
-			});
-
-			buttonDelete.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					executeDelete();
-				}
-			});
-
-			buttonQuery.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					executeQuery();
-				}
-			});
-
-			buttonGetContent.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					textAreaConsulta.setText(Util.getContentTransfered());
-				}
-			});
-		}
 	}
 
 	void executeUpdate() {
@@ -270,6 +181,14 @@ public class DadosDialog extends JFrame {
 		try {
 			processar(string, getGraphics());
 			fichario.setSelectedIndex(0);
+
+			if (painelRegistros != null) {
+				painelRegistros.atualizarCampoID();
+			}
+
+			if (painelReferencia != null) {
+				painelReferencia.atualizarCampoID();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -358,6 +277,98 @@ public class DadosDialog extends JFrame {
 		}
 	}
 
+	class PainelRegistros extends JPanel {
+		private static final long serialVersionUID = 1L;
+		final PainelReferencia painelReferencia;
+		JLabel labelStatus = new JLabel();
+		JLabel labelValor = new JLabel();
+
+		PainelRegistros(int largura) {
+			super(new BorderLayout());
+
+			JPanel painelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			painelNorte.add(chkAbrirDialogReferencia);
+			painelNorte.add(chkAbrirAbaReferencia);
+			labelStatus.setForeground(Color.BLUE);
+			add(BorderLayout.NORTH, painelNorte);
+			labelValor.setForeground(Color.RED);
+			painelNorte.add(labelStatus);
+			painelNorte.add(labelValor);
+
+			JSplitPane splitPane = new JSplitPane();
+			splitPane.setDividerLocation(largura / 2);
+			splitPane.setOneTouchExpandable(true);
+			splitPane.setContinuousLayout(true);
+			splitPane.setLeftComponent(new JScrollPane(table));
+			painelReferencia = new PainelReferencia(formulario, formulario.referencias, tabela);
+			splitPane.setRightComponent(painelReferencia);
+
+			add(BorderLayout.CENTER, splitPane);
+		}
+
+		void setInfo(String status, String valor) {
+			labelStatus.setText(status);
+			labelValor.setText(valor);
+		}
+
+		void atualizarCampoID() {
+			painelReferencia.atualizarCampoID();
+		}
+	}
+
+	class PainelControle extends JPanel {
+		private static final long serialVersionUID = 1L;
+		JButton buttonGetContent = new JButton(Util.getString("label.get_content"));
+		JButton buttonUpdate = new JButton(Util.getString("label.execute_update"));
+		JButton buttonDelete = new JButton(Util.getString("label.execute_delete"));
+		JButton buttonQuery = new JButton(Util.getString("label.execute_query"));
+		JButton buttonFechar = new JButton(Util.getString("label.fechar"));
+
+		PainelControle() {
+			setLayout(new FlowLayout(FlowLayout.LEFT));
+			add(buttonFechar);
+			add(buttonUpdate);
+			add(buttonDelete);
+			add(buttonQuery);
+			add(buttonGetContent);
+
+			buttonFechar.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					fechar();
+				}
+			});
+
+			buttonUpdate.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					executeUpdate();
+				}
+			});
+
+			buttonDelete.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					executeDelete();
+				}
+			});
+
+			buttonQuery.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					executeQuery();
+				}
+			});
+
+			buttonGetContent.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					textAreaConsulta.setText(Util.getContentTransfered());
+				}
+			});
+		}
+	}
+
 	class CellRenderer extends DefaultTableCellRenderer {
 		private static final long serialVersionUID = 1L;
 	}
@@ -402,12 +413,19 @@ public class DadosDialog extends JFrame {
 		@Override
 		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
 				int column) {
+
 			valor = value;
 			Campo campo = tabela.get(0);
 			campo.setValor(valor.toString());
 			painelRegistros.atualizarCampoID();
+			painelReferencia.atualizarCampoID();
 			painelRegistros.setInfo(TITLE + "." + campo.getNome(), "[" + campo.getValor() + "]");
-			return super.getTableCellRendererComponent(table, value, isSelected, true, row, column);
+
+			Component c = getTableCellRendererComponent(table, value, isSelected, true, row, column);
+			c.setForeground(table.getSelectionForeground());
+			c.setBackground(table.getSelectionBackground());
+
+			return c;
 		}
 
 		@Override

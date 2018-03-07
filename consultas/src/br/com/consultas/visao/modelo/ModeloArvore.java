@@ -1,4 +1,4 @@
-package br.com.consultas.visao;
+package br.com.consultas.visao.modelo;
 
 import java.util.List;
 

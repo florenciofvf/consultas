@@ -11,9 +11,7 @@ import java.util.List;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.TreePath;
@@ -22,6 +20,7 @@ import javax.swing.tree.TreeSelectionModel;
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
 import br.com.consultas.util.Util;
+import br.com.consultas.visao.modelo.ModeloArvore;
 
 public class PainelReferencia extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -29,13 +28,9 @@ public class PainelReferencia extends JPanel {
 			Util.getBooleanConfig("consultas.raiz_visivel"));
 	private final JCheckBox chkLinhaRaiz = new JCheckBox(Util.getString("label.raiz_linha"),
 			Util.getBooleanConfig("consultas.raiz_linha"));
-	private final JMenuItem itemMeuSQLDialogo = new JMenuItem(Util.getString("label.gerar_dados_dialogo"));
-	private final JMenuItem itemMeuSQLMemoria = new JMenuItem(Util.getString("label.gerar_dados_memoria"));
-	private final JMenuItem itemSQLDialogo = new JMenuItem(Util.getString("label.gerar_sql_dialogo"));
-	private final JMenuItem itemSQLMemoria = new JMenuItem(Util.getString("label.gerar_sql_memoria"));
-	private final JPopupMenu popup = new JPopupMenu();
 	private final JLabel labelStatus = new JLabel();
 	private final JLabel labelValor = new JLabel();
+	private final Popup popup = new Popup();
 	private final Formulario formulario;
 	private Referencia selecionado;
 	private final JTree arvore;
@@ -77,13 +72,11 @@ public class PainelReferencia extends JPanel {
 	}
 
 	private void config() {
-		popup.add(itemMeuSQLDialogo);
-		popup.add(itemMeuSQLMemoria);
+		popup.dialogo();
 		popup.addSeparator();
-		popup.add(itemSQLDialogo);
-		popup.add(itemSQLMemoria);
+		popup.memoria();
 
-		itemMeuSQLDialogo.addActionListener(new ActionListener() {
+		popup.itemMeuSQLDialogo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SQL sql = Util.criarSQL(selecionado, formulario.tabelas);
@@ -91,7 +84,7 @@ public class PainelReferencia extends JPanel {
 			}
 		});
 
-		itemMeuSQLMemoria.addActionListener(new ActionListener() {
+		popup.itemMeuSQLMemoria.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SQL sql = Util.criarSQL(selecionado, formulario.tabelas);
@@ -99,7 +92,7 @@ public class PainelReferencia extends JPanel {
 			}
 		});
 
-		itemSQLDialogo.addActionListener(new ActionListener() {
+		popup.itemSQLDialogo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SQL sql = Util.criarSQL(selecionado, formulario.tabelas);
@@ -107,7 +100,7 @@ public class PainelReferencia extends JPanel {
 			}
 		});
 
-		itemSQLMemoria.addActionListener(new ActionListener() {
+		popup.itemSQLMemoria.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SQL sql = Util.criarSQL(selecionado, formulario.tabelas);

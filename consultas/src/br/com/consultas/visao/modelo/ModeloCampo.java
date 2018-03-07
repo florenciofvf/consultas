@@ -1,4 +1,4 @@
-package br.com.consultas.visao;
+package br.com.consultas.visao.modelo;
 
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;

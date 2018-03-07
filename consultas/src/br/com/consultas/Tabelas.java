@@ -37,6 +37,10 @@ public class Tabelas {
 		return new ArrayList<>(tabelas.values());
 	}
 
+	public int getTotalTabelas() {
+		return tabelas.size();
+	}
+
 	@Override
 	public String toString() {
 		return tabelas.toString();

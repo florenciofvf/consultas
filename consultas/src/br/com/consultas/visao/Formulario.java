@@ -27,7 +27,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -43,24 +42,23 @@ import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
 import br.com.consultas.Tabelas;
 import br.com.consultas.util.Util;
+import br.com.consultas.visao.modelo.CampoReferencia;
+import br.com.consultas.visao.modelo.ModeloArvore;
+import br.com.consultas.visao.modelo.ModeloBundle;
+import br.com.consultas.visao.modelo.ModeloCampo;
+import br.com.consultas.visao.modelo.ModeloReferencia;
 import br.com.consultas.xml.XML;
 
 public class Formulario extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private final JMenuItem itemLimparCampos = new JMenuItem(Util.getString("label.limpar_campos"));
 	private final JMenuItem itemLimparIds = new JMenuItem(Util.getString("label.limpar_ids"));
-	private final JButton buttonUpdate = new JButton(Util.getString("label.execute_update"));
-	private final JButton buttonGetContent = new JButton(Util.getString("label.get_content"));
-	private final JButton buttonQuery = new JButton(Util.getString("label.execute_query"));
 	private final JMenuItem itemFechar = new JMenuItem(Util.getString("label.fechar"));
-	private final JButton buttonLimpar = new JButton(Util.getString("label.limpar"));
-	private final JButton buttonFechar = new JButton(Util.getString("label.fechar"));
 	private final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 	private final JMenu menuArquivo = new JMenu(Util.getString("label.arquivo"));
 	protected final List<Referencia> referencias = new ArrayList<>();
 	private final JTabbedPane fichario = new JTabbedPane();
 	private final JTextArea textArea = new JTextArea();
-	private final JLabel labelStatus = new JLabel();
 	protected final Tabelas tabelas = new Tabelas();
 	private final JMenuBar menuBar = new JMenuBar();
 	private final PainelConsultas painelConsultas;
@@ -115,14 +113,7 @@ public class Formulario extends JFrame {
 		splitPane.setContinuousLayout(true);
 		add(BorderLayout.CENTER, splitPane);
 
-		JPanel painelSul = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		painelSul.add(labelStatus);
-		painelSul.add(buttonFechar);
-		painelSul.add(buttonLimpar);
-		painelSul.add(buttonUpdate);
-		painelSul.add(buttonQuery);
-		painelSul.add(buttonGetContent);
-		add(BorderLayout.SOUTH, painelSul);
+		add(BorderLayout.SOUTH, new PainelControle());
 
 		setJMenuBar(menuBar);
 		menuBar.add(menuArquivo);
@@ -183,41 +174,6 @@ public class Formulario extends JFrame {
 				}
 			}
 		});
-
-		buttonLimpar.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				limpar();
-			}
-		});
-
-		buttonFechar.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
-
-		buttonUpdate.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				executeUpdate();
-			}
-		});
-
-		buttonQuery.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				executeQuery();
-			}
-		});
-
-		buttonGetContent.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				textArea.setText(Util.getContentTransfered());
-			}
-		});
 	}
 
 	void divisao(int i) {
@@ -249,7 +205,7 @@ public class Formulario extends JFrame {
 			return;
 		}
 		try {
-			new DadosDialog(Formulario.this, string, null, null, null);
+			new DadosDialog(this, string, null, null, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -279,16 +235,9 @@ public class Formulario extends JFrame {
 				Util.getBooleanConfig("consultas.raiz_visivel"));
 		private final JCheckBox chkLinhaRaiz = new JCheckBox(Util.getString("label.raiz_linha"),
 				Util.getBooleanConfig("consultas.raiz_linha"));
-		private final JMenuItem itemMeuSQLDialogo = new JMenuItem(Util.getString("label.gerar_dados_dialogo"));
-		private final JMenuItem itemMeuSQLMemoria = new JMenuItem(Util.getString("label.gerar_dados_memoria"));
-		private final JMenuItem itemSQLDialogo = new JMenuItem(Util.getString("label.gerar_sql_dialogo"));
-		private final JMenuItem itemSQLMemoria = new JMenuItem(Util.getString("label.gerar_sql_memoria"));
-		private final JMenuItem itemDelete = new JMenuItem(Util.getString("label.gerar_delete"));
-		private final JMenuItem itemUpdate = new JMenuItem(Util.getString("label.gerar_update"));
-		private final JMenuItem itemCampos = new JMenuItem(Util.getString("label.campos"));
 		private final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		private final JTable tableCampos = new JTable(new ModeloReferencia(null));
-		private final JPopupMenu popup = new JPopupMenu();
+		private final Popup popup = new Popup();
 		private final JTree arvore;
 		Referencia selecionado;
 
@@ -313,19 +262,15 @@ public class Formulario extends JFrame {
 		}
 
 		private void config() {
-			popup.add(itemMeuSQLDialogo);
-			popup.add(itemMeuSQLMemoria);
+			popup.dialogo();
 			popup.addSeparator();
-			popup.add(itemSQLDialogo);
-			popup.add(itemSQLMemoria);
+			popup.memoria();
 			popup.addSeparator();
-			popup.add(itemCampos);
+			popup.campos();
 			popup.addSeparator();
-			popup.add(itemUpdate);
-			popup.addSeparator();
-			popup.add(itemDelete);
+			popup.dml();
 
-			itemMeuSQLDialogo.addActionListener(new ActionListener() {
+			popup.itemMeuSQLDialogo.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
@@ -333,7 +278,7 @@ public class Formulario extends JFrame {
 				}
 			});
 
-			itemMeuSQLMemoria.addActionListener(new ActionListener() {
+			popup.itemMeuSQLMemoria.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
@@ -341,7 +286,7 @@ public class Formulario extends JFrame {
 				}
 			});
 
-			itemSQLDialogo.addActionListener(new ActionListener() {
+			popup.itemSQLDialogo.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
@@ -349,7 +294,7 @@ public class Formulario extends JFrame {
 				}
 			});
 
-			itemSQLMemoria.addActionListener(new ActionListener() {
+			popup.itemSQLMemoria.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
@@ -357,21 +302,21 @@ public class Formulario extends JFrame {
 				}
 			});
 
-			itemCampos.addActionListener(new ActionListener() {
+			popup.itemCampos.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					new CampoDialog(Formulario.this, selecionado.getTabela(tabelas));
 				}
 			});
 
-			itemUpdate.addActionListener(new ActionListener() {
+			popup.itemUpdate.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					textArea.setText(selecionado.gerarUpdate(tabelas));
 				}
 			});
 
-			itemDelete.addActionListener(new ActionListener() {
+			popup.itemDelete.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					textArea.setText(selecionado.gerarDelete(tabelas));
@@ -485,8 +430,8 @@ public class Formulario extends JFrame {
 				super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
 				ModeloReferencia modelo = (ModeloReferencia) table.getModel();
-				CampoReferencia campo = modelo.getCampoReferencia(row);
-				setBackground(campo.editavel ? Color.WHITE : Color.LIGHT_GRAY);
+				CampoReferencia campoRef = modelo.getCampoReferencia(row);
+				setBackground(campoRef.editavel ? Color.WHITE : Color.LIGHT_GRAY);
 				setForeground(table.getForeground());
 
 				return this;
@@ -500,14 +445,9 @@ public class Formulario extends JFrame {
 				Util.getBooleanConfig("tabelas.raiz_visivel"));
 		private final JCheckBox chkLinhaRaiz = new JCheckBox(Util.getString("label.raiz_linha"),
 				Util.getBooleanConfig("tabelas.raiz_linha"));
-		private final JMenuItem itemMeuSQLDialogo = new JMenuItem(Util.getString("label.gerar_dados_dialogo"));
-		private final JMenuItem itemMeuSQLMemoria = new JMenuItem(Util.getString("label.gerar_dados_memoria"));
-		private final JMenuItem itemDelete = new JMenuItem(Util.getString("label.gerar_delete"));
-		private final JMenuItem itemUpdate = new JMenuItem(Util.getString("label.gerar_update"));
-		private final JMenuItem itemCampos = new JMenuItem(Util.getString("label.campos"));
 		private final JTable tableCampos = new JTable(new ModeloCampo(Util.criarTabela()));
 		private final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		private final JPopupMenu popup = new JPopupMenu();
+		private final Popup popup = new Popup();
 		private final JTree arvore;
 		Referencia selecionado;
 
@@ -529,7 +469,6 @@ public class Formulario extends JFrame {
 			}
 
 			Util.ordenar(referencias);
-			labelStatus.setText(Util.getString("label.total_tabelas") + referencias.size());
 			arvore = new JTree(new ModeloArvore(referencias, Util.getString("label.tabelas")));
 			arvore.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 			arvore.addMouseListener(new OuvinteArvore());
@@ -550,16 +489,14 @@ public class Formulario extends JFrame {
 		}
 
 		private void config() {
-			popup.add(itemMeuSQLDialogo);
-			popup.add(itemMeuSQLMemoria);
+			popup.dialogoMeuSQL();
+			popup.memoriaMeuSQL();
 			popup.addSeparator();
-			popup.add(itemCampos);
+			popup.campos();
 			popup.addSeparator();
-			popup.add(itemUpdate);
-			popup.addSeparator();
-			popup.add(itemDelete);
+			popup.dml();
 
-			itemMeuSQLDialogo.addActionListener(new ActionListener() {
+			popup.itemMeuSQLDialogo.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
@@ -567,7 +504,7 @@ public class Formulario extends JFrame {
 				}
 			});
 
-			itemMeuSQLMemoria.addActionListener(new ActionListener() {
+			popup.itemMeuSQLMemoria.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
@@ -575,21 +512,21 @@ public class Formulario extends JFrame {
 				}
 			});
 
-			itemCampos.addActionListener(new ActionListener() {
+			popup.itemCampos.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					new CampoDialog(Formulario.this, selecionado.getTabela(tabelas));
 				}
 			});
 
-			itemUpdate.addActionListener(new ActionListener() {
+			popup.itemUpdate.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					textArea.setText(selecionado.gerarUpdate(tabelas));
 				}
 			});
 
-			itemDelete.addActionListener(new ActionListener() {
+			popup.itemDelete.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					textArea.setText(selecionado.gerarDelete(tabelas));
@@ -690,6 +627,64 @@ public class Formulario extends JFrame {
 					popup.show(arvore, e.getX(), e.getY());
 				}
 			}
+		}
+	}
+
+	class PainelControle extends JPanel {
+		private static final long serialVersionUID = 1L;
+		private final JButton buttonGetContent = new JButton(Util.getString("label.get_content"));
+		private final JButton buttonUpdate = new JButton(Util.getString("label.execute_update"));
+		private final JButton buttonQuery = new JButton(Util.getString("label.execute_query"));
+		private final JButton buttonLimpar = new JButton(Util.getString("label.limpar"));
+		private final JButton buttonFechar = new JButton(Util.getString("label.fechar"));
+		private final JLabel labelStatus = new JLabel();
+
+		PainelControle() {
+			super(new FlowLayout(FlowLayout.LEFT));
+
+			add(labelStatus);
+			add(buttonFechar);
+			add(buttonLimpar);
+			add(buttonUpdate);
+			add(buttonQuery);
+			add(buttonGetContent);
+
+			labelStatus.setText(Util.getString("label.total_tabelas") + tabelas.getTotalTabelas());
+
+			buttonLimpar.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					limpar();
+				}
+			});
+
+			buttonFechar.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					System.exit(0);
+				}
+			});
+
+			buttonUpdate.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					executeUpdate();
+				}
+			});
+
+			buttonQuery.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					executeQuery();
+				}
+			});
+
+			buttonGetContent.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					textArea.setText(Util.getContentTransfered());
+				}
+			});
 		}
 	}
 }
