@@ -85,6 +85,7 @@ public class PainelReferencia extends JPanel {
 				SQL sql = Util.criarSQL(selecionado, formulario.tabelas);
 				Tabela tabela = selecionado.getTabela(formulario.tabelas);
 				tabela.limparID();
+				atualizarCampoID();
 				texto(sql.dados, sql.update, sql.delete, tabela, true, true);
 			}
 		});
@@ -103,6 +104,7 @@ public class PainelReferencia extends JPanel {
 				SQL sql = Util.criarSQL(selecionado, formulario.tabelas);
 				Tabela tabela = selecionado.getTabela(formulario.tabelas);
 				tabela.limparID();
+				atualizarCampoID();
 				texto(sql.dados, sql.update, sql.delete, tabela, true, false);
 			}
 		});
@@ -120,6 +122,8 @@ public class PainelReferencia extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				SQL sql = Util.criarSQL(selecionado, formulario.tabelas);
 				Tabela tabela = selecionado.getTabela(formulario.tabelas);
+				tabela.limparID();
+				atualizarCampoID();
 				texto(sql.select, sql.update, sql.delete, tabela, true, true);
 			}
 		});
@@ -137,6 +141,8 @@ public class PainelReferencia extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				SQL sql = Util.criarSQL(selecionado, formulario.tabelas);
 				Tabela tabela = selecionado.getTabela(formulario.tabelas);
+				tabela.limparID();
+				atualizarCampoID();
 				texto(sql.select, sql.update, sql.delete, tabela, true, false);
 			}
 		});
@@ -153,6 +159,7 @@ public class PainelReferencia extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				selecionado.getTabela(formulario.tabelas).limparCampos();
+				atualizarCampoID();
 			}
 		});
 
@@ -160,6 +167,7 @@ public class PainelReferencia extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				selecionado.getTabela(formulario.tabelas).limparID();
+				atualizarCampoID();
 			}
 		});
 
