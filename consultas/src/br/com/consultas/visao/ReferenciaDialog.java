@@ -1,14 +1,9 @@
 package br.com.consultas.visao;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -16,7 +11,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
@@ -42,36 +36,15 @@ public class ReferenciaDialog extends JFrame {
 	}
 
 	private void cfg() {
-		((JComponent) getContentPane()).getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-				.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "esc");
-		((JComponent) getContentPane()).getActionMap().put("esc", new AbstractAction() {
+		Util.setActionESC((JComponent) getContentPane(), new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 
-			@Override
 			public void actionPerformed(ActionEvent e) {
-				fechar();
+				Util.fechar(ReferenciaDialog.this);
 			}
 		});
 
-		addWindowListener(new WindowAdapter() {
-			public void windowIconified(WindowEvent e) {
-				setState(NORMAL);
-			}
-
-			public void windowOpened(WindowEvent e) {
-				formulario.abrirJanela();
-			}
-
-			public void windowClosing(WindowEvent e) {
-				formulario.fecharJanela();
-			}
-		});
-	}
-
-	void fechar() {
-		WindowEvent event = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
-		EventQueue systemEventQueue = Toolkit.getDefaultToolkit().getSystemEventQueue();
-		systemEventQueue.postEvent(event);
+		Util.setWindowListener(this, formulario);
 	}
 
 	class PainelControle extends JPanel {
@@ -85,7 +58,7 @@ public class ReferenciaDialog extends JFrame {
 			buttonFechar.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					fechar();
+					Util.fechar(ReferenciaDialog.this);
 				}
 			});
 		}

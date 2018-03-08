@@ -61,6 +61,7 @@ public class ModeloBundle implements TableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		ChaveValor cv = listagem.get(rowIndex);
+
 		return columnIndex == 0 ? cv.chave : cv.valor;
 	}
 

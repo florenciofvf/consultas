@@ -204,7 +204,8 @@ public class PainelReferencia extends JPanel {
 				new DadosDialog(formulario, Util.getSQL(consulta), Util.getSQL(atualizacao), Util.getSQL(exclusao),
 						tabela);
 			} catch (Exception e) {
-				e.printStackTrace();
+				String msg = Util.getStackTrace(getClass().getName() + ".texto()", e);
+				Util.mensagem(this, msg);
 			}
 		}
 	}

@@ -1,12 +1,20 @@
 package br.com.consultas.util;
 
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,9 +22,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.Action;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTree;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -28,6 +44,7 @@ import br.com.consultas.Campo;
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
 import br.com.consultas.Tabelas;
+import br.com.consultas.visao.Formulario;
 import br.com.consultas.visao.SQL;
 import br.com.consultas.visao.modelo.ModeloArvore;
 
@@ -117,12 +134,14 @@ public class Util {
 		if (ehVazio(s)) {
 			return false;
 		}
+
 		for (char c : s.toCharArray()) {
 			boolean ehNumero = c >= '0' && c <= '9';
 			if (!ehNumero) {
 				return false;
 			}
 		}
+
 		return true;
 	}
 
@@ -188,6 +207,12 @@ public class Util {
 		return resposta;
 	}
 
+	public static void setEspecial(List<Referencia> referencias) {
+		for (Referencia r : referencias) {
+			r.especial(false);
+		}
+	}
+
 	public static void atualizarCampoID(List<Referencia> referencias, Tabelas tabelas) {
 		for (Referencia ref : referencias) {
 			ref.setCampoID(tabelas);
@@ -207,6 +232,7 @@ public class Util {
 
 	public static void ordenar(List<Referencia> referencias) {
 		Collections.sort(referencias, new Comparador());
+
 		for (Referencia r : referencias) {
 			r.ordenar();
 		}
@@ -223,10 +249,13 @@ public class Util {
 		if (ehVazio(s)) {
 			return null;
 		}
+
 		s = s.trim();
+
 		if (s.endsWith(";")) {
 			s = s.substring(0, s.length() - 1);
 		}
+
 		return s;
 	}
 
@@ -259,7 +288,9 @@ public class Util {
 	}
 
 	public static void mensagem(Component componente, String string) {
-		JOptionPane.showMessageDialog(componente, string);
+		JScrollPane scrollPane = new JScrollPane(new JTextArea(string));
+		scrollPane.setPreferredSize(new Dimension(500, 300));
+		JOptionPane.showMessageDialog(componente, scrollPane);
 	}
 
 	public static boolean confirmarUpdate(Component componente) {
@@ -294,6 +325,33 @@ public class Util {
 			List<Object> lista = new ArrayList<>();
 			r.caminho(lista);
 			lista.add(0, raiz);
+
+			TreePath path = new TreePath(lista.toArray(new Object[] {}));
+			if (expandir) {
+				tree.expandPath(path);
+			} else {
+				tree.collapsePath(path);
+			}
+		}
+	}
+
+	public static void expandirRetrairID(JTree tree, boolean expandir, Tabelas tabelas) {
+		ModeloArvore modelo = (ModeloArvore) tree.getModel();
+		String raiz = (String) modelo.getRoot();
+		int filhos = modelo.getChildCount(raiz);
+
+		List<Referencia> folhas = new ArrayList<>();
+
+		for (int i = 0; i < filhos; i++) {
+			Referencia ref = (Referencia) modelo.getChild(raiz, i);
+			ref.addFolhaID(folhas, tabelas);
+		}
+
+		for (Referencia r : folhas) {
+			List<Object> lista = new ArrayList<>();
+			r.caminho(lista);
+			lista.add(0, raiz);
+
 			TreePath path = new TreePath(lista.toArray(new Object[] {}));
 			if (expandir) {
 				tree.expandPath(path);
@@ -343,5 +401,48 @@ public class Util {
 			TableColumn column = columnModel.getColumn(icoluna);
 			column.setPreferredWidth(width + 7);
 		}
+	}
+
+	public static void setActionESC(JComponent component, Action action) {
+		InputMap inputMap = component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "esc");
+
+		ActionMap actionMap = component.getActionMap();
+		actionMap.put("esc", action);
+	}
+
+	public static void fechar(Window w) {
+		WindowEvent event = new WindowEvent(w, WindowEvent.WINDOW_CLOSING);
+		EventQueue systemEventQueue = Toolkit.getDefaultToolkit().getSystemEventQueue();
+		systemEventQueue.postEvent(event);
+	}
+
+	public static void setWindowListener(final JFrame frame, final Formulario formulario) {
+		frame.addWindowListener(new WindowAdapter() {
+			public void windowIconified(WindowEvent e) {
+				frame.setState(JFrame.NORMAL);
+			}
+
+			public void windowOpened(WindowEvent e) {
+				formulario.abrirJanela();
+			}
+
+			public void windowClosing(WindowEvent e) {
+				formulario.fecharJanela();
+			}
+		});
+	}
+
+	public static String getStackTrace(String info, Exception e) {
+		StringBuilder sb = new StringBuilder(info + "\r\n\r\n");
+
+		if (e != null) {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			PrintStream ps = new PrintStream(baos);
+			e.printStackTrace(ps);
+			sb.append(new String(baos.toByteArray()));
+		}
+
+		return sb.toString();
 	}
 }

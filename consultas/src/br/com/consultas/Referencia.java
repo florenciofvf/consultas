@@ -100,6 +100,19 @@ public class Referencia {
 		}
 	}
 
+	public void addFolhaID(List<Referencia> referencias, Tabelas tabelas) {
+		Tabela tab = tabelas.get(alias);
+		Campo campo = tab.get(0);
+
+		if (getCount() == 0 && !Util.ehVazio(campo.getValor())) {
+			referencias.add(this);
+		} else {
+			for (Referencia r : getReferencias()) {
+				r.addFolhaID(referencias, tabelas);
+			}
+		}
+	}
+
 	public void addFolha(List<Referencia> referencias) {
 		if (getCount() == 0) {
 			referencias.add(this);
@@ -112,6 +125,7 @@ public class Referencia {
 
 	public void caminho(List<Object> referencias) {
 		Referencia pai = this.pai;
+
 		while (pai != null) {
 			referencias.add(0, pai);
 			pai = pai.pai;
@@ -235,12 +249,16 @@ public class Referencia {
 		}
 
 		StringBuilder set = new StringBuilder();
+
 		boolean ativado = false;
+
 		while (it.hasNext()) {
 			Campo c = it.next();
+
 			if (ativado) {
 				set.append(", ");
 			}
+
 			set.append(Util.fragmentoFiltroCampo(c));
 			ativado = true;
 		}

@@ -61,6 +61,7 @@ public class ModeloReferencia implements TableModel {
 		if (columnIndex == 0) {
 			return false;
 		}
+
 		CampoReferencia campo = campos.get(rowIndex);
 		return campo.editavel;
 	}
@@ -68,12 +69,14 @@ public class ModeloReferencia implements TableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		CampoReferencia campo = campos.get(rowIndex);
+
 		return columnIndex == 0 ? campo.nome : campo.getValor(referencia);
 	}
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		CampoReferencia campo = campos.get(rowIndex);
+
 		if (columnIndex == COLUNAS.length - 1 && aValue != null) {
 			campo.setValor(referencia, aValue.toString());
 		}

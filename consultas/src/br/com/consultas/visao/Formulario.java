@@ -57,6 +57,7 @@ public class Formulario extends JFrame {
 	private final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 	private final JMenu menuArquivo = new JMenu(Util.getString("label.arquivo"));
 	protected final List<Referencia> referencias = new ArrayList<>();
+	private final ProgressoDialog progresso = new ProgressoDialog();
 	private final JTabbedPane fichario = new JTabbedPane();
 	private final JTextArea textArea = new JTextArea();
 	protected final Tabelas tabelas = new Tabelas();
@@ -87,7 +88,8 @@ public class Formulario extends JFrame {
 				Method method = classe.getMethod("setWindowCanFullScreen", Window.class, Boolean.TYPE);
 				method.invoke(classe, this, true);
 			} catch (Exception e) {
-				e.printStackTrace();
+				String msg = Util.getStackTrace(getClass().getName() + ".setWindowCanFullScreen()", e);
+				Util.mensagem(this, msg);
 			}
 		}
 
@@ -133,6 +135,7 @@ public class Formulario extends JFrame {
 				for (Tabela t : tabelas.getTabelas()) {
 					t.limparCampos();
 				}
+				Util.setEspecial(referencias);
 				atualizarCampoIDForm();
 			}
 		});
@@ -143,6 +146,7 @@ public class Formulario extends JFrame {
 				for (Tabela t : tabelas.getTabelas()) {
 					t.limparID();
 				}
+				Util.setEspecial(referencias);
 				atualizarCampoIDForm();
 			}
 		});
@@ -191,29 +195,34 @@ public class Formulario extends JFrame {
 
 	void executeUpdate() {
 		String string = Util.getSQL(textArea.getText());
+
 		if (string == null) {
 			return;
 		}
+
 		if (Util.confirmarUpdate(this)) {
 			try {
 				DadosDialog.executeUpdate(string);
 				Util.mensagem(this, Util.getString("label.sucesso"));
 			} catch (Exception e) {
-				e.printStackTrace();
-				Util.mensagem(this, Util.getString("label.erro"));
+				String msg = Util.getStackTrace(getClass().getName() + ".executeUpdate()", e);
+				Util.mensagem(this, msg);
 			}
 		}
 	}
 
 	void executeQuery() {
 		String string = Util.getSQL(textArea.getText());
+
 		if (string == null) {
 			return;
 		}
+
 		try {
 			new DadosDialog(this, string, null, null, null);
 		} catch (Exception e) {
-			e.printStackTrace();
+			String msg = Util.getStackTrace(getClass().getName() + ".executeQuery()", e);
+			Util.mensagem(this, msg);
 		}
 	}
 
@@ -222,12 +231,12 @@ public class Formulario extends JFrame {
 		textArea.requestFocus();
 	}
 
-	void abrirJanela() {
+	public void abrirJanela() {
 		janelas++;
 		setAlwaysOnTop(janelas <= 0);
 	}
 
-	void fecharJanela() {
+	public void fecharJanela() {
 		janelas--;
 		setAlwaysOnTop(janelas <= 0);
 		if (janelas < 0) {
@@ -250,6 +259,7 @@ public class Formulario extends JFrame {
 		PainelConsultas() {
 			arvore = new JTree(new ModeloArvore(referencias, Util.getString("label.consultas")));
 			arvore.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+			arvore.setCellRenderer(new TreeCellRenderer());
 			arvore.addMouseListener(new OuvinteArvore());
 			setLayout(new BorderLayout());
 
@@ -269,7 +279,13 @@ public class Formulario extends JFrame {
 
 		public void atualizarCampoID() {
 			Util.atualizarCampoID(referencias, tabelas);
-			arvore.setModel(new ModeloArvore(referencias, Util.getString("label.consultas")));
+			/*
+			 * Util.expandirRetrairID(arvore, true, tabelas);
+			 * arvore.setModel(new ModeloArvore(referencias,
+			 * Util.getString("label.consultas")));
+			 */
+			arvore.revalidate();
+			arvore.repaint();
 		}
 
 		private void config() {
@@ -287,6 +303,7 @@ public class Formulario extends JFrame {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
 					Tabela tabela = selecionado.getTabela(tabelas);
 					tabela.limparID();
+					atualizarCampoIDForm();
 					texto(sql.dados, sql.update, sql.delete, tabela, true, true);
 				}
 			});
@@ -305,6 +322,7 @@ public class Formulario extends JFrame {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
 					Tabela tabela = selecionado.getTabela(tabelas);
 					tabela.limparID();
+					atualizarCampoIDForm();
 					texto(sql.dados, sql.update, sql.delete, tabela, true, false);
 				}
 			});
@@ -323,6 +341,7 @@ public class Formulario extends JFrame {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
 					Tabela tabela = selecionado.getTabela(tabelas);
 					tabela.limparID();
+					atualizarCampoIDForm();
 					texto(sql.select, sql.update, sql.delete, tabela, true, true);
 				}
 			});
@@ -341,6 +360,7 @@ public class Formulario extends JFrame {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
 					Tabela tabela = selecionado.getTabela(tabelas);
 					tabela.limparID();
+					atualizarCampoIDForm();
 					texto(sql.select, sql.update, sql.delete, tabela, true, false);
 				}
 			});
@@ -429,7 +449,8 @@ public class Formulario extends JFrame {
 					new DadosDialog(Formulario.this, Util.getSQL(consulta), Util.getSQL(atualizacao),
 							Util.getSQL(exclusao), tabela);
 				} catch (Exception e) {
-					e.printStackTrace();
+					String msg = Util.getStackTrace(getClass().getName() + ".texto()", e);
+					Util.mensagem(this, msg);
 				}
 			}
 		}
@@ -526,9 +547,12 @@ public class Formulario extends JFrame {
 			}
 
 			try {
-				DadosDialog.atualizarTotalRegistros(referencias, tabelas);
+				progresso.exibir(referencias.size());
+				DadosDialog.atualizarTotalRegistros(referencias, tabelas, progresso);
+				progresso.esconder();
 			} catch (Exception e) {
-				e.printStackTrace();
+				String msg = Util.getStackTrace(getClass().getName() + ".atualizarTotalRegistros()", e);
+				Util.mensagem(this, msg);
 			}
 
 			if (comRegistros) {
@@ -569,6 +593,7 @@ public class Formulario extends JFrame {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
 					Tabela tabela = selecionado.getTabela(tabelas);
 					tabela.limparID();
+					atualizarCampoIDForm();
 					texto(sql.dados, sql.update, sql.delete, tabela, true, true);
 				}
 			});
@@ -587,6 +612,7 @@ public class Formulario extends JFrame {
 					SQL sql = Util.criarSQL(selecionado, tabelas);
 					Tabela tabela = selecionado.getTabela(tabelas);
 					tabela.limparID();
+					atualizarCampoIDForm();
 					texto(sql.dados, sql.update, sql.delete, tabela, true, false);
 				}
 			});
@@ -675,7 +701,8 @@ public class Formulario extends JFrame {
 					new DadosDialog(Formulario.this, Util.getSQL(consulta), Util.getSQL(atualizacao),
 							Util.getSQL(exclusao), tabela);
 				} catch (Exception e) {
-					e.printStackTrace();
+					String msg = Util.getStackTrace(getClass().getName() + ".texto()", e);
+					Util.mensagem(this, msg);
 				}
 			}
 		}
@@ -746,7 +773,7 @@ public class Formulario extends JFrame {
 			super(new FlowLayout(FlowLayout.LEFT));
 
 			add(labelStatus);
-			add(buttonFechar);
+			/* add(buttonFechar); */
 			add(buttonLimpar);
 			add(buttonUpdate);
 			add(buttonQuery);

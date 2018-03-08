@@ -3,15 +3,10 @@ package br.com.consultas.visao;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -33,7 +28,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.EventListenerList;
@@ -109,75 +103,60 @@ public class DadosDialog extends JFrame {
 	}
 
 	private void cfg() {
-		((JComponent) getContentPane()).getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-				.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "esc");
-		((JComponent) getContentPane()).getActionMap().put("esc", new AbstractAction() {
+		Util.setActionESC((JComponent) getContentPane(), new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 
-			@Override
 			public void actionPerformed(ActionEvent e) {
-				fechar();
+				Util.fechar(DadosDialog.this);
 			}
 		});
 
-		addWindowListener(new WindowAdapter() {
-			public void windowIconified(WindowEvent e) {
-				setState(NORMAL);
-			}
-
-			public void windowOpened(WindowEvent e) {
-				formulario.abrirJanela();
-			}
-
-			public void windowClosing(WindowEvent e) {
-				formulario.fecharJanela();
-			}
-		});
-	}
-
-	void fechar() {
-		WindowEvent event = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
-		EventQueue systemEventQueue = Toolkit.getDefaultToolkit().getSystemEventQueue();
-		systemEventQueue.postEvent(event);
+		Util.setWindowListener(this, formulario);
 	}
 
 	void executeUpdate() {
 		String string = Util.getSQL(textAreaAtualiza.getText());
+
 		if (string == null) {
 			return;
 		}
+
 		if (Util.confirmarUpdate(this)) {
 			try {
 				int i = executeUpdate(string);
 				Util.mensagem(this, Util.getString("label.sucesso") + " (" + i + ")");
 			} catch (Exception e) {
-				e.printStackTrace();
-				Util.mensagem(this, Util.getString("label.erro"));
+				String msg = Util.getStackTrace(getClass().getName() + ".executeUpdate()", e);
+				Util.mensagem(this, msg);
 			}
 		}
 	}
 
 	void executeDelete() {
 		String string = Util.getSQL(textAreaExclusao.getText());
+
 		if (string == null) {
 			return;
 		}
+
 		if (Util.confirmarUpdate(this)) {
 			try {
 				int i = executeUpdate(string);
 				Util.mensagem(this, Util.getString("label.sucesso") + " (" + i + ")");
 			} catch (Exception e) {
-				e.printStackTrace();
-				Util.mensagem(this, Util.getString("label.erro"));
+				String msg = Util.getStackTrace(getClass().getName() + ".executeDelete()", e);
+				Util.mensagem(this, msg);
 			}
 		}
 	}
 
 	void executeQuery() {
 		String string = Util.getSQL(textAreaConsulta.getText());
+
 		if (string == null) {
 			return;
 		}
+
 		try {
 			processar(string, getGraphics());
 			fichario.setSelectedIndex(0);
@@ -192,7 +171,8 @@ public class DadosDialog extends JFrame {
 
 			formulario.atualizarCampoIDForm();
 		} catch (Exception e) {
-			e.printStackTrace();
+			String msg = Util.getStackTrace(getClass().getName() + ".executeQuery()", e);
+			Util.mensagem(this, msg);
 		}
 	}
 
@@ -213,14 +193,18 @@ public class DadosDialog extends JFrame {
 		conn.close();
 	}
 
-	public static void atualizarTotalRegistros(List<Referencia> referencias, Tabelas tabelas) throws Exception {
+	public static void atualizarTotalRegistros(List<Referencia> referencias, Tabelas tabelas, ProgressoDialog progresso)
+			throws Exception {
 		Connection conn = getConnection();
+
+		int i = 0;
 
 		for (Referencia ref : referencias) {
 			PreparedStatement psmt = conn.prepareStatement(ref.getConsultaCount(tabelas));
 			ResultSet rs = psmt.executeQuery();
 			rs.next();
 			ref.setTotalRegistros(rs.getInt("total"));
+			progresso.atualizar(++i);
 			rs.close();
 			psmt.close();
 		}
@@ -333,7 +317,7 @@ public class DadosDialog extends JFrame {
 			buttonFechar.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					fechar();
+					Util.fechar(DadosDialog.this);
 				}
 			});
 

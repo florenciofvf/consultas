@@ -42,12 +42,14 @@ public class ModeloCampo implements TableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		Campo campo = tabela.get(rowIndex);
+
 		return columnIndex == 0 ? campo.getNome() : campo.getValor();
 	}
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		Campo campo = tabela.get(rowIndex);
+
 		if (columnIndex == COLUNAS.length - 1 && aValue != null) {
 			campo.setValor(aValue.toString());
 		}
