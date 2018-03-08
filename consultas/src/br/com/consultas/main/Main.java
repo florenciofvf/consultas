@@ -21,6 +21,20 @@ public class Main {
 			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		}
 
-		new Formulario(new File("projeto_atual.xml"));
+		File file = new File("projeto_atual.xml");
+
+		if (file.exists() && file.canRead()) {
+			new Formulario(file);
+
+		} else if (!file.exists()) {
+			Util.mensagem(null, "Arquivo inexistente!\r\n\r\n" + file.getAbsolutePath());
+
+		} else if (!file.canRead()) {
+			Util.mensagem(null, "O arquivo não pode ser lido!\r\n\r\n" + file.getAbsolutePath());
+
+		} else {
+			Util.mensagem(null, "Erro!");
+		}
+
 	}
 }
