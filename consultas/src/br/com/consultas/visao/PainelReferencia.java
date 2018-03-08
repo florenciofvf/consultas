@@ -136,6 +136,14 @@ public class PainelReferencia extends JPanel {
 			}
 		});
 
+		popup.itemPesquisaDialogoAlias.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SQL sql = Util.criarSQL(selecionado, formulario.tabelas, Util.getAliasTemp(PainelReferencia.this, selecionado));
+				texto(sql.select, sql.update, sql.delete, selecionado.getTabela(formulario.tabelas), true, true);
+			}
+		});
+
 		popup.itemPesquisaMemoriaLimpo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

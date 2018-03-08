@@ -132,6 +132,25 @@ public class Referencia {
 		}
 	}
 
+	public List<String> getCaminho() {
+		List<String> lista = new ArrayList<>();
+
+		Referencia pai = this.pai;
+
+		while (pai != null) {
+			lista.add(0, pai.getAlias());
+			pai = pai.pai;
+		}
+
+		lista.add(getAlias());
+
+		return lista;
+	}
+
+	public Object[] getCaminhoArray() {
+		return getCaminho().toArray();
+	}
+
 	public List<Referencia> getReferencias() {
 		return referencias;
 	}
@@ -289,13 +308,14 @@ public class Referencia {
 		return sb.toString();
 	}
 
-	public String gerarConsulta(Tabelas tabelas) {
+	public String gerarConsulta(Tabelas tabelas, String aliasTemp) {
 		if (inverso && pai == null) {
 			throw new IllegalStateException(alias + ": INVERSO");
 		}
 
 		Tabela tab = tabelas.get(alias);
-		StringBuilder sb = new StringBuilder("SELECT " + getAlias() + ".* FROM");
+		StringBuilder sb = new StringBuilder(
+				"SELECT " + (Util.ehVazio(aliasTemp) ? getAlias() : aliasTemp) + ".* FROM");
 
 		if (pai != null) {
 			completarConsulta(sb, tabelas);

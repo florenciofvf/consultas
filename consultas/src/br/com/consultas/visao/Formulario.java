@@ -354,6 +354,14 @@ public class Formulario extends JFrame {
 				}
 			});
 
+			popup.itemPesquisaDialogoAlias.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					SQL sql = Util.criarSQL(selecionado, tabelas, Util.getAliasTemp(PainelConsultas.this, selecionado));
+					texto(sql.select, sql.update, sql.delete, selecionado.getTabela(tabelas), true, true);
+				}
+			});
+
 			popup.itemPesquisaMemoriaLimpo.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {

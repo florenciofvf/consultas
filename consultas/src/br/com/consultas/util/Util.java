@@ -298,15 +298,26 @@ public class Util {
 				getString("label.atencao"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION;
 	}
 
-	public static SQL criarSQL(Referencia ref, Tabelas tabelas) {
+	public static SQL criarSQL(Referencia ref, Tabelas tabelas, String aliasTemp) {
 		SQL sql = new SQL();
 
 		sql.dados = ref.gerarConsultaDados(tabelas);
-		sql.select = ref.gerarConsulta(tabelas);
+		sql.select = ref.gerarConsulta(tabelas, aliasTemp);
 		sql.delete = ref.gerarDelete(tabelas);
 		sql.update = ref.gerarUpdate(tabelas);
 
 		return sql;
+	}
+
+	public static SQL criarSQL(Referencia ref, Tabelas tabelas) {
+		return criarSQL(ref, tabelas, null);
+	}
+
+	public static String getAliasTemp(Component componente, Referencia referencia) {
+		Object[] opcoes = referencia.getCaminhoArray();
+		Object selecionado = JOptionPane.showInputDialog(componente, "Selecione", getString("label.opcoes"),
+				JOptionPane.INFORMATION_MESSAGE, null, opcoes, opcoes[opcoes.length - 1]);
+		return selecionado == null ? null : selecionado.toString();
 	}
 
 	public static void expandirRetrair(JTree tree, boolean expandir) {

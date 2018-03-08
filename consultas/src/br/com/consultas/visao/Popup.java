@@ -10,6 +10,7 @@ public class Popup extends JPopupMenu {
 	private static final long serialVersionUID = 1L;
 	final JMenuItem itemPesquisaDialogoLimpo = new JMenuItem(Util.getString("label.gerar_pesquisa_dialogo_limpo"));
 	final JMenuItem itemPesquisaMemoriaLimpo = new JMenuItem(Util.getString("label.gerar_pesquisa_memoria_limpo"));
+	final JMenuItem itemPesquisaDialogoAlias = new JMenuItem(Util.getString("label.gerar_pesquisa_dialogo_alias"));
 	final JMenuItem itemRegistrosMemoriaLimpo = new JMenuItem(Util.getString("label.gerar_dados_memoria_limpo"));
 	final JMenuItem itemRegistrosDialogoLimpo = new JMenuItem(Util.getString("label.gerar_dados_dialogo_limpo"));
 	final JMenuItem itemPesquisaDialogo = new JMenuItem(Util.getString("label.gerar_pesquisa_dialogo"));
@@ -36,21 +37,23 @@ public class Popup extends JPopupMenu {
 		add(menuDialogo);
 	}
 
-	public void dialogo() {
-		menuDialogo.add(itemPesquisaDialogoLimpo);
-		menuDialogo.add(itemPesquisaDialogo);
-		menuDialogo.addSeparator();
-		menuDialogo.add(itemRegistrosDialogoLimpo);
-		menuDialogo.add(itemRegistrosDialogo);
-
-		add(menuDialogo);
-	}
-
 	public void memoriaMeuSQL() {
 		menuMemoria.add(itemRegistrosMemoriaLimpo);
 		menuMemoria.add(itemRegistrosMemoria);
 
 		add(menuMemoria);
+	}
+
+	public void dialogo() {
+		menuDialogo.add(itemPesquisaDialogoLimpo);
+		menuDialogo.add(itemPesquisaDialogo);
+		menuDialogo.addSeparator();
+		menuDialogo.add(itemPesquisaDialogoAlias);
+		menuDialogo.addSeparator();
+		menuDialogo.add(itemRegistrosDialogoLimpo);
+		menuDialogo.add(itemRegistrosDialogo);
+
+		add(menuDialogo);
 	}
 
 	public void memoria() {
