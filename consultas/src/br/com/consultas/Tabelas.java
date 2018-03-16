@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.com.consultas.util.Util;
+
 public class Tabelas {
 	private final Map<String, Tabela> tabelas;
 
@@ -13,11 +15,28 @@ public class Tabelas {
 	}
 
 	public void add(Tabela tabela) {
+		if (tabela.getAlias() == null) {
+			try {
+				throw new Exception("ALIAS INEXISTENTE PARA A TABELA: " + tabela.getNome());
+			} catch (Exception ex) {
+				String msg = Util.getStackTrace("Tabelas.add()", ex);
+				Util.mensagem(null, msg);
+				System.exit(0);
+			}
+		}
+
 		String alias = tabela.getAlias().getValor();
 
 		Tabela tmp = tabelas.get(alias);
+
 		if (tmp != null) {
-			throw new IllegalArgumentException("ALIAS EXISTENTE! " + alias);
+			try {
+				throw new Exception("ALIAS DUPLICADO: " + alias);
+			} catch (Exception ex) {
+				String msg = Util.getStackTrace("Tabelas.add()", ex);
+				Util.mensagem(null, msg);
+				System.exit(0);
+			}
 		}
 
 		tabelas.put(alias, tabela);
@@ -27,7 +46,13 @@ public class Tabelas {
 		Tabela tabela = tabelas.get(alias);
 
 		if (tabela == null) {
-			throw new IllegalArgumentException(alias);
+			try {
+				throw new Exception("TABELA NÃO ENCONTRADA PARA O ALIAS: " + alias);
+			} catch (Exception ex) {
+				String msg = Util.getStackTrace("Tabelas.get()", ex);
+				Util.mensagem(null, msg);
+				System.exit(0);
+			}
 		}
 
 		return tabela;

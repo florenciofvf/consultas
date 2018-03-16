@@ -2,6 +2,8 @@ package br.com.consultas.visao.modelo;
 
 import java.util.List;
 
+import javax.swing.event.EventListenerList;
+import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
@@ -9,6 +11,7 @@ import javax.swing.tree.TreePath;
 import br.com.consultas.Referencia;
 
 public class ModeloArvore implements TreeModel {
+	private final EventListenerList listenerList = new EventListenerList();
 	private final List<Referencia> referencias;
 	private final String raiz;
 
@@ -41,7 +44,7 @@ public class ModeloArvore implements TreeModel {
 			return referencias.size();
 		}
 
-		return ((Referencia) parent).getCount();
+		return ((Referencia) parent).getTotalFilhos();
 	}
 
 	@Override
@@ -50,7 +53,7 @@ public class ModeloArvore implements TreeModel {
 			return referencias.isEmpty();
 		}
 
-		return ((Referencia) parent).getCount() == 0;
+		return ((Referencia) parent).getTotalFilhos() == 0;
 	}
 
 	@Override
@@ -68,9 +71,21 @@ public class ModeloArvore implements TreeModel {
 
 	@Override
 	public void addTreeModelListener(TreeModelListener l) {
+		listenerList.add(TreeModelListener.class, l);
 	}
 
 	@Override
 	public void removeTreeModelListener(TreeModelListener l) {
+		listenerList.remove(TreeModelListener.class, l);
+	}
+
+	public void treeNodesChanged(TreeModelEvent event) {
+		Object[] listeners = listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == TreeModelListener.class) {
+				((TreeModelListener) listeners[i + 1]).treeNodesChanged(event);
+			}
+		}
 	}
 }

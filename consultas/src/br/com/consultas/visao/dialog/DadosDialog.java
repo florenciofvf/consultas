@@ -1,9 +1,8 @@
-package br.com.consultas.visao;
+package br.com.consultas.visao.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,17 +16,9 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.EventListenerList;
@@ -41,63 +32,82 @@ import br.com.consultas.Campo;
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
 import br.com.consultas.Tabelas;
+import br.com.consultas.util.CellColor;
 import br.com.consultas.util.Util;
+import br.com.consultas.visao.Formulario;
+import br.com.consultas.visao.PainelReferencia;
+import br.com.consultas.visao.comp.Button;
+import br.com.consultas.visao.comp.CheckBox;
+import br.com.consultas.visao.comp.Label;
+import br.com.consultas.visao.comp.PanelBorderLayout;
+import br.com.consultas.visao.comp.PanelLeft;
+import br.com.consultas.visao.comp.ScrollPane;
+import br.com.consultas.visao.comp.SplitPane;
+import br.com.consultas.visao.comp.TabbedPane;
+import br.com.consultas.visao.comp.Table;
+import br.com.consultas.visao.comp.TextArea;
+import br.com.consultas.visao.modelo.ModeloOrdenacao;
+import br.com.consultas.visao.modelo.ModeloRSMD;
+import br.com.consultas.visao.modelo.ModeloVazio;
 
-public class DadosDialog extends JFrame {
+public class DadosDialog extends Dialogo {
 	private static final long serialVersionUID = 1L;
-	private final JCheckBox chkAbrirDialogReferencia = new JCheckBox(Util.getString("label.abrir_dialog_referencia"),
-			Util.getBooleanConfig("dados_dialog.abrir_dialog_referencia"));
-	private final JCheckBox chkAbrirAbaReferencia = new JCheckBox(Util.getString("label.abrir_aba_referencia"),
-			Util.getBooleanConfig("dados_dialog.abrir_aba_referencia"));
-	private final JTextArea textAreaConsulta = new JTextArea();
-	private final JTextArea textAreaAtualiza = new JTextArea();
-	private final JTextArea textAreaExclusao = new JTextArea();
-	private final JTabbedPane fichario = new JTabbedPane();
+	private final CheckBox chkAbrirDialogReferencia = new CheckBox("label.abrir_dialog_referencia",
+			"dados_dialog.abrir_dialog_referencia");
+	private final CheckBox chkAbrirAbaReferencia = new CheckBox("label.abrir_aba_referencia",
+			"dados_dialog.abrir_aba_referencia");
+	private Table tableMetaInfo = new Table(new ModeloOrdenacao(new ModeloVazio()));
+	private Table table = new Table(new ModeloOrdenacao(new ModeloVazio()));
+	private final TextArea textAreaConsulta = new TextArea();
+	private final TextArea textAreaAtualiza = new TextArea();
+	private final TextArea textAreaExclusao = new TextArea();
+	private final TabbedPane fichario = new TabbedPane();
 	private final PainelRegistros painelRegistros;
 	private final PainelReferencia abaConsultas;
 	private final Formulario formulario;
-	private JTable table = new JTable();
 	private final Tabela tabela;
 	private final String TITLE;
 
 	public DadosDialog(Formulario formulario, String consulta, String atualizacao, String exclusao, Tabela tabela)
 			throws Exception {
-		int largura = (int) (formulario.getWidth() * .8);
-		this.tabela = tabela;
-		this.formulario = formulario;
+		final int largura = (int) (formulario.getWidth() * .8);
 		TITLE = tabela != null ? tabela.getNome() : "";
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+		this.formulario = formulario;
+		this.tabela = tabela;
+
 		processar(consulta, formulario.getGraphics());
 
 		if (tabela != null) {
 			painelRegistros = new PainelRegistros(largura);
-			fichario.addTab(Util.getString("label.consultas"), painelRegistros);
+			fichario.addTab("label.consultas", painelRegistros);
 		} else {
 			painelRegistros = null;
-			fichario.addTab(Util.getString("label.registros"), new JScrollPane(table));
+			fichario.addTab("label.registros", new ScrollPane(table));
 		}
 
-		fichario.addTab(Util.getString("label.consulta"), new JScrollPane(textAreaConsulta));
-		fichario.addTab(Util.getString("label.atualiza"), new JScrollPane(textAreaAtualiza));
-		fichario.addTab(Util.getString("label.exclusao"), new JScrollPane(textAreaExclusao));
+		fichario.addTab("label.consulta", textAreaConsulta);
+		fichario.addTab("label.atualiza", textAreaAtualiza);
+		fichario.addTab("label.exclusao", textAreaExclusao);
+		fichario.addTab("label.meta_info", new ScrollPane(tableMetaInfo));
 
 		if (tabela != null) {
-			abaConsultas = new PainelReferencia(formulario, formulario.referencias, tabela);
-			fichario.addTab(Util.getString("label.consultas"), abaConsultas);
+			abaConsultas = new PainelReferencia(formulario, tabela);
+			fichario.addTab("label.consultas", abaConsultas);
 		} else {
 			abaConsultas = null;
 		}
 
-		setLayout(new BorderLayout());
 		add(BorderLayout.CENTER, fichario);
 		add(BorderLayout.SOUTH, new PainelControle());
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
 		textAreaAtualiza.setText(atualizacao);
 		textAreaConsulta.setText(consulta);
 		textAreaExclusao.setText(exclusao);
-		setAlwaysOnTop(true);
+
 		setSize(largura, 500);
 		setLocationRelativeTo(formulario);
+
 		cfg();
 		setVisible(true);
 	}
@@ -114,7 +124,7 @@ public class DadosDialog extends JFrame {
 		Util.setWindowListener(this, formulario);
 	}
 
-	void executeUpdate() {
+	private void executeUpdate() {
 		String string = Util.getSQL(textAreaAtualiza.getText());
 
 		if (string == null) {
@@ -132,7 +142,7 @@ public class DadosDialog extends JFrame {
 		}
 	}
 
-	void executeDelete() {
+	private void executeDelete() {
 		String string = Util.getSQL(textAreaExclusao.getText());
 
 		if (string == null) {
@@ -150,7 +160,7 @@ public class DadosDialog extends JFrame {
 		}
 	}
 
-	void executeQuery() {
+	private void executeQuery() {
 		String string = Util.getSQL(textAreaConsulta.getText());
 
 		if (string == null) {
@@ -243,7 +253,7 @@ public class DadosDialog extends JFrame {
 				: TITLE + " - REGISTROS [" + dados.size() + "]");
 
 		int[] is = table.getSelectedRows();
-		table.setModel(new DefaultTableModel(dados, colunas));
+		table.setModel(new ModeloOrdenacao(new DefaultTableModel(dados, colunas)));
 
 		if (tabela != null) {
 			TableColumnModel columnModel = table.getColumnModel();
@@ -252,7 +262,7 @@ public class DadosDialog extends JFrame {
 			column.setCellEditor(new CellEditor());
 		}
 
-		Util.ajustar(table, graphics);
+		table.ajustar(graphics);
 
 		if (is != null) {
 			for (int i : is) {
@@ -261,34 +271,27 @@ public class DadosDialog extends JFrame {
 				}
 			}
 		}
+
+		tableMetaInfo.setModel(new ModeloOrdenacao(new ModeloRSMD(rsmd)));
+		tableMetaInfo.ajustar(graphics);
 	}
 
-	class PainelRegistros extends JPanel {
+	private class PainelRegistros extends PanelBorderLayout {
 		private static final long serialVersionUID = 1L;
-		final PainelReferencia painelReferencia;
-		JLabel labelStatus = new JLabel();
-		JLabel labelValor = new JLabel();
+		private final Label labelStatus = new Label(Color.BLUE);
+		private final Label labelValor = new Label(Color.RED);
+		private final SplitPane splitPane = new SplitPane();
+		private final PainelReferencia painelReferencia;
 
 		PainelRegistros(int largura) {
-			super(new BorderLayout());
-
-			JPanel painelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			painelNorte.add(chkAbrirDialogReferencia);
-			painelNorte.add(chkAbrirAbaReferencia);
-			labelStatus.setForeground(Color.BLUE);
-			add(BorderLayout.NORTH, painelNorte);
-			labelValor.setForeground(Color.RED);
-			painelNorte.add(labelStatus);
-			painelNorte.add(labelValor);
-
-			JSplitPane splitPane = new JSplitPane();
 			splitPane.setDividerLocation(largura / 2);
-			splitPane.setOneTouchExpandable(true);
-			splitPane.setContinuousLayout(true);
-			splitPane.setLeftComponent(new JScrollPane(table));
-			painelReferencia = new PainelReferencia(formulario, formulario.referencias, tabela);
+
+			splitPane.setLeftComponent(new ScrollPane(table));
+			painelReferencia = new PainelReferencia(formulario, tabela);
 			splitPane.setRightComponent(painelReferencia);
 
+			add(BorderLayout.NORTH,
+					new PanelLeft(chkAbrirDialogReferencia, chkAbrirAbaReferencia, labelStatus, labelValor));
 			add(BorderLayout.CENTER, splitPane);
 		}
 
@@ -298,21 +301,17 @@ public class DadosDialog extends JFrame {
 		}
 	}
 
-	class PainelControle extends JPanel {
+	private class PainelControle extends PanelLeft {
 		private static final long serialVersionUID = 1L;
-		JButton buttonGetContent = new JButton(Util.getString("label.get_content"));
-		JButton buttonUpdate = new JButton(Util.getString("label.execute_update"));
-		JButton buttonDelete = new JButton(Util.getString("label.execute_delete"));
-		JButton buttonQuery = new JButton(Util.getString("label.execute_query"));
-		JButton buttonFechar = new JButton(Util.getString("label.fechar"));
+		private final Button buttonGetContent = new Button("label.get_content");
+		private final Button buttonUpdate = new Button("label.execute_update");
+		private final Button buttonDelete = new Button("label.execute_delete");
+		private final Button buttonQuery = new Button("label.execute_query");
+		private final Button buttonLargura = new Button("label.largura");
+		private final Button buttonFechar = new Button("label.fechar");
 
 		PainelControle() {
-			setLayout(new FlowLayout(FlowLayout.LEFT));
-			add(buttonFechar);
-			add(buttonUpdate);
-			add(buttonDelete);
-			add(buttonQuery);
-			add(buttonGetContent);
+			adicionar(buttonFechar, buttonUpdate, buttonDelete, buttonQuery, buttonGetContent, buttonLargura);
 
 			buttonFechar.addActionListener(new ActionListener() {
 				@Override
@@ -348,17 +347,34 @@ public class DadosDialog extends JFrame {
 					textAreaConsulta.setText(Util.getContentTransfered());
 				}
 			});
+
+			buttonLargura.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					DadosDialog.this.setSize(formulario.getWidth() - 20, DadosDialog.this.getHeight());
+					DadosDialog.this.setLocation(formulario.getX() + 10, DadosDialog.this.getY());
+
+					if (painelRegistros != null) {
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								painelRegistros.splitPane.setDividerLocation(Util.DIVISAO3);
+							}
+						});
+					}
+				}
+			});
 		}
 	}
 
-	class CellRenderer extends DefaultTableCellRenderer {
+	private class CellRenderer extends DefaultTableCellRenderer {
 		private static final long serialVersionUID = 1L;
 	}
 
-	class CellEditor extends CellRenderer implements TableCellEditor {
+	private class CellEditor extends CellRenderer implements TableCellEditor {
 		private static final long serialVersionUID = 1L;
-		private EventListenerList listenerList = new EventListenerList();
-		private ChangeEvent changeEvent = new ChangeEvent(this);
+		private final EventListenerList listenerList = new EventListenerList();
+		private final ChangeEvent changeEvent = new ChangeEvent(this);
 		private Object valor;
 
 		@Override
@@ -374,10 +390,12 @@ public class DadosDialog extends JFrame {
 		@Override
 		public boolean shouldSelectCell(EventObject anEvent) {
 			if (chkAbrirDialogReferencia.isSelected()) {
-				new ReferenciaDialog(formulario, formulario.referencias, tabela);
+				new ReferenciaDialog(formulario, tabela);
+
 			} else if (chkAbrirAbaReferencia.isSelected()) {
 				fichario.setSelectedIndex(fichario.getTabCount() - 1);
 			}
+
 			return true;
 		}
 

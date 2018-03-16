@@ -15,10 +15,12 @@ public class Main {
 			os = "";
 		}
 
-		if (os.toLowerCase().indexOf("indows") >= 0 || os.toLowerCase().indexOf("mac") >= 0) {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} else {
-			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+		if (Util.getBooleanConfig("ui_manager")) {
+			if (os.toLowerCase().indexOf("indows") >= 0 || os.toLowerCase().indexOf("mac") >= 0) {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} else {
+				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+			}
 		}
 
 		File file = new File("projeto_atual.xml");
@@ -35,6 +37,5 @@ public class Main {
 		} else {
 			Util.mensagem(null, "Erro!");
 		}
-
 	}
 }

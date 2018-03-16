@@ -1,36 +1,31 @@
 package br.com.consultas.visao;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import br.com.consultas.util.Util;
+import br.com.consultas.visao.comp.Menu;
+import br.com.consultas.visao.comp.MenuItem;
 
 public class Popup extends JPopupMenu {
 	private static final long serialVersionUID = 1L;
-	final JMenuItem itemPesquisaDialogoAliasLimpo = new JMenuItem(
-			Util.getString("label.gerar_pesquisa_dialogo_alias_limpo"));
-	final JMenuItem itemPesquisaDialogoLimpo = new JMenuItem(Util.getString("label.gerar_pesquisa_dialogo_limpo"));
-	final JMenuItem itemPesquisaMemoriaLimpo = new JMenuItem(Util.getString("label.gerar_pesquisa_memoria_limpo"));
-	final JMenuItem itemPesquisaDialogoAlias = new JMenuItem(Util.getString("label.gerar_pesquisa_dialogo_alias"));
-	final JMenuItem itemRegistrosMemoriaLimpo = new JMenuItem(Util.getString("label.gerar_dados_memoria_limpo"));
-	final JMenuItem itemRegistrosDialogoLimpo = new JMenuItem(Util.getString("label.gerar_dados_dialogo_limpo"));
-	final JMenuItem itemPesquisaDialogo = new JMenuItem(Util.getString("label.gerar_pesquisa_dialogo"));
-	final JMenuItem itemPesquisaMemoria = new JMenuItem(Util.getString("label.gerar_pesquisa_memoria"));
-	final JMenuItem itemRegistrosDialogo = new JMenuItem(Util.getString("label.gerar_dados_dialogo"));
-	final JMenuItem itemRegistrosMemoria = new JMenuItem(Util.getString("label.gerar_dados_memoria"));
-	final JMenuItem itemLimparCampos = new JMenuItem(Util.getString("label.limpar_campos"));
-	final JMenuItem itemDelete = new JMenuItem(Util.getString("label.gerar_delete"));
-	final JMenuItem itemUpdate = new JMenuItem(Util.getString("label.gerar_update"));
-	final JMenuItem itemLimparId = new JMenuItem(Util.getString("label.limpar_id"));
-	final JMenuItem itemCampos = new JMenuItem(Util.getString("label.campos"));
-	final JMenu menuDialogo = new JMenu(Util.getString("label.dialogo"));
-	final JMenu menuMemoria = new JMenu(Util.getString("label.memoria"));
-	final JMenu menuCampo = new JMenu(Util.getString("label.campo"));
-	final JMenu menuDML = new JMenu(Util.getString("label.dml"));
-
-	public Popup() {
-	}
+	final MenuItem itemPesquisaDialogoAliasLimpo = new MenuItem("label.gerar_pesquisa_dialogo_alias_limpo");
+	final MenuItem itemPesquisaDialogoLimpo = new MenuItem("label.gerar_pesquisa_dialogo_limpo");
+	final MenuItem itemPesquisaMemoriaLimpo = new MenuItem("label.gerar_pesquisa_memoria_limpo");
+	final MenuItem itemPesquisaDialogoAlias = new MenuItem("label.gerar_pesquisa_dialogo_alias");
+	final MenuItem itemRegistrosMemoriaLimpo = new MenuItem("label.gerar_dados_memoria_limpo");
+	final MenuItem itemRegistrosDialogoLimpo = new MenuItem("label.gerar_dados_dialogo_limpo");
+	final MenuItem itemPesquisaDialogo = new MenuItem("label.gerar_pesquisa_dialogo");
+	final MenuItem itemPesquisaMemoria = new MenuItem("label.gerar_pesquisa_memoria");
+	final MenuItem itemRegistrosDialogo = new MenuItem("label.gerar_dados_dialogo");
+	final MenuItem itemRegistrosMemoria = new MenuItem("label.gerar_dados_memoria");
+	final MenuItem itemLimparCampos = new MenuItem("label.limpar_campos");
+	final MenuItem itemDelete = new MenuItem("label.gerar_delete");
+	final MenuItem itemUpdate = new MenuItem("label.gerar_update");
+	final MenuItem itemLimparId = new MenuItem("label.limpar_id");
+	final MenuItem itemCampos = new MenuItem("label.campos");
+	final Menu menuDialogo = new Menu("label.dialogo");
+	final Menu menuMemoria = new Menu("label.memoria");
+	final Menu menuCampo = new Menu("label.campo");
+	final Menu menuDML = new Menu("label.dml");
 
 	public void dialogoMeuSQL() {
 		menuDialogo.add(itemRegistrosDialogoLimpo);

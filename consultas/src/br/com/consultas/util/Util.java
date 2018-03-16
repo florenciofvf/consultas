@@ -28,11 +28,9 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.event.TreeModelEvent;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -45,15 +43,18 @@ import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
 import br.com.consultas.Tabelas;
 import br.com.consultas.visao.Formulario;
-import br.com.consultas.visao.SQL;
+import br.com.consultas.visao.comp.Arvore;
+import br.com.consultas.visao.comp.TextArea;
 import br.com.consultas.visao.modelo.ModeloArvore;
 
 public class Util {
-	private static final String PREFIXO_FILTRO_CAMPO = "${";
-	private static final String SUFIXO_FILTRO_CAMPO = "}";
-
 	public static ResourceBundle bundleConfig = ResourceBundle.getBundle("config");
 	public static ResourceBundle bundleMsg = ResourceBundle.getBundle("mensagens");
+	private static final String PREFIXO_FILTRO_CAMPO = "${";
+	private static final String SUFIXO_FILTRO_CAMPO = "}";
+	private static final boolean LOG_MENSAGEM = true;
+	public static final double DIVISAO2 = 0.60;
+	public static final double DIVISAO3 = 0.70;
 
 	private Util() {
 	}
@@ -187,12 +188,12 @@ public class Util {
 			r.especial(false);
 		}
 
-		for (Referencia r : referencias) {
-			if (r.getAlias2().equals(alias)) {
-				r.setEspecial(true);
-				container.add(r);
+		for (Referencia ref : referencias) {
+			if (ref.getAlias2().equals(alias)) {
+				ref.setEspecial(true);
+				container.add(ref);
 			} else {
-				refs(container, r, alias);
+				refs(container, ref, alias);
 			}
 		}
 
@@ -207,7 +208,29 @@ public class Util {
 		return resposta;
 	}
 
-	public static void setEspecial(List<Referencia> referencias) {
+	public static void validarArvore(List<Referencia> referencias, Tabelas tabelas) {
+		for (Referencia r : referencias) {
+			r.validar(tabelas);
+		}
+	}
+
+	public static List<Referencia> filtrarTopo(List<Referencia> referencias, Tabela tabela, Tabelas tabelas) {
+		final String alias = tabela.getAlias().getValor();
+
+		List<Referencia> resposta = new ArrayList<>();
+
+		for (Referencia ref : referencias) {
+			if (ref.getAlias2().equals(alias)) {
+				resposta.add(ref);
+			}
+		}
+
+		atualizarCampoID(resposta, tabelas);
+
+		return resposta;
+	}
+
+	public static void setEspecialFalse(List<Referencia> referencias) {
 		for (Referencia r : referencias) {
 			r.especial(false);
 		}
@@ -263,10 +286,6 @@ public class Util {
 		return new Tabela("Campos");
 	}
 
-	public static Referencia criarReferencia() {
-		return new Referencia("Campos", null, false, -1, null, -1, null, null, null);
-	}
-
 	public static String fragmentoFiltroCampo(Campo campo) {
 		StringBuilder sb = new StringBuilder(campo.getNome());
 		String valor = campo.getValor();
@@ -288,9 +307,9 @@ public class Util {
 	}
 
 	public static void mensagem(Component componente, String string) {
-		JScrollPane scrollPane = new JScrollPane(new JTextArea(string));
-		scrollPane.setPreferredSize(new Dimension(500, 300));
-		JOptionPane.showMessageDialog(componente, scrollPane);
+		TextArea textArea = new TextArea(string);
+		textArea.setPreferredSize(new Dimension(500, 300));
+		JOptionPane.showMessageDialog(componente, textArea);
 	}
 
 	public static boolean confirmarUpdate(Component componente) {
@@ -320,7 +339,7 @@ public class Util {
 		return selecionado == null ? null : selecionado.toString();
 	}
 
-	public static void expandirRetrair(JTree tree, boolean expandir) {
+	public static void expandirRetrair(Arvore tree, boolean expandir) {
 		ModeloArvore modelo = (ModeloArvore) tree.getModel();
 		String raiz = (String) modelo.getRoot();
 		int filhos = modelo.getChildCount(raiz);
@@ -346,7 +365,7 @@ public class Util {
 		}
 	}
 
-	public static void expandirRetrairID(JTree tree, boolean expandir, Tabelas tabelas) {
+	public static void atualizarEstrutura(Arvore tree, Tabelas tabelas, boolean comID) {
 		ModeloArvore modelo = (ModeloArvore) tree.getModel();
 		String raiz = (String) modelo.getRoot();
 		int filhos = modelo.getChildCount(raiz);
@@ -355,20 +374,18 @@ public class Util {
 
 		for (int i = 0; i < filhos; i++) {
 			Referencia ref = (Referencia) modelo.getChild(raiz, i);
-			ref.addFolhaID(folhas, tabelas);
+			ref.atualizar(folhas, tabelas, comID);
 		}
 
 		for (Referencia r : folhas) {
 			List<Object> lista = new ArrayList<>();
 			r.caminho(lista);
 			lista.add(0, raiz);
+			lista.add(r);
 
 			TreePath path = new TreePath(lista.toArray(new Object[] {}));
-			if (expandir) {
-				tree.expandPath(path);
-			} else {
-				tree.collapsePath(path);
-			}
+			TreeModelEvent event = new TreeModelEvent(r, path);
+			modelo.treeNodesChanged(event);
 		}
 	}
 
@@ -395,6 +412,10 @@ public class Util {
 	}
 
 	public static void ajustar(JTable table, Graphics graphics) {
+		ajustar(table, graphics, 17);
+	}
+
+	public static void ajustar(JTable table, Graphics graphics, int ajuste) {
 		DefaultTableColumnModel columnModel = (DefaultTableColumnModel) table.getColumnModel();
 		FontMetrics fontMetrics = graphics.getFontMetrics();
 
@@ -410,7 +431,7 @@ public class Util {
 			}
 
 			TableColumn column = columnModel.getColumn(icoluna);
-			column.setPreferredWidth(width + 7);
+			column.setPreferredWidth(width + ajuste);
 		}
 	}
 
@@ -450,10 +471,21 @@ public class Util {
 		if (e != null) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			PrintStream ps = new PrintStream(baos);
-			e.printStackTrace(ps);
+			if (LOG_MENSAGEM) {
+				e.printStackTrace(ps);
+			} else {
+				e.printStackTrace();
+			}
 			sb.append(new String(baos.toByteArray()));
 		}
 
 		return sb.toString();
+	}
+
+	public static Tabela limparID(Referencia referencia, Formulario formulario) {
+		Tabela tabela = referencia.getTabela(formulario.getTabelas());
+		tabela.limparID();
+
+		return tabela;
 	}
 }

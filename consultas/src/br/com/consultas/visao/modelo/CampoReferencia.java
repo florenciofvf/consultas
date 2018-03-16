@@ -30,6 +30,9 @@ public class CampoReferencia {
 		} else if ("inverso".equals(nome)) {
 			return referencia.isInverso();
 
+		} else if ("cloneCompleto".equals(nome)) {
+			return referencia.isCloneCompleto();
+
 		} else if ("pk".equals(nome)) {
 			return referencia.getPk();
 
@@ -57,24 +60,29 @@ public class CampoReferencia {
 
 	void setValor(Referencia referencia, String valor) {
 		if ("alias".equals(nome)) {
+
 		} else if ("prefixo".equals(nome)) {
+
 		} else if ("aliasAlt".equals(nome)) {
 			referencia.setAliasAlt(valor);
 
 		} else if ("inverso".equals(nome)) {
-			referencia.setInverso(Boolean.parseBoolean(valor));
+			// referencia.setInverso(Boolean.parseBoolean(valor));
+
+		} else if ("cloneCompleto".equals(nome)) {
+			referencia.setCloneCompleto(Boolean.parseBoolean(valor));
 
 		} else if ("pk".equals(nome)) {
-			referencia.setPk(getInt(valor, referencia.getPk()));
+			// referencia.setPk(getInt(valor, referencia.getPk()));
 
 		} else if ("pkNome".equals(nome)) {
-			referencia.setPkNome(valor);
+			// referencia.setPkNome(valor);
 
 		} else if ("fk".equals(nome)) {
-			referencia.setFk(getInt(valor, referencia.getFk()));
+			// referencia.setFk(getInt(valor, referencia.getFk()));
 
 		} else if ("fkNome".equals(nome)) {
-			referencia.setFkNome(valor);
+			// referencia.setFkNome(valor);
 
 		} else if ("preJoin".equals(nome)) {
 			referencia.setPreJoin(valor);

@@ -20,19 +20,27 @@ public class XML {
 	public static void processar(File file, Tabelas tabelas, List<Referencia> referencias) throws Exception {
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		SAXParser parser = factory.newSAXParser();
-		parser.parse(file, new XMLHander(tabelas, referencias));
+
+		try {
+			parser.parse(file, new XMLHandler(tabelas, referencias));
+		} catch (Exception ex) {
+			String msg = Util.getStackTrace("XML.processar()", ex);
+			Util.mensagem(null, msg);
+			System.exit(0);
+		}
+
 		Util.ordenar(referencias);
 	}
 }
 
-class XMLHander extends DefaultHandler {
+class XMLHandler extends DefaultHandler {
 	private final List<Referencia> referencias;
 	private boolean lendoReferencias;
 	private Referencia selecionado;
 	private final Tabelas tabelas;
 	private boolean lendoTabelas;
 
-	public XMLHander(Tabelas tabelas, List<Referencia> referencias) {
+	public XMLHandler(Tabelas tabelas, List<Referencia> referencias) {
 		this.referencias = referencias;
 		this.tabelas = tabelas;
 	}
@@ -56,23 +64,27 @@ class XMLHander extends DefaultHandler {
 				tabelas.add(tab);
 			} else if (lendoReferencias) {
 				if (qName.equals("obj")) {
-					final String pkStr = Util.getString(attributes, "pk", null);
-					final String fkStr = Util.getString(attributes, "fk", null);
+					final String pkString = Util.getString(attributes, "pk", null);
+					final String fkString = Util.getString(attributes, "fk", null);
 
 					final String alias = Util.getString(attributes, "alias", null);
 					final String aliasAlt = Util.getString(attributes, "alias-alt", null);
-					final boolean invs = Util.getBoolean(attributes, "inverso", false);
-					final int pk = Util.ehSomenteNumeros(pkStr) ? Util.getInteger(attributes, "pk", 0)
-							: Util.ehVazio(pkStr) ? 0 : -1;
-					final int fk = Util.ehSomenteNumeros(fkStr) ? Util.getInteger(attributes, "fk", 1)
-							: Util.ehVazio(fkStr) ? 1 : -1;
-					final String preJn = Util.getString(attributes, "preJoin", null);
+					final boolean inverso = Util.getBoolean(attributes, "inverso", false);
+					final boolean cloneCompleto = Util.getBoolean(attributes, "cloneCompleto", false);
+
+					final int pk = Util.ehSomenteNumeros(pkString) ? Util.getInteger(attributes, "pk", 0)
+							: Util.ehVazio(pkString) ? 0 : -1;
+					final int fk = Util.ehSomenteNumeros(fkString) ? Util.getInteger(attributes, "fk", 1)
+							: Util.ehVazio(fkString) ? 1 : -1;
+
+					final String preJoin = Util.getString(attributes, "preJoin", null);
 					final String resumo = Util.getString(attributes, "resumo", null);
 
-					final String pkNome = !Util.ehVazio(pkStr) && !Util.ehSomenteNumeros(pkStr) ? pkStr : null;
-					final String fkNome = !Util.ehVazio(fkStr) && !Util.ehSomenteNumeros(fkStr) ? fkStr : null;
+					final String pkNome = !Util.ehVazio(pkString) && !Util.ehSomenteNumeros(pkString) ? pkString : null;
+					final String fkNome = !Util.ehVazio(fkString) && !Util.ehSomenteNumeros(fkString) ? fkString : null;
 
-					Referencia ref = new Referencia(alias, aliasAlt, invs, pk, pkNome, fk, fkNome, preJn, resumo);
+					Referencia ref = new Referencia(alias, aliasAlt, inverso, pk, pkNome, fk, fkNome, preJoin, resumo,
+							cloneCompleto);
 
 					if (selecionado == null) {
 						referencias.add(ref);

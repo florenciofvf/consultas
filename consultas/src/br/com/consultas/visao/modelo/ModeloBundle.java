@@ -10,11 +10,15 @@ import java.util.ResourceBundle;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
+import br.com.consultas.util.Util;
+
 public class ModeloBundle implements TableModel {
 	private final String[] COLUNAS = { "NOME", "VALOR" };
 	private final List<ChaveValor> listagem;
+	private final boolean atualizarBundle;
 
-	public ModeloBundle(ResourceBundle bundle) {
+	public ModeloBundle(ResourceBundle bundle, boolean atualizarBundle) {
+		this.atualizarBundle = atualizarBundle;
 		listagem = new ArrayList<ChaveValor>();
 
 		Enumeration<String> keys = bundle.getKeys();
@@ -55,18 +59,28 @@ public class ModeloBundle implements TableModel {
 
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return false;
+		return true;
 	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		ChaveValor cv = listagem.get(rowIndex);
-
 		return columnIndex == 0 ? cv.chave : cv.valor;
 	}
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+		ChaveValor cv = listagem.get(rowIndex);
+
+		if (columnIndex == 0) {
+			cv.chave = aValue.toString();
+		} else if (columnIndex == 1) {
+			cv.valor = aValue.toString();
+		}
+
+		if (atualizarBundle) {
+			Util.bundleConfig = new Recurso(listagem);
+		}
 	}
 
 	@Override
@@ -79,8 +93,8 @@ public class ModeloBundle implements TableModel {
 }
 
 class ChaveValor {
-	final String chave;
-	final String valor;
+	String chave;
+	String valor;
 
 	public ChaveValor(String chave, String valor) {
 		this.chave = chave;

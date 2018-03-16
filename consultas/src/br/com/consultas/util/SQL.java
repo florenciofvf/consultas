@@ -1,4 +1,4 @@
-package br.com.consultas.visao;
+package br.com.consultas.util;
 
 public class SQL {
 	public String select;

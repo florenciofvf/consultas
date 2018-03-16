@@ -7,28 +7,30 @@ import java.util.List;
 import br.com.consultas.util.Util;
 
 public class Referencia {
-	private static final String QUEBRA_LINHA = "\n";
+	private static final String QUEBRAR_LINHA = "\r\n";
 	private final List<Referencia> referencias;
 	private boolean exibirTotalRegistros;
+	private boolean cloneCompleto;
+	private final boolean inverso;
 	private final String prefixo;
+	private final String pkNome;
+	private final String fkNome;
 	private int totalRegistros;
 	private final String alias;
 	private boolean especial;
-	private boolean inverso;
 	private String aliasAlt;
 	private String preJoin;
 	private String campoID;
 	private Referencia pai;
 	private String resumo;
-	private String pkNome;
-	private String fkNome;
-	private int pk;
-	private int fk;
+	private final int pk;
+	private final int fk;
 
 	public Referencia(String alias, String aliasAlt, boolean inverso, int pk, String pkNome, int fk, String fkNome,
-			String preJoin, String resumo) {
+			String preJoin, String resumo, boolean cloneCompleto) {
 		Util.checarVazio(alias, "alias.invalido", true);
 		prefixo = alias.substring(0, 1).toUpperCase();
+		this.cloneCompleto = cloneCompleto;
 		referencias = new ArrayList<>();
 		this.aliasAlt = aliasAlt;
 		this.inverso = inverso;
@@ -42,22 +44,43 @@ public class Referencia {
 	}
 
 	public Referencia clonar() {
-		Referencia r = new Referencia(alias, aliasAlt, inverso, pk, pkNome, fk, fkNome, preJoin, resumo);
+		Referencia r = new Referencia(alias, aliasAlt, inverso, pk, pkNome, fk, fkNome, preJoin, resumo, cloneCompleto);
 		r.especial = especial;
+
+		return r;
+	}
+
+	public Referencia clonarCompleto() {
+		Referencia r = new Referencia(alias, aliasAlt, inverso, pk, pkNome, fk, fkNome, preJoin, resumo, cloneCompleto);
+		r.especial = especial;
+
+		for (Referencia ref : referencias) {
+			r.add(ref.clonarCompleto());
+		}
+
 		return r;
 	}
 
 	public void especial(boolean b) {
 		especial = b;
+
 		for (Referencia r : referencias) {
 			r.especial(b);
 		}
 	}
 
 	public Referencia clonarCaminho() {
-		Referencia clone = clonar();
-		for (Referencia r : referencias) {
-			clone.add(r.clonar());
+		Referencia clone = null;
+
+		if (cloneCompleto) {
+			clone = clonarCompleto();
+
+		} else {
+			clone = clonar();
+
+			for (Referencia r : referencias) {
+				clone.add(r.clonar());
+			}
 		}
 
 		Referencia pai = this.pai;
@@ -74,7 +97,7 @@ public class Referencia {
 	}
 
 	public static Referencia criarReferenciaDados(Tabela tabela) {
-		return new Referencia(tabela.getAlias().getValor(), null, false, -1, null, -1, null, null, null);
+		return new Referencia(tabela.getAlias().getValor(), null, false, -1, null, -1, null, null, null, false);
 	}
 
 	public void setCampoID(String campoID) {
@@ -100,21 +123,33 @@ public class Referencia {
 		}
 	}
 
-	public void addFolhaID(List<Referencia> referencias, Tabelas tabelas) {
+	public void validar(Tabelas tabelas) {
+		tabelas.get(alias);
+
+		gerarConsulta(tabelas, null);
+
+		for (Referencia r : referencias) {
+			r.validar(tabelas);
+		}
+	}
+
+	public void atualizar(List<Referencia> referencias, Tabelas tabelas, boolean comID) {
 		Tabela tab = tabelas.get(alias);
 		Campo campo = tab.get(0);
 
-		if (getCount() == 0 && !Util.ehVazio(campo.getValor())) {
+		if (comID && !Util.ehVazio(campo.getValor())) {
 			referencias.add(this);
 		} else {
-			for (Referencia r : getReferencias()) {
-				r.addFolhaID(referencias, tabelas);
-			}
+			referencias.add(this);
+		}
+
+		for (Referencia r : getReferencias()) {
+			r.atualizar(referencias, tabelas, comID);
 		}
 	}
 
 	public void addFolha(List<Referencia> referencias) {
-		if (getCount() == 0) {
+		if (getTotalFilhos() == 0) {
 			referencias.add(this);
 		} else {
 			for (Referencia r : getReferencias()) {
@@ -164,7 +199,7 @@ public class Referencia {
 		return referencias.get(i);
 	}
 
-	public int getCount() {
+	public int getTotalFilhos() {
 		return referencias.size();
 	}
 
@@ -192,40 +227,28 @@ public class Referencia {
 		return inverso;
 	}
 
-	public void setInverso(boolean inverso) {
-		this.inverso = inverso;
+	public void setCloneCompleto(boolean cloneCompleto) {
+		this.cloneCompleto = cloneCompleto;
+	}
+
+	public boolean isCloneCompleto() {
+		return cloneCompleto;
 	}
 
 	public int getPk() {
 		return pk;
 	}
 
-	public void setPk(int pk) {
-		this.pk = pk;
-	}
-
 	public int getFk() {
 		return fk;
-	}
-
-	public void setFk(int fk) {
-		this.fk = fk;
 	}
 
 	public String getPkNome() {
 		return pkNome;
 	}
 
-	public void setPkNome(String pkNome) {
-		this.pkNome = pkNome;
-	}
-
 	public String getFkNome() {
 		return fkNome;
-	}
-
-	public void setFkNome(String fkNome) {
-		this.fkNome = fkNome;
 	}
 
 	public String getAliasAlt() {
@@ -253,8 +276,8 @@ public class Referencia {
 	public String gerarDelete(Tabelas tabelas) {
 		Tabela tab = tabelas.get(alias);
 
-		StringBuilder sb = new StringBuilder("DELETE FROM " + tab.getNome() + QUEBRA_LINHA);
-		sb.append(" WHERE " + Util.fragmentoFiltroCampo(tab.get(0)) + QUEBRA_LINHA);
+		StringBuilder sb = new StringBuilder("DELETE FROM " + tab.getNome() + QUEBRAR_LINHA);
+		sb.append(" WHERE " + Util.fragmentoFiltroCampo(tab.get(0)) + QUEBRAR_LINHA);
 
 		return sb.toString();
 	}
@@ -282,9 +305,9 @@ public class Referencia {
 			ativado = true;
 		}
 
-		StringBuilder sb = new StringBuilder("UPDATE " + tab.getNome() + QUEBRA_LINHA);
-		sb.append(" SET " + set.toString().trim() + QUEBRA_LINHA);
-		sb.append(" WHERE " + Util.fragmentoFiltroCampo(tab.get(0)) + QUEBRA_LINHA);
+		StringBuilder sb = new StringBuilder("UPDATE " + tab.getNome() + QUEBRAR_LINHA);
+		sb.append(" SET " + set.toString().trim() + QUEBRAR_LINHA);
+		sb.append(" WHERE " + Util.fragmentoFiltroCampo(tab.get(0)) + QUEBRAR_LINHA);
 
 		return sb.toString();
 	}
@@ -292,25 +315,31 @@ public class Referencia {
 	public String gerarConsultaDados(Tabelas tabelas) {
 		Tabela tab = tabelas.get(alias);
 		StringBuilder sb = new StringBuilder(
-				"SELECT " + getAlias() + ".* FROM " + tab.getNome() + " " + getAlias() + QUEBRA_LINHA);
+				"SELECT " + getAlias() + ".* FROM " + tab.getNome() + " " + getAlias() + QUEBRAR_LINHA);
 
-		sb.append(" WHERE 1=1" + QUEBRA_LINHA);
+		sb.append(" WHERE 1=1" + QUEBRAR_LINHA);
 
 		for (Campo c : tab.getCampos()) {
 			if (!Util.ehVazio(c.getValor())) {
-				sb.append(" AND " + getAlias() + "." + Util.fragmentoFiltroCampo(c) + QUEBRA_LINHA);
+				sb.append(" AND " + getAlias() + "." + Util.fragmentoFiltroCampo(c) + QUEBRAR_LINHA);
 			}
 		}
 
 		sb.append(" ORDER BY " + getAlias() + "." + tab.get(0).getNome() + aux(Util.getStringConfig("order_by"))
-				+ QUEBRA_LINHA);
-		sb.delete(sb.length() - QUEBRA_LINHA.length(), sb.length()).append(";").append(QUEBRA_LINHA);
+				+ QUEBRAR_LINHA);
+		sb.delete(sb.length() - QUEBRAR_LINHA.length(), sb.length()).append(";").append(QUEBRAR_LINHA);
 		return sb.toString();
 	}
 
 	public String gerarConsulta(Tabelas tabelas, String aliasTemp) {
 		if (inverso && pai == null) {
-			throw new IllegalStateException(alias + ": INVERSO");
+			try {
+				throw new Exception("ALIAS INVERSO INVÁLIDO: " + alias);
+			} catch (Exception ex) {
+				String msg = Util.getStackTrace("Referencia.gerarConsulta()", ex);
+				Util.mensagem(null, msg);
+				System.exit(0);
+			}
 		}
 
 		Tabela tab = tabelas.get(alias);
@@ -320,16 +349,16 @@ public class Referencia {
 		if (pai != null) {
 			completarConsulta(sb, tabelas);
 		} else {
-			sb.append(" " + tab.getNome() + " " + getAlias() + QUEBRA_LINHA);
+			sb.append(" " + tab.getNome() + " " + getAlias() + QUEBRAR_LINHA);
 		}
 
-		sb.append(" WHERE 1=1" + QUEBRA_LINHA);
+		sb.append(" WHERE 1=1" + QUEBRAR_LINHA);
 
 		filtros(sb, tabelas);
 
 		sb.append(" ORDER BY " + getAlias() + "." + tab.get(0).getNome() + aux(Util.getStringConfig("order_by"))
-				+ QUEBRA_LINHA);
-		sb.delete(sb.length() - QUEBRA_LINHA.length(), sb.length()).append(";").append(QUEBRA_LINHA);
+				+ QUEBRAR_LINHA);
+		sb.delete(sb.length() - QUEBRAR_LINHA.length(), sb.length()).append(";").append(QUEBRAR_LINHA);
 		return sb.toString();
 	}
 
@@ -346,7 +375,7 @@ public class Referencia {
 
 		for (Campo c : tab.getCampos()) {
 			if (!Util.ehVazio(c.getValor())) {
-				sb.append(" AND " + getAlias() + "." + Util.fragmentoFiltroCampo(c) + QUEBRA_LINHA);
+				sb.append(" AND " + getAlias() + "." + Util.fragmentoFiltroCampo(c) + QUEBRAR_LINHA);
 			}
 		}
 	}
@@ -355,7 +384,7 @@ public class Referencia {
 		Tabela tab = tabelas.get(alias);
 
 		if (pai == null) {
-			sb.append(" " + tab.getNome() + " " + getAlias() + QUEBRA_LINHA);
+			sb.append(" " + tab.getNome() + " " + getAlias() + QUEBRAR_LINHA);
 			return;
 		}
 
@@ -370,12 +399,12 @@ public class Referencia {
 			campoPK = Util.ehVazio(pkNome) ? tabPai.get(pk) : tabPai.get(pkNome);
 			campoFK = Util.ehVazio(fkNome) ? tab.get(fk) : tab.get(fkNome);
 			sb.append(" ON " + pai.getAlias() + "." + campoPK.getNome() + " = " + getAlias() + "." + campoFK.getNome()
-					+ QUEBRA_LINHA);
+					+ QUEBRAR_LINHA);
 		} else {
 			campoPK = Util.ehVazio(pkNome) ? tab.get(pk) : tab.get(pkNome);
 			campoFK = Util.ehVazio(fkNome) ? tabPai.get(fk) : tabPai.get(fkNome);
 			sb.append(" ON " + getAlias() + "." + campoPK.getNome() + " = " + pai.getAlias() + "." + campoFK.getNome()
-					+ QUEBRA_LINHA);
+					+ QUEBRAR_LINHA);
 		}
 	}
 

@@ -1,36 +1,33 @@
-package br.com.consultas.visao;
+package br.com.consultas.visao.dialog;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
 import javax.swing.AbstractAction;
-import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
-import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
 import br.com.consultas.util.Util;
+import br.com.consultas.visao.Formulario;
+import br.com.consultas.visao.PainelReferencia;
+import br.com.consultas.visao.comp.Button;
+import br.com.consultas.visao.comp.PanelLeft;
 
-public class ReferenciaDialog extends JFrame {
+public class ReferenciaDialog extends Dialogo {
 	private static final long serialVersionUID = 1L;
 	private final Formulario formulario;
 
-	public ReferenciaDialog(Formulario formulario, List<Referencia> referencias, Tabela tabela) {
+	public ReferenciaDialog(Formulario formulario, Tabela tabela) {
 		setTitle(tabela.getNome() + " - " + tabela.getAlias().getValor());
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setLayout(new BorderLayout());
 		this.formulario = formulario;
 
 		add(BorderLayout.SOUTH, new PainelControle());
-		add(BorderLayout.CENTER, new PainelReferencia(formulario, formulario.referencias, tabela));
-		setAlwaysOnTop(true);
+		add(BorderLayout.CENTER, new PainelReferencia(formulario, tabela));
+
 		setSize(600, 400);
 		setLocationRelativeTo(formulario);
+
 		cfg();
 		setVisible(true);
 	}
@@ -47,12 +44,11 @@ public class ReferenciaDialog extends JFrame {
 		Util.setWindowListener(this, formulario);
 	}
 
-	class PainelControle extends JPanel {
+	private class PainelControle extends PanelLeft {
 		private static final long serialVersionUID = 1L;
-		JButton buttonFechar = new JButton(Util.getString("label.fechar"));
+		private final Button buttonFechar = new Button("label.fechar");
 
 		PainelControle() {
-			setLayout(new FlowLayout(FlowLayout.LEFT));
 			add(buttonFechar);
 
 			buttonFechar.addActionListener(new ActionListener() {

@@ -26,6 +26,7 @@ public class ModeloReferencia implements TableModel {
 			campos.add(new CampoReferencia("fk"));
 			campos.add(new CampoReferencia("pkNome"));
 			campos.add(new CampoReferencia("fkNome"));
+			campos.add(new CampoReferencia("cloneCompleto", true));
 			campos.add(new CampoReferencia("preJoin", true));
 			campos.add(new CampoReferencia("resumo", true));
 			campos.add(new CampoReferencia("campoID", true));
@@ -69,7 +70,6 @@ public class ModeloReferencia implements TableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		CampoReferencia campo = campos.get(rowIndex);
-
 		return columnIndex == 0 ? campo.nome : campo.getValor(referencia);
 	}
 

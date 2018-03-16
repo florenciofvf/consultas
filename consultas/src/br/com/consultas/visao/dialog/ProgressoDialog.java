@@ -1,4 +1,4 @@
-package br.com.consultas.visao;
+package br.com.consultas.visao.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -13,10 +13,12 @@ public class ProgressoDialog extends JWindow {
 	public ProgressoDialog() {
 		setLayout(new BorderLayout());
 		add(BorderLayout.SOUTH, progresso);
+
 		progresso.setPreferredSize(new Dimension(400, 40));
 		progresso.setBorderPainted(true);
 		progresso.setStringPainted(true);
 		progresso.setMinimum(0);
+
 		pack();
 		setLocationRelativeTo(null);
 	}

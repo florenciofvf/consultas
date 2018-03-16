@@ -1,37 +1,40 @@
-package br.com.consultas.visao;
+package br.com.consultas.visao.dialog;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
-import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 
 import br.com.consultas.Tabela;
 import br.com.consultas.util.Util;
+import br.com.consultas.visao.Formulario;
+import br.com.consultas.visao.comp.Button;
+import br.com.consultas.visao.comp.PanelLeft;
+import br.com.consultas.visao.comp.ScrollPane;
+import br.com.consultas.visao.comp.Table;
 import br.com.consultas.visao.modelo.ModeloCampo;
+import br.com.consultas.visao.modelo.ModeloOrdenacao;
 
-public class CampoDialog extends JFrame {
+public class CampoDialog extends Dialogo {
 	private static final long serialVersionUID = 1L;
-	private final JTable table;
+	private final Table table;
 
 	public CampoDialog(Formulario formulario, Tabela tabela) {
+		super();
+
 		ModeloCampo modelo = new ModeloCampo(tabela);
-		table = new JTable(modelo);
+		table = new Table(new ModeloOrdenacao(modelo));
+		table.ajustar(formulario.getGraphics());
 		setTitle(tabela.getNome() + " - REGISTROS [" + modelo.getRowCount() + "]");
-		setLayout(new BorderLayout());
-		add(BorderLayout.CENTER, new JScrollPane(table));
+
+		add(BorderLayout.CENTER, new ScrollPane(table));
 		add(BorderLayout.SOUTH, new PainelControle());
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setAlwaysOnTop(true);
+
 		setSize(400, 400);
 		setLocationRelativeTo(formulario);
+
 		cfg(formulario);
 		setVisible(true);
 	}
@@ -48,12 +51,11 @@ public class CampoDialog extends JFrame {
 		Util.setWindowListener(this, formulario);
 	}
 
-	class PainelControle extends JPanel {
+	private class PainelControle extends PanelLeft {
 		private static final long serialVersionUID = 1L;
-		JButton buttonFechar = new JButton(Util.getString("label.fechar"));
+		private final Button buttonFechar = new Button("label.fechar");
 
 		PainelControle() {
-			setLayout(new FlowLayout(FlowLayout.LEFT));
 			add(buttonFechar);
 
 			buttonFechar.addActionListener(new ActionListener() {

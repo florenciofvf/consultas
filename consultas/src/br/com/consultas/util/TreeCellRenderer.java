@@ -1,4 +1,4 @@
-package br.com.consultas.visao;
+package br.com.consultas.util;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -16,14 +16,15 @@ public class TreeCellRenderer extends DefaultTreeCellRenderer {
 			int row, boolean hasFocus) {
 		super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 
-		Object objeto = value;
+		if (value instanceof Referencia) {
+			Referencia ref = (Referencia) value;
 
-		if (objeto instanceof Referencia) {
-			Referencia ref = (Referencia) objeto;
 			if (ref.isEspecial()) {
 				setForeground(sel ? Color.WHITE : Color.BLUE);
+
 			} else if (ref.getCampoID() != null) {
 				setForeground(sel ? Color.WHITE : Color.LIGHT_GRAY);
+
 			} else {
 				setForeground(sel ? Color.WHITE : Color.BLACK);
 			}
