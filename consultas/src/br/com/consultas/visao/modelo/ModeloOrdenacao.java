@@ -7,6 +7,7 @@ import java.util.Arrays;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
@@ -70,8 +71,14 @@ public class ModeloOrdenacao extends AbstractTableModel {
 
 				TableColumnModel columnModel = table.getColumnModel();
 				TableColumn coluna = columnModel.getColumn(tableColuna);
-				coluna.setHeaderRenderer(new OrdenacaoRenderer(descendente));
+				TableCellRenderer headerRenderer = coluna.getHeaderRenderer();
 
+				if (!(headerRenderer instanceof OrdenacaoRenderer)) {
+					int largura = coluna.getPreferredWidth() + 20;
+					coluna.setPreferredWidth(largura);
+				}
+
+				coluna.setHeaderRenderer(new OrdenacaoRenderer(descendente));
 				ordenar(modelColuna);
 			}
 		}
