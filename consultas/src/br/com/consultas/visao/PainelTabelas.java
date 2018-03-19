@@ -32,7 +32,7 @@ import br.com.consultas.visao.modelo.ModeloOrdenacao;
 
 public class PainelTabelas extends PanelBorderLayout {
 	private static final long serialVersionUID = 1L;
-	private final Table tableCampos = new Table(new ModeloOrdenacao(new ModeloCampo(Util.criarTabela())));
+	private final Table table = new Table(new ModeloOrdenacao(new ModeloCampo(Util.criarTabela())));
 	private final CheckBox chkRaizVisivel = new CheckBox("label.raiz_visivel", "tabelas.raiz_visivel");
 	private final CheckBox chkLinhaRaiz = new CheckBox("label.raiz_linha", "tabelas.raiz_linha");
 	protected final SplitPane splitPane = new SplitPane(SplitPane.HORIZONTAL_SPLIT);
@@ -73,7 +73,7 @@ public class PainelTabelas extends PanelBorderLayout {
 		arvore.addMouseListener(new OuvinteArvore());
 
 		splitPane.setLeftComponent(new ScrollPane(arvore));
-		splitPane.setRightComponent(new ScrollPane(tableCampos));
+		splitPane.setRightComponent(new ScrollPane(table));
 
 		PanelLeft panelNorte = new PanelLeft();
 
@@ -278,9 +278,9 @@ public class PainelTabelas extends PanelBorderLayout {
 				selecionado = (Referencia) path.getLastPathComponent();
 				if (ultimoSelecionado != selecionado) {
 					ultimoSelecionado = selecionado;
-					tableCampos.setModel(
+					table.setModel(
 							new ModeloOrdenacao(new ModeloCampo(selecionado.getTabela(formulario.getTabelas()))));
-					tableCampos.ajustar(getGraphics(), 20);
+					table.ajustar(getGraphics(), 20);
 				}
 			}
 

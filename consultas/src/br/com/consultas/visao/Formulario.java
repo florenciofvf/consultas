@@ -63,6 +63,8 @@ public class Formulario extends JFrame {
 	private int janelas;
 
 	public Formulario(File file) throws Exception {
+		super("Consultas");
+
 		XML.processar(file, tabelas, referencias);
 		Util.validarArvore(referencias, tabelas);
 

@@ -71,6 +71,8 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 
 	public DadosDialog(Formulario formulario, String consulta, String atualizacao, String exclusao, Tabela tabela)
 			throws Exception {
+		super(null);
+
 		final int largura = (int) (formulario.getWidth() * .8);
 		TITLE = tabela != null ? tabela.getNome() : "";
 
@@ -228,6 +230,11 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 		Connection conn = getConnection();
 
 		String consulta = ref.getConsultaGroupByCount(tabelas);
+
+		if (Util.getBooleanConfig("consultas.area_transferencia")) {
+			Util.setContentTransfered(consulta);
+		}
+
 		PreparedStatement psmt = conn.prepareStatement(consulta);
 		ResultSet rs = psmt.executeQuery();
 
@@ -274,13 +281,11 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 				: TITLE + " - REGISTROS [" + dados.size() + "]");
 
 		int[] is = table.getSelectedRows();
-		table.setModel(new ModeloOrdenacao(new DefaultTableModel(dados, colunas)));
+		ModeloOrdenacao modeloOrdenacao = new ModeloOrdenacao(new DefaultTableModel(dados, colunas));
+		table.setModel(modeloOrdenacao);
 
 		if (tabela != null) {
-			TableColumnModel columnModel = table.getColumnModel();
-			TableColumn column = columnModel.getColumn(0);
-			column.setCellRenderer(new CellColor());
-			column.setCellEditor(new CellEditor());
+			configTable(table);
 		}
 
 		table.ajustar(graphics);
@@ -293,7 +298,10 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 			}
 		}
 
-		tableMetaInfo.setModel(new ModeloOrdenacao(new ModeloRSMD(rsmd)));
+		ModeloRSMD modeloRSMD = new ModeloRSMD(rsmd);
+		modeloOrdenacao.configMapaTipoColuna(modeloRSMD.getTipoColunas());
+
+		tableMetaInfo.setModel(new ModeloOrdenacao(modeloRSMD));
 		tableMetaInfo.ajustar(graphics);
 	}
 
@@ -309,8 +317,31 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 			dados.add(array[1]);
 		}
 
+		if (dados.isEmpty()) {
+			Util.mensagem(this, Util.getString("label.sem_registros_encontrados"));
+			return;
+		}
+
+		if (table.getModel().getRowCount() == 0) {
+			Util.mensagem(this, Util.getString("label.sem_registros_table"));
+			return;
+		}
+
+		if (table.getModel().getRowCount() != dados.size()) {
+			Util.mensagem(this, Util.getString("label.registros_vs_table"));
+			return;
+		}
+
 		table.addColuna(titulo, dados);
+		configTable(table);
 		table.ajustar(getGraphics());
+	}
+
+	private void configTable(Table table) {
+		TableColumnModel columnModel = table.getColumnModel();
+		TableColumn column = columnModel.getColumn(0);
+		column.setCellRenderer(new CellColor());
+		column.setCellEditor(new CellEditor());
 	}
 
 	private class PainelRegistros extends PanelBorderLayout {
@@ -344,11 +375,13 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 		private final Button buttonUpdate = new Button("label.execute_update");
 		private final Button buttonDelete = new Button("label.execute_delete");
 		private final Button buttonQuery = new Button("label.execute_query");
+		private final Button buttonCopiarIds = new Button("label.copiar_id");
 		private final Button buttonLargura = new Button("label.largura");
 		private final Button buttonFechar = new Button("label.fechar");
 
 		PainelControle() {
-			adicionar(buttonFechar, buttonUpdate, buttonDelete, buttonQuery, buttonGetContent, buttonLargura);
+			adicionar(buttonFechar, buttonUpdate, buttonDelete, buttonQuery, buttonGetContent, buttonCopiarIds,
+					buttonLargura);
 
 			buttonFechar.addActionListener(new ActionListener() {
 				@Override
@@ -382,6 +415,14 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					textAreaConsulta.setText(Util.getContentTransfered());
+				}
+			});
+
+			buttonCopiarIds.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					List<String> resp = table.getIds(0);
+					Util.setContentTransfered(Util.getStringLista(resp));
 				}
 			});
 

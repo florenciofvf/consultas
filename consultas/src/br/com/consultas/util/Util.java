@@ -488,4 +488,21 @@ public class Util {
 
 		return tabela;
 	}
+
+	public static String getStringLista(List<String> lista) {
+		StringBuilder sb = new StringBuilder();
+
+		boolean ativado = false;
+
+		for (String string : lista) {
+			if (ativado) {
+				sb.append(", ");
+			}
+
+			sb.append(string);
+			ativado = true;
+		}
+
+		return sb.toString();
+	}
 }

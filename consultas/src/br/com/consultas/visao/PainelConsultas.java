@@ -38,7 +38,7 @@ public class PainelConsultas extends PanelBorderLayout {
 	private static final long serialVersionUID = 1L;
 	private final CheckBox chkRaizVisivel = new CheckBox("label.raiz_visivel", "consultas.raiz_visivel");
 	private final CheckBox chkLinhaRaiz = new CheckBox("label.raiz_linha", "consultas.raiz_linha");
-	private final Table tableCampos = new Table(new ModeloOrdenacao(new ModeloReferencia(null)));
+	private final Table table = new Table(new ModeloOrdenacao(new ModeloReferencia(null)));
 	protected final SplitPane splitPane = new SplitPane(SplitPane.HORIZONTAL_SPLIT);
 	private final Popup popup = new Popup();
 	private final Formulario formulario;
@@ -53,7 +53,7 @@ public class PainelConsultas extends PanelBorderLayout {
 		arvore.addMouseListener(new OuvinteArvore());
 
 		splitPane.setLeftComponent(new ScrollPane(arvore));
-		splitPane.setRightComponent(new ScrollPane(tableCampos));
+		splitPane.setRightComponent(new ScrollPane(table));
 
 		if (Util.getBooleanConfig("config_arvore")) {
 			add(BorderLayout.NORTH, new PanelLeft(chkRaizVisivel, chkLinhaRaiz));
@@ -302,10 +302,10 @@ public class PainelConsultas extends PanelBorderLayout {
 				selecionado = (Referencia) path.getLastPathComponent();
 				if (ultimoSelecionado != selecionado) {
 					ultimoSelecionado = selecionado;
-					tableCampos.setModel(new ModeloOrdenacao(new ModeloReferencia(selecionado)));
-					tableCampos.getColumnModel().getColumn(ModeloReferencia.COLUNAS.length - 1)
+					table.setModel(new ModeloOrdenacao(new ModeloReferencia(selecionado)));
+					table.getColumnModel().getColumn(ModeloReferencia.COLUNAS.length - 1)
 							.setCellRenderer(new CellRenderer());
-					tableCampos.ajustar(getGraphics());
+					table.ajustar(getGraphics());
 				}
 			}
 
@@ -341,7 +341,7 @@ public class PainelConsultas extends PanelBorderLayout {
 		}
 	}
 
-	private class CellRenderer extends DefaultTableCellRenderer {
+	public static class CellRenderer extends DefaultTableCellRenderer {
 		private static final long serialVersionUID = 1L;
 
 		@Override

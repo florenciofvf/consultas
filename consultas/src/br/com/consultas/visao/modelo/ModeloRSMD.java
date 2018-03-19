@@ -8,11 +8,13 @@ import javax.swing.table.TableModel;
 
 public class ModeloRSMD implements TableModel {
 	private final Vector<Vector<String>> listagem;
+	private final Vector<String> tipoColunas;
 	private final Vector<String> colunas;
 
 	public ModeloRSMD(ResultSetMetaData rsmd) throws Exception {
 		int qtdColunas = rsmd.getColumnCount();
 
+		tipoColunas = new Vector<>();
 		listagem = new Vector<>();
 		colunas = getColunas();
 
@@ -39,6 +41,8 @@ public class ModeloRSMD implements TableModel {
 			registro.add("" + rsmd.isWritable(i));
 			registro.add("" + rsmd.isDefinitelyWritable(i));
 			registro.add("" + rsmd.getColumnClassName(i));
+
+			tipoColunas.add("" + rsmd.getColumnClassName(i));
 
 			listagem.add(registro);
 		}
@@ -69,6 +73,10 @@ public class ModeloRSMD implements TableModel {
 		vector.add("getColumnClassName");
 
 		return vector;
+	}
+
+	public Vector<String> getTipoColunas() {
+		return tipoColunas;
 	}
 
 	@Override

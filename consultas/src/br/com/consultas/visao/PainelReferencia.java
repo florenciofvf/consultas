@@ -23,6 +23,7 @@ import br.com.consultas.visao.comp.PanelLeft;
 import br.com.consultas.visao.comp.ScrollPane;
 import br.com.consultas.visao.dialog.CampoDialog;
 import br.com.consultas.visao.dialog.DadosDialog;
+import br.com.consultas.visao.dialog.ReferenciaPropDialog;
 import br.com.consultas.visao.modelo.ModeloArvore;
 
 public class PainelReferencia extends PanelBorderLayout {
@@ -127,6 +128,9 @@ public class PainelReferencia extends PanelBorderLayout {
 			popup.addSeparator();
 			popup.calculado();
 		}
+
+		popup.addSeparator();
+		popup.propriedades();
 
 		arvore.setShowsRootHandles(chkLinhaRaiz.isSelected());
 		arvore.setRootVisible(chkRaizVisivel.isSelected());
@@ -235,6 +239,13 @@ public class PainelReferencia extends PanelBorderLayout {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new CampoDialog(formulario, selecionado.getTabela(formulario.getTabelas()));
+			}
+		});
+
+		popup.itemPropriedades.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new ReferenciaPropDialog(formulario, selecionado);
 			}
 		});
 

@@ -7,7 +7,8 @@ import javax.swing.JFrame;
 public class Dialogo extends JFrame {
 	private static final long serialVersionUID = 1L;
 
-	public Dialogo() {
+	public Dialogo(String titulo) {
+		super(titulo);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLayout(new BorderLayout());
 		setAlwaysOnTop(true);

@@ -7,37 +7,45 @@ import java.awt.event.ActionListener;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 
-import br.com.consultas.Tabela;
+import br.com.consultas.Referencia;
 import br.com.consultas.util.Util;
 import br.com.consultas.visao.Formulario;
-import br.com.consultas.visao.PainelReferencia;
+import br.com.consultas.visao.PainelConsultas.CellRenderer;
 import br.com.consultas.visao.comp.Button;
 import br.com.consultas.visao.comp.PanelLeft;
+import br.com.consultas.visao.comp.ScrollPane;
+import br.com.consultas.visao.comp.Table;
+import br.com.consultas.visao.modelo.ModeloOrdenacao;
+import br.com.consultas.visao.modelo.ModeloReferencia;
 
-public class ReferenciaDialog extends Dialogo {
+public class ReferenciaPropDialog extends Dialogo {
 	private static final long serialVersionUID = 1L;
-	private final Formulario formulario;
+	private final Table table;
 
-	public ReferenciaDialog(Formulario formulario, Tabela tabela) {
-		super(tabela.getNome() + " - " + tabela.getAlias().getValor());
-		this.formulario = formulario;
+	public ReferenciaPropDialog(Formulario formulario, Referencia referencia) {
+		super(referencia.getAlias());
 
+		ModeloReferencia modelo = new ModeloReferencia(referencia);
+		table = new Table(new ModeloOrdenacao(modelo));
+		table.getColumnModel().getColumn(ModeloReferencia.COLUNAS.length - 1).setCellRenderer(new CellRenderer());
+		table.ajustar(formulario.getGraphics());
+
+		add(BorderLayout.CENTER, new ScrollPane(table));
 		add(BorderLayout.SOUTH, new PainelControle());
-		add(BorderLayout.CENTER, new PainelReferencia(formulario, tabela, null));
 
-		setSize(600, 400);
+		setSize(400, 400);
 		setLocationRelativeTo(formulario);
 
-		cfg();
+		cfg(formulario);
 		setVisible(true);
 	}
 
-	private void cfg() {
+	private void cfg(Formulario formulario) {
 		Util.setActionESC((JComponent) getContentPane(), new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				Util.fechar(ReferenciaDialog.this);
+				Util.fechar(ReferenciaPropDialog.this);
 			}
 		});
 
@@ -54,7 +62,7 @@ public class ReferenciaDialog extends Dialogo {
 			buttonFechar.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Util.fechar(ReferenciaDialog.this);
+					Util.fechar(ReferenciaPropDialog.this);
 				}
 			});
 		}

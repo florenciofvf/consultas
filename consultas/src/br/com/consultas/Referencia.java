@@ -423,6 +423,15 @@ public class Referencia {
 		sb.append(" LEFT JOIN " + tab.getNome() + " " + getAlias());
 		sb.append(" ON " + pai.getAlias() + "." + campoPK.getNome() + " = " + getAlias() + "." + campoFK.getNome()
 				+ QUEBRAR_LINHA);
+
+		sb.append(" WHERE 1=1" + QUEBRAR_LINHA);
+
+		for (Campo c : tabPai.getCampos()) {
+			if (!Util.ehVazio(c.getValor())) {
+				sb.append(" AND " + pai.getAlias() + "." + Util.fragmentoFiltroCampo(c) + QUEBRAR_LINHA);
+			}
+		}
+
 		sb.append(" GROUP BY " + pai.getAlias() + "." + campoPK.getNome() + QUEBRAR_LINHA);
 
 		return sb.toString();

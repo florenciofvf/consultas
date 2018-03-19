@@ -3,6 +3,8 @@ package br.com.consultas.visao.modelo;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JTable;
@@ -19,6 +21,8 @@ import br.com.consultas.util.Util;
 
 public class ModeloOrdenacao extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
+	private Map<Integer, Boolean> mapaTipoColuna;
+	private boolean ordenarNumero;
 	private int colunaOrdenacao;
 	private boolean descendente;
 	private Listener listener;
@@ -52,6 +56,14 @@ public class ModeloOrdenacao extends AbstractTableModel {
 		}
 	}
 
+	public boolean isOrdenarNumero() {
+		return ordenarNumero;
+	}
+
+	public void setOrdenarNumero(boolean ordenarNumero) {
+		this.ordenarNumero = ordenarNumero;
+	}
+
 	public void desconfigurar(JTable table) {
 		table.getTableHeader().removeMouseListener(listener);
 	}
@@ -80,10 +92,26 @@ public class ModeloOrdenacao extends AbstractTableModel {
 					coluna.setPreferredWidth(largura);
 				}
 
+				ordenarNumero = false;
+
+				if (mapaTipoColuna != null) {
+					ordenarNumero = isNumero(modelColuna);
+				}
+
 				coluna.setHeaderRenderer(new OrdenacaoRenderer(descendente));
 				ordenar(modelColuna);
 			}
 		}
+	}
+
+	private boolean isNumero(int coluna) {
+		Boolean b = mapaTipoColuna.get(coluna);
+
+		if (b == null) {
+			b = Boolean.FALSE;
+		}
+
+		return b;
 	}
 
 	public void setModel(TableModel model) {
@@ -98,6 +126,31 @@ public class ModeloOrdenacao extends AbstractTableModel {
 	public void addColumn(Object columnName, Vector<?> columnData) {
 		((DefaultTableModel) model).addColumn(columnName, columnData);
 		fireTableStructureChanged();
+
+		if (mapaTipoColuna != null) {
+			mapaTipoColuna.put(model.getColumnCount() - 1, Boolean.TRUE);
+		}
+	}
+
+	public void configMapaTipoColuna(Vector<String> vector) {
+		Map<String, Boolean> map = new HashMap<>();
+		map.put("java.math.BigDecimal", Boolean.TRUE);
+		map.put("java.math.BigInteger", Boolean.TRUE);
+		map.put("java.lang.String", Boolean.FALSE);
+		map.put("java.lang.Double", Boolean.TRUE);
+		map.put("java.lang.Long", Boolean.TRUE);
+
+		mapaTipoColuna = new HashMap<>();
+
+		for (int i = 0; i < vector.size(); i++) {
+			Boolean b = map.get(vector.get(i));
+
+			if (b == null) {
+				b = Boolean.FALSE;
+			}
+
+			mapaTipoColuna.put(i, b);
+		}
 	}
 
 	public TableModel getModel() {
@@ -151,19 +204,31 @@ public class ModeloOrdenacao extends AbstractTableModel {
 			String string = (String) model.getValueAt(indice, colunaOrdenacao);
 			String outra = (String) model.getValueAt(o.indice, colunaOrdenacao);
 
-			if (Util.ehVazio(string)) {
-				string = "";
-			}
+			if (!ordenarNumero) {
+				if (Util.ehVazio(string)) {
+					string = "";
+				}
 
-			if (Util.ehVazio(outra)) {
-				outra = "";
-			}
+				if (Util.ehVazio(outra)) {
+					outra = "";
+				}
 
-			if (descendente) {
-				return string.compareTo(outra);
+				if (descendente) {
+					return string.compareTo(outra);
+				} else {
+					return outra.compareTo(string);
+				}
 			} else {
-				return outra.compareTo(string);
+				Long valor = Util.ehVazio(string) ? 0 : Long.valueOf(string);
+				Long outro = Util.ehVazio(outra) ? 0 : Long.valueOf(outra);
+
+				if (descendente) {
+					return valor.compareTo(outro);
+				} else {
+					return outro.compareTo(valor);
+				}
 			}
+
 		}
 	}
 }

@@ -67,22 +67,17 @@ public class CampoReferencia {
 			referencia.setAliasAlt(valor);
 
 		} else if ("inverso".equals(nome)) {
-			// referencia.setInverso(Boolean.parseBoolean(valor));
 
 		} else if ("cloneCompleto".equals(nome)) {
 			referencia.setCloneCompleto(Boolean.parseBoolean(valor));
 
 		} else if ("pk".equals(nome)) {
-			// referencia.setPk(getInt(valor, referencia.getPk()));
 
 		} else if ("pkNome".equals(nome)) {
-			// referencia.setPkNome(valor);
 
 		} else if ("fk".equals(nome)) {
-			// referencia.setFk(getInt(valor, referencia.getFk()));
 
 		} else if ("fkNome".equals(nome)) {
-			// referencia.setFkNome(valor);
 
 		} else if ("preJoin".equals(nome)) {
 			referencia.setPreJoin(valor);

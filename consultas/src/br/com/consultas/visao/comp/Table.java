@@ -1,6 +1,8 @@
 package br.com.consultas.visao.comp;
 
 import java.awt.Graphics;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JTable;
@@ -50,5 +52,23 @@ public class Table extends JTable {
 
 	public void ajustar(Graphics graphics, int ajuste) {
 		Util.ajustar(this, graphics, ajuste);
+	}
+
+	public List<String> getIds(int coluna) {
+		List<String> resposta = new ArrayList<>();
+
+		ModeloOrdenacao atual = (ModeloOrdenacao) getModel();
+		TableModel model = atual.getModel();
+		int total = model.getRowCount();
+
+		for (int i = 0; i < total; i++) {
+			Object obj = model.getValueAt(i, coluna);
+
+			if (obj != null && !Util.ehVazio(obj.toString())) {
+				resposta.add(obj.toString());
+			}
+		}
+
+		return resposta;
 	}
 }
