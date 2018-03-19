@@ -32,8 +32,8 @@ import br.com.consultas.visao.modelo.ModeloOrdenacao;
 
 public class PainelTabelas extends PanelBorderLayout {
 	private static final long serialVersionUID = 1L;
-	private final Table table = new Table(new ModeloOrdenacao(new ModeloCampo(Util.criarTabela())));
 	private final CheckBox chkRaizVisivel = new CheckBox("label.raiz_visivel", "tabelas.raiz_visivel");
+	private final Table table = new Table(new ModeloOrdenacao(new ModeloCampo(Util.criarTabela())));
 	private final CheckBox chkLinhaRaiz = new CheckBox("label.raiz_linha", "tabelas.raiz_linha");
 	protected final SplitPane splitPane = new SplitPane(SplitPane.HORIZONTAL_SPLIT);
 	private final Button buttonAtualizar = new Button("label.atualizar");
