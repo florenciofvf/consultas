@@ -17,11 +17,13 @@ public class Popup extends JPopupMenu {
 	final MenuItem itemPesquisaMemoria = new MenuItem("label.gerar_pesquisa_memoria");
 	final MenuItem itemRegistrosDialogo = new MenuItem("label.gerar_dados_dialogo");
 	final MenuItem itemRegistrosMemoria = new MenuItem("label.gerar_dados_memoria");
+	final MenuItem itemAgruparTotal = new MenuItem("label.agrupar_total");
 	final MenuItem itemLimparCampos = new MenuItem("label.limpar_campos");
 	final MenuItem itemDelete = new MenuItem("label.gerar_delete");
 	final MenuItem itemUpdate = new MenuItem("label.gerar_update");
 	final MenuItem itemLimparId = new MenuItem("label.limpar_id");
 	final MenuItem itemCampos = new MenuItem("label.campos");
+	final Menu menuCalculado = new Menu("label.calculado");
 	final Menu menuDialogo = new Menu("label.dialogo");
 	final Menu menuMemoria = new Menu("label.memoria");
 	final Menu menuCampo = new Menu("label.campo");
@@ -70,6 +72,12 @@ public class Popup extends JPopupMenu {
 		menuCampo.add(itemCampos);
 
 		add(menuCampo);
+	}
+
+	public void calculado() {
+		menuCalculado.add(itemAgruparTotal);
+
+		add(menuCalculado);
 	}
 
 	public void dml() {

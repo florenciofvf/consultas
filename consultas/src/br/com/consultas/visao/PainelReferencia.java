@@ -32,14 +32,16 @@ public class PainelReferencia extends PanelBorderLayout {
 	private final CheckBox chkTopoHierarquia = new CheckBox("label.topo_hierarquia", "false");
 	private final Label labelStatus = new Label(Color.BLUE);
 	private final Label labelValor = new Label(Color.RED);
+	private final PainelReferenciaListener listener;
 	private final List<Referencia> caminhosFiltro;
 	private final List<Referencia> caminhos;
 	private final Popup popup = new Popup();
 	private final Formulario formulario;
 	private Referencia selecionado;
 	private final Arvore arvore;
+	private final Tabela tabela;
 
-	public PainelReferencia(Formulario formulario, Tabela tabela) {
+	public PainelReferencia(Formulario formulario, Tabela tabela, PainelReferenciaListener listener) {
 		caminhos = Util.pesquisarReferencias(formulario.getReferencias(), tabela, formulario.getTabelas());
 		caminhosFiltro = Util.filtrarTopo(caminhos, tabela, formulario.getTabelas());
 
@@ -48,6 +50,8 @@ public class PainelReferencia extends PanelBorderLayout {
 		arvore.addMouseListener(new OuvinteArvore());
 		Util.expandirRetrair(arvore, true);
 		this.formulario = formulario;
+		this.listener = listener;
+		this.tabela = tabela;
 
 		PanelLeft panelNorte = new PanelLeft();
 
@@ -118,6 +122,11 @@ public class PainelReferencia extends PanelBorderLayout {
 		popup.memoria();
 		popup.addSeparator();
 		popup.campos();
+
+		if (listener != null) {
+			popup.addSeparator();
+			popup.calculado();
+		}
 
 		arvore.setShowsRootHandles(chkLinhaRaiz.isSelected());
 		arvore.setRootVisible(chkRaizVisivel.isSelected());
@@ -226,6 +235,32 @@ public class PainelReferencia extends PanelBorderLayout {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new CampoDialog(formulario, selecionado.getTabela(formulario.getTabelas()));
+			}
+		});
+
+		popup.itemAgruparTotal.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (listener == null) {
+					Util.mensagem(PainelReferencia.this, Util.getString("msg.nao_implementado"));
+				} else if (selecionado.getPai() == null) {
+					Util.mensagem(PainelReferencia.this, Util.getString("msg.objeto_deve_conter_pai"));
+				} else {
+					Tabela tabPai = selecionado.getPai().getTabela(formulario.getTabelas());
+
+					if (tabela.getNome().equals(tabPai.getNome())) {
+						try {
+							listener.calcularTotal(selecionado);
+						} catch (Exception ex) {
+							String msg = Util
+									.getStackTrace(PainelReferencia.this.getClass().getName() + ".calcularTotal()", ex);
+							Util.mensagem(PainelReferencia.this, msg);
+						}
+					} else {
+						Util.mensagem(PainelReferencia.this,
+								Util.getString("msg.selecione_tabela_pai") + " " + selecionado.getAlias() + ".");
+					}
+				}
 			}
 		});
 

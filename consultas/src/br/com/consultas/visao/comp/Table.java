@@ -1,8 +1,10 @@
 package br.com.consultas.visao.comp;
 
 import java.awt.Graphics;
+import java.util.Vector;
 
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import br.com.consultas.util.Util;
@@ -31,6 +33,15 @@ public class Table extends JTable {
 
 		((ModeloOrdenacao) modelo).configurar(this);
 		super.setModel(modelo);
+	}
+
+	public void addColuna(String titulo, Vector<Object> dados) {
+		ModeloOrdenacao atual = (ModeloOrdenacao) getModel();
+		TableModel model = atual.getModel();
+
+		if (model instanceof DefaultTableModel) {
+			atual.addColumn(titulo, dados);
+		}
 	}
 
 	public void ajustar(Graphics graphics) {

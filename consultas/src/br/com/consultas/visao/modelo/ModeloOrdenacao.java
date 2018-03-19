@@ -3,9 +3,11 @@ package br.com.consultas.visao.modelo;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
+import java.util.Vector;
 
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -91,6 +93,11 @@ public class ModeloOrdenacao extends AbstractTableModel {
 		for (int i = 0; i < linhas.length; i++) {
 			linhas[i] = new Linha(i);
 		}
+	}
+
+	public void addColumn(Object columnName, Vector<?> columnData) {
+		((DefaultTableModel) model).addColumn(columnName, columnData);
+		fireTableStructureChanged();
 	}
 
 	public TableModel getModel() {

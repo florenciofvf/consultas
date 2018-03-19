@@ -334,7 +334,7 @@ public class Referencia {
 	public String gerarConsulta(Tabelas tabelas, String aliasTemp) {
 		if (inverso && pai == null) {
 			try {
-				throw new Exception("ALIAS INVERSO INVÁLIDO: " + alias);
+				throw new Exception("ALIAS INVERSO INVï¿½LIDO: " + alias);
 			} catch (Exception ex) {
 				String msg = Util.getStackTrace("Referencia.gerarConsulta()", ex);
 				Util.mensagem(null, msg);
@@ -391,21 +391,41 @@ public class Referencia {
 		pai.completarConsulta(sb, tabelas);
 		sb.append(" " + getPreJoin() + " JOIN " + tab.getNome() + " " + getAlias());
 
-		Campo campoFK = null;
 		Campo campoPK = null;
+		Campo campoFK = null;
 		Tabela tabPai = tabelas.get(pai.alias);
 
 		if (!inverso) {
 			campoPK = Util.ehVazio(pkNome) ? tabPai.get(pk) : tabPai.get(pkNome);
 			campoFK = Util.ehVazio(fkNome) ? tab.get(fk) : tab.get(fkNome);
+
 			sb.append(" ON " + pai.getAlias() + "." + campoPK.getNome() + " = " + getAlias() + "." + campoFK.getNome()
 					+ QUEBRAR_LINHA);
 		} else {
 			campoPK = Util.ehVazio(pkNome) ? tab.get(pk) : tab.get(pkNome);
 			campoFK = Util.ehVazio(fkNome) ? tabPai.get(fk) : tabPai.get(fkNome);
+
 			sb.append(" ON " + getAlias() + "." + campoPK.getNome() + " = " + pai.getAlias() + "." + campoFK.getNome()
 					+ QUEBRAR_LINHA);
 		}
+	}
+
+	public String getConsultaGroupByCount(Tabelas tabelas) {
+		Tabela tabPai = tabelas.get(pai.alias);
+		Tabela tab = tabelas.get(alias);
+
+		Campo campoPK = Util.ehVazio(pkNome) ? tabPai.get(pk) : tabPai.get(pkNome);
+		Campo campoFK = Util.ehVazio(fkNome) ? tab.get(fk) : tab.get(fkNome);
+
+		StringBuilder sb = new StringBuilder(
+				"SELECT " + pai.getAlias() + "." + campoPK.getNome() + ", COUNT(" + getAlias() + "." + campoFK.getNome()
+						+ ") AS total FROM " + tabPai.getNome() + " " + pai.getAlias() + QUEBRAR_LINHA);
+		sb.append(" LEFT JOIN " + tab.getNome() + " " + getAlias());
+		sb.append(" ON " + pai.getAlias() + "." + campoPK.getNome() + " = " + getAlias() + "." + campoFK.getNome()
+				+ QUEBRAR_LINHA);
+		sb.append(" GROUP BY " + pai.getAlias() + "." + campoPK.getNome() + QUEBRAR_LINHA);
+
+		return sb.toString();
 	}
 
 	public String getPrefixo() {

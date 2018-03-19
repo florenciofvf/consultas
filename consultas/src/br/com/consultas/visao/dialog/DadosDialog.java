@@ -36,6 +36,7 @@ import br.com.consultas.util.CellColor;
 import br.com.consultas.util.Util;
 import br.com.consultas.visao.Formulario;
 import br.com.consultas.visao.PainelReferencia;
+import br.com.consultas.visao.PainelReferenciaListener;
 import br.com.consultas.visao.comp.Button;
 import br.com.consultas.visao.comp.CheckBox;
 import br.com.consultas.visao.comp.Label;
@@ -50,7 +51,7 @@ import br.com.consultas.visao.modelo.ModeloOrdenacao;
 import br.com.consultas.visao.modelo.ModeloRSMD;
 import br.com.consultas.visao.modelo.ModeloVazio;
 
-public class DadosDialog extends Dialogo {
+public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 	private static final long serialVersionUID = 1L;
 	private final CheckBox chkAbrirDialogReferencia = new CheckBox("label.abrir_dialog_referencia",
 			"dados_dialog.abrir_dialog_referencia");
@@ -92,7 +93,7 @@ public class DadosDialog extends Dialogo {
 		fichario.addTab("label.meta_info", new ScrollPane(tableMetaInfo));
 
 		if (tabela != null) {
-			abaConsultas = new PainelReferencia(formulario, tabela);
+			abaConsultas = new PainelReferencia(formulario, tabela, null);
 			fichario.addTab("label.consultas", abaConsultas);
 		} else {
 			abaConsultas = null;
@@ -222,6 +223,26 @@ public class DadosDialog extends Dialogo {
 		conn.close();
 	}
 
+	public static Vector<Object[]> getRegistrosGroupBy(Referencia ref, Tabelas tabelas) throws Exception {
+		Vector<Object[]> vector = new Vector<Object[]>();
+		Connection conn = getConnection();
+
+		String consulta = ref.getConsultaGroupByCount(tabelas);
+		PreparedStatement psmt = conn.prepareStatement(consulta);
+		ResultSet rs = psmt.executeQuery();
+
+		while (rs.next()) {
+			Object[] array = { rs.getString(1), rs.getString(2) };
+			vector.add(array);
+		}
+
+		rs.close();
+		psmt.close();
+		conn.close();
+
+		return vector;
+	}
+
 	public static int executeUpdate(String string) throws Exception {
 		Connection conn = getConnection();
 		PreparedStatement psmt = conn.prepareStatement(string);
@@ -276,6 +297,22 @@ public class DadosDialog extends Dialogo {
 		tableMetaInfo.ajustar(graphics);
 	}
 
+	@Override
+	public void calcularTotal(Referencia ref) throws Exception {
+		String titulo = "" + ref.getPai().getAlias() + " >> " + ref.getAlias();
+
+		Vector<Object[]> resp = getRegistrosGroupBy(ref, formulario.getTabelas());
+
+		Vector<Object> dados = new Vector<>();
+
+		for (Object[] array : resp) {
+			dados.add(array[1]);
+		}
+
+		table.addColuna(titulo, dados);
+		table.ajustar(getGraphics());
+	}
+
 	private class PainelRegistros extends PanelBorderLayout {
 		private static final long serialVersionUID = 1L;
 		private final Label labelStatus = new Label(Color.BLUE);
@@ -287,7 +324,7 @@ public class DadosDialog extends Dialogo {
 			splitPane.setDividerLocation(largura / 2);
 
 			splitPane.setLeftComponent(new ScrollPane(table));
-			painelReferencia = new PainelReferencia(formulario, tabela);
+			painelReferencia = new PainelReferencia(formulario, tabela, DadosDialog.this);
 			splitPane.setRightComponent(painelReferencia);
 
 			add(BorderLayout.NORTH,
@@ -351,14 +388,15 @@ public class DadosDialog extends Dialogo {
 			buttonLargura.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					DadosDialog.this.setSize(formulario.getWidth() - 20, DadosDialog.this.getHeight());
+					int largura = formulario.getWidth() - 20;
+					DadosDialog.this.setSize(largura, DadosDialog.this.getHeight());
 					DadosDialog.this.setLocation(formulario.getX() + 10, DadosDialog.this.getY());
 
 					if (painelRegistros != null) {
 						SwingUtilities.invokeLater(new Runnable() {
 							@Override
 							public void run() {
-								painelRegistros.splitPane.setDividerLocation(Util.DIVISAO3);
+								painelRegistros.splitPane.setDividerLocation((int) (largura * Util.DIVISAO3));
 							}
 						});
 					}

@@ -23,7 +23,7 @@ public class ReferenciaDialog extends Dialogo {
 		this.formulario = formulario;
 
 		add(BorderLayout.SOUTH, new PainelControle());
-		add(BorderLayout.CENTER, new PainelReferencia(formulario, tabela));
+		add(BorderLayout.CENTER, new PainelReferencia(formulario, tabela, null));
 
 		setSize(600, 400);
 		setLocationRelativeTo(formulario);
