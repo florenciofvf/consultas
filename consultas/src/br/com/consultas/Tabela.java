@@ -36,9 +36,25 @@ public class Tabela {
 		return campos;
 	}
 
+	public List<String> getNomeCampos() {
+		List<String> nomes = new ArrayList<>();
+
+		for (Campo c : campos) {
+			nomes.add(c.getNome());
+		}
+
+		return nomes;
+	}
+
 	public void limparCampos() {
 		for (Campo c : campos) {
 			c.setValor("");
+		}
+	}
+
+	public void limparSolenteLeitura() {
+		for (Campo c : campos) {
+			c.setSomenteLeitura(false);
 		}
 	}
 

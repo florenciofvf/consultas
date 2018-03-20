@@ -44,6 +44,7 @@ public class Formulario extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private final Table tableConfig = new Table(new ModeloOrdenacao(new ModeloBundle(Util.bundleConfig, true)));
 	private final Table tableMsg = new Table(new ModeloOrdenacao(new ModeloBundle(Util.bundleMsg, false)));
+	private final MenuItem itemLimparSL = new MenuItem("label.limpar_somente_leitura");
 	private final MenuItem itemLimparCampos = new MenuItem("label.limpar_campos");
 	private final SplitPane splitPane = new SplitPane(SplitPane.VERTICAL_SPLIT);
 	private final MenuItem itemLimparIds = new MenuItem("label.limpar_ids");
@@ -51,8 +52,8 @@ public class Formulario extends JFrame {
 	private final List<Referencia> referencias = new ArrayList<>();
 	protected ProgressoDialog progresso = new ProgressoDialog();
 	private final Menu menuArquivo = new Menu("label.arquivo");
+	private static final double DIVISAO_TEXT_AREA = 0.80;
 	private final TabbedPane fichario = new TabbedPane();
-	private static final double DIVISAO_TEXT_AREA = 0.8;
 	protected final TextArea textArea = new TextArea();
 	private final JMenuBar menuBar = new JMenuBar();
 	private final Tabelas tabelas = new Tabelas();
@@ -114,6 +115,15 @@ public class Formulario extends JFrame {
 				}
 				Util.setEspecialFalse(referencias);
 				atualizarCampoIDForm();
+			}
+		});
+
+		itemLimparSL.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (Tabela t : tabelas.getTabelas()) {
+					t.limparSolenteLeitura();
+				}
 			}
 		});
 
@@ -187,6 +197,8 @@ public class Formulario extends JFrame {
 		menuArquivo.addSeparator();
 		menuArquivo.add(itemLimparCampos);
 		menuArquivo.addSeparator();
+		menuArquivo.add(itemLimparSL);
+		menuArquivo.addSeparator();
 		menuArquivo.add(itemFechar);
 		setJMenuBar(menuBar);
 	}
@@ -202,6 +214,7 @@ public class Formulario extends JFrame {
 		String string = Util.getSQL(textArea.getText());
 
 		if (string == null) {
+			Util.mensagem(this, Util.getString("labe.consulta_vazia"));
 			return;
 		}
 
@@ -220,6 +233,7 @@ public class Formulario extends JFrame {
 		String string = Util.getSQL(textArea.getText());
 
 		if (string == null) {
+			Util.mensagem(this, Util.getString("labe.consulta_vazia"));
 			return;
 		}
 
@@ -267,7 +281,6 @@ public class Formulario extends JFrame {
 					new JLabel(espacamento), buttonLimpar, buttonUpdate, buttonQuery, buttonGetContent);
 
 			labelValorVersao.addMouseListener(new MouseAdapter() {
-				@Override
 				public void mouseClicked(MouseEvent e) {
 					Util.mensagem(PainelControle.this,
 							"florenciovieira@gmail.com\r\n\r\n" + labelValorVersao.getText());
@@ -276,35 +289,30 @@ public class Formulario extends JFrame {
 
 			labelValorTabelas.setText("" + tabelas.getTotalTabelas());
 			labelValorTabelas.addMouseListener(new MouseAdapter() {
-				@Override
 				public void mouseClicked(MouseEvent e) {
 					fichario.setSelectedIndex(2);
 				}
 			});
 
 			buttonLimpar.addActionListener(new ActionListener() {
-				@Override
 				public void actionPerformed(ActionEvent e) {
 					limpar();
 				}
 			});
 
 			buttonUpdate.addActionListener(new ActionListener() {
-				@Override
 				public void actionPerformed(ActionEvent e) {
 					executeUpdate();
 				}
 			});
 
 			buttonQuery.addActionListener(new ActionListener() {
-				@Override
 				public void actionPerformed(ActionEvent e) {
 					executeQuery();
 				}
 			});
 
 			buttonGetContent.addActionListener(new ActionListener() {
-				@Override
 				public void actionPerformed(ActionEvent e) {
 					textArea.setText(Util.getContentTransfered());
 				}

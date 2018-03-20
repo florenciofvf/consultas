@@ -37,12 +37,12 @@ public class Table extends JTable {
 		super.setModel(modelo);
 	}
 
-	public void addColuna(String titulo, Vector<Object> dados) {
+	public void addColuna(String titulo, Vector<Object> dados, Boolean ordenarNumero) {
 		ModeloOrdenacao atual = (ModeloOrdenacao) getModel();
 		TableModel model = atual.getModel();
 
 		if (model instanceof DefaultTableModel) {
-			atual.addColumn(titulo, dados);
+			atual.addColumn(titulo, dados, ordenarNumero);
 		}
 	}
 

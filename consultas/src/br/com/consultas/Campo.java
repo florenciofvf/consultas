@@ -3,6 +3,7 @@ package br.com.consultas;
 import br.com.consultas.util.Util;
 
 public class Campo {
+	private boolean somenteLeitura;
 	private final String nome;
 	private String valor;
 
@@ -30,7 +31,19 @@ public class Campo {
 	}
 
 	public void setValor(String valor) {
+		if (somenteLeitura) {
+			return;
+		}
+
 		this.valor = valor;
+	}
+
+	public boolean isSomenteLeitura() {
+		return somenteLeitura;
+	}
+
+	public void setSomenteLeitura(boolean somenteLeitura) {
+		this.somenteLeitura = somenteLeitura;
 	}
 
 	@Override

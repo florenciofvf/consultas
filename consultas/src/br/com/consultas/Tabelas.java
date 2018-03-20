@@ -47,7 +47,7 @@ public class Tabelas {
 
 		if (tabela == null) {
 			try {
-				throw new Exception("TABELA NÃO ENCONTRADA PARA O ALIAS: " + alias);
+				throw new Exception("TABELA NAO ENCONTRADA PARA O ALIAS: " + alias);
 			} catch (Exception ex) {
 				String msg = Util.getStackTrace("Tabelas.get()", ex);
 				Util.mensagem(null, msg);

@@ -16,7 +16,6 @@ import javax.swing.tree.TreePath;
 
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
-import br.com.consultas.Tabelas;
 import br.com.consultas.util.SQL;
 import br.com.consultas.util.TreeCellRenderer;
 import br.com.consultas.util.Util;
@@ -70,34 +69,34 @@ public class PainelConsultas extends PanelBorderLayout {
 		arvore.repaint();
 	}
 
-	public void itemRegistrosDialogoLimpo(Referencia selecionado, Tabelas tabelas) {
+	public void itemRegistrosDialogoLimpo(Referencia selecionado) {
 		Util.limparID(selecionado, formulario);
 		formulario.atualizarCampoIDForm();
-		textoDados(selecionado, true, true, null);
+		registros(selecionado, true);
+	}
+
+	private void itemPesquisaDialogoLimpo(Referencia selecionado) {
+		Util.limparID(selecionado, formulario);
+		formulario.atualizarCampoIDForm();
+		pesquisa(selecionado, true);
 	}
 
 	private void itemRegistrosMemoriaLimpo() {
 		Util.limparID(selecionado, formulario);
 		formulario.atualizarCampoIDForm();
-		textoDados(selecionado, true, false, null);
-	}
-
-	private void itemPesquisaDialogoLimpo() {
-		Util.limparID(selecionado, formulario);
-		formulario.atualizarCampoIDForm();
-		textoSelect(selecionado, true, true, null);
+		registros(selecionado, false);
 	}
 
 	private void itemPesquisaMemoriaLimpo() {
 		Util.limparID(selecionado, formulario);
 		formulario.atualizarCampoIDForm();
-		textoSelect(selecionado, true, false, null);
+		pesquisa(selecionado, false);
 	}
 
 	private void itemPesquisaDialogoAliasLimpo(String aliasTemp) {
 		Util.limparID(selecionado, formulario);
 		formulario.atualizarCampoIDForm();
-		textoSelect(selecionado, true, true, aliasTemp);
+		pesquisa(selecionado, true, aliasTemp);
 	}
 
 	private void cfg() {
@@ -110,60 +109,52 @@ public class PainelConsultas extends PanelBorderLayout {
 		popup.dml();
 
 		popup.itemRegistrosDialogoLimpo.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
-				itemRegistrosDialogoLimpo(selecionado, formulario.getTabelas());
+				itemRegistrosDialogoLimpo(selecionado);
 			}
 		});
 
 		popup.itemRegistrosDialogo.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
-				textoDados(selecionado, true, true, null);
+				registros(selecionado, true);
 			}
 		});
 
 		popup.itemRegistrosMemoriaLimpo.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemRegistrosMemoriaLimpo();
 			}
 		});
 
 		popup.itemRegistrosMemoria.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
-				textoDados(selecionado, true, false, null);
+				registros(selecionado, false);
 			}
 		});
 
 		popup.itemPesquisaDialogoLimpo.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
-				itemPesquisaDialogoLimpo();
+				itemPesquisaDialogoLimpo(selecionado);
 			}
 		});
 
 		popup.itemPesquisaDialogo.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
-				textoSelect(selecionado, true, true, null);
+				pesquisa(selecionado, true);
 			}
 		});
 
 		popup.itemPesquisaDialogoAlias.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				String aliasTemp = Util.getAliasTemp(PainelConsultas.this, selecionado);
 
 				if (!Util.ehVazio(aliasTemp)) {
-					textoSelect(selecionado, true, true, aliasTemp);
+					pesquisa(selecionado, true, aliasTemp);
 				}
 			}
 		});
 
 		popup.itemPesquisaDialogoAliasLimpo.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				String aliasTemp = Util.getAliasTemp(PainelConsultas.this, selecionado);
 
@@ -174,21 +165,18 @@ public class PainelConsultas extends PanelBorderLayout {
 		});
 
 		popup.itemPesquisaMemoriaLimpo.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemPesquisaMemoriaLimpo();
 			}
 		});
 
 		popup.itemPesquisaMemoria.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
-				textoSelect(selecionado, true, false, null);
+				pesquisa(selecionado, false);
 			}
 		});
 
 		popup.itemLimparCampos.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				selecionado.getTabela(formulario.getTabelas()).limparCampos();
 				formulario.atualizarCampoIDForm();
@@ -196,7 +184,6 @@ public class PainelConsultas extends PanelBorderLayout {
 		});
 
 		popup.itemLimparId.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				selecionado.getTabela(formulario.getTabelas()).limparID();
 				formulario.atualizarCampoIDForm();
@@ -204,42 +191,36 @@ public class PainelConsultas extends PanelBorderLayout {
 		});
 
 		popup.itemCampos.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				new CampoDialog(formulario, selecionado.getTabela(formulario.getTabelas()));
 			}
 		});
 
 		popup.itemUpdate.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				formulario.textArea.setText(selecionado.gerarUpdate(formulario.getTabelas()));
 			}
 		});
 
 		popup.itemDelete.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				formulario.textArea.setText(selecionado.gerarDelete(formulario.getTabelas()));
 			}
 		});
 
 		chkRaizVisivel.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				arvore.setRootVisible(chkRaizVisivel.isSelected());
 			}
 		});
 
 		chkLinhaRaiz.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				arvore.setShowsRootHandles(chkLinhaRaiz.isSelected());
 			}
 		});
 
 		splitPane.addPropertyChangeListener(new PropertyChangeListener() {
-			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				SplitPane splitPane = (SplitPane) evt.getSource();
 				String propertyName = evt.getPropertyName();
@@ -251,18 +232,18 @@ public class PainelConsultas extends PanelBorderLayout {
 		});
 	}
 
-	private void textoDados(Referencia selecionado, boolean chkAreaTransferencia, boolean chkAbrirDialog,
-			String aliasTemp) {
+	private void registros(Referencia selecionado, boolean abrirDialogo) {
+		registros(selecionado, abrirDialogo, null);
+	}
+
+	private void registros(Referencia selecionado, boolean abrirDialogo, String aliasTemp) {
 		SQL sql = Util.criarSQL(selecionado, formulario.getTabelas(), aliasTemp);
 
 		Tabela tabela = selecionado.getTabela(formulario.getTabelas());
 		formulario.textArea.setText(sql.dados);
+		Util.setContentTransfered(sql.dados);
 
-		if (chkAreaTransferencia) {
-			Util.setContentTransfered(sql.dados);
-		}
-
-		if (chkAbrirDialog) {
+		if (abrirDialogo) {
 			try {
 				new DadosDialog(formulario, selecionado, tabela, false, null, aliasTemp);
 			} catch (Exception e) {
@@ -272,18 +253,18 @@ public class PainelConsultas extends PanelBorderLayout {
 		}
 	}
 
-	private void textoSelect(Referencia selecionado, boolean chkAreaTransferencia, boolean chkAbrirDialog,
-			String aliasTemp) {
+	private void pesquisa(Referencia selecionado, boolean abrirDialogo) {
+		pesquisa(selecionado, abrirDialogo, null);
+	}
+
+	private void pesquisa(Referencia selecionado, boolean abrirDialogo, String aliasTemp) {
 		SQL sql = Util.criarSQL(selecionado, formulario.getTabelas(), aliasTemp);
 
 		Tabela tabela = selecionado.getTabela(formulario.getTabelas());
 		formulario.textArea.setText(sql.select);
+		Util.setContentTransfered(sql.select);
 
-		if (chkAreaTransferencia) {
-			Util.setContentTransfered(sql.select);
-		}
-
-		if (chkAbrirDialog) {
+		if (abrirDialogo) {
 			try {
 				new DadosDialog(formulario, selecionado, tabela, true, null, aliasTemp);
 			} catch (Exception e) {
@@ -322,7 +303,7 @@ public class PainelConsultas extends PanelBorderLayout {
 			}
 
 			if (e.getClickCount() > 1 && ultimoSelecionado != null) {
-				itemRegistrosDialogoLimpo(ultimoSelecionado, formulario.getTabelas());
+				itemPesquisaDialogoLimpo(ultimoSelecionado);
 			}
 		}
 

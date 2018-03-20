@@ -52,8 +52,9 @@ public class Util {
 	public static ResourceBundle bundleMsg = ResourceBundle.getBundle("mensagens");
 	private static final String PREFIXO_FILTRO_CAMPO = "${";
 	private static final String SUFIXO_FILTRO_CAMPO = "}";
+	public static final int LARGURA_ICONE_ORDENAR = 20;
 	private static final boolean LOG_MENSAGEM = true;
-	public static final double DIVISAO2 = 0.60;
+	public static final double DIVISAO2 = 0.70;
 	public static final double DIVISAO3 = 0.70;
 
 	private Util() {
@@ -328,14 +329,21 @@ public class Util {
 		return sql;
 	}
 
-	// public static SQL criarSQL(Referencia ref, Tabelas tabelas) {
-	// return criarSQL(ref, tabelas, null);
-	// }
+	public static SQL criarSQL(Referencia ref, Tabelas tabelas) {
+		return criarSQL(ref, tabelas, null);
+	}
 
 	public static String getAliasTemp(Component componente, Referencia referencia) {
 		Object[] opcoes = referencia.getCaminhoArray();
 		Object selecionado = JOptionPane.showInputDialog(componente, "Selecione", getString("label.opcoes"),
 				JOptionPane.INFORMATION_MESSAGE, null, opcoes, opcoes[opcoes.length - 1]);
+		return selecionado == null ? null : selecionado.toString();
+	}
+
+	public static String getNomeCampo(Component componente, Tabela tabela) {
+		Object[] opcoes = tabela.getNomeCampos().toArray();
+		Object selecionado = JOptionPane.showInputDialog(componente, "Selecione", getString("label.opcoes"),
+				JOptionPane.INFORMATION_MESSAGE, null, opcoes, opcoes[0]);
 		return selecionado == null ? null : selecionado.toString();
 	}
 
@@ -412,7 +420,7 @@ public class Util {
 	}
 
 	public static void ajustar(JTable table, Graphics graphics) {
-		ajustar(table, graphics, 17);
+		ajustar(table, graphics, Util.LARGURA_ICONE_ORDENAR);
 	}
 
 	public static void ajustar(JTable table, Graphics graphics, int ajuste) {

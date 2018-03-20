@@ -92,13 +92,13 @@ public class PainelTabelas extends PanelBorderLayout {
 	private void itemRegistrosDialogoLimpo(Referencia selecionado) {
 		Util.limparID(selecionado, formulario);
 		formulario.atualizarCampoIDForm();
-		textoDados(selecionado, true, true, null);
+		registros(selecionado, true);
 	}
 
 	private void itemRegistrosMemoriaLimpo() {
 		Util.limparID(selecionado, formulario);
 		formulario.atualizarCampoIDForm();
-		textoDados(selecionado, true, false, null);
+		registros(selecionado, false);
 	}
 
 	private void cfg() {
@@ -110,35 +110,30 @@ public class PainelTabelas extends PanelBorderLayout {
 		popup.dml();
 
 		popup.itemRegistrosDialogoLimpo.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemRegistrosDialogoLimpo(selecionado);
 			}
 		});
 
 		popup.itemRegistrosDialogo.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
-				textoDados(selecionado, true, true, null);
+				registros(selecionado, true);
 			}
 		});
 
 		popup.itemRegistrosMemoriaLimpo.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemRegistrosMemoriaLimpo();
 			}
 		});
 
 		popup.itemRegistrosMemoria.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
-				textoDados(selecionado, true, false, null);
+				registros(selecionado, false);
 			}
 		});
 
 		popup.itemLimparCampos.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				selecionado.getTabela(formulario.getTabelas()).limparCampos();
 				formulario.atualizarCampoIDForm();
@@ -146,7 +141,6 @@ public class PainelTabelas extends PanelBorderLayout {
 		});
 
 		popup.itemLimparId.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				selecionado.getTabela(formulario.getTabelas()).limparID();
 				formulario.atualizarCampoIDForm();
@@ -154,42 +148,36 @@ public class PainelTabelas extends PanelBorderLayout {
 		});
 
 		popup.itemCampos.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				new CampoDialog(formulario, selecionado.getTabela(formulario.getTabelas()));
 			}
 		});
 
 		popup.itemUpdate.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				formulario.textArea.setText(selecionado.gerarUpdate(formulario.getTabelas()));
 			}
 		});
 
 		popup.itemDelete.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				formulario.textArea.setText(selecionado.gerarDelete(formulario.getTabelas()));
 			}
 		});
 
 		chkRaizVisivel.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				arvore.setRootVisible(chkRaizVisivel.isSelected());
 			}
 		});
 
 		chkLinhaRaiz.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				arvore.setShowsRootHandles(chkLinhaRaiz.isSelected());
 			}
 		});
 
 		splitPane.addPropertyChangeListener(new PropertyChangeListener() {
-			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				SplitPane splitPane = (SplitPane) evt.getSource();
 				String propertyName = evt.getPropertyName();
@@ -234,18 +222,18 @@ public class PainelTabelas extends PanelBorderLayout {
 		});
 	}
 
-	private void textoDados(Referencia selecionado, boolean chkAreaTransferencia, boolean chkAbrirDialog,
-			String aliasTemp) {
+	private void registros(Referencia selecionado, boolean abrirDialogo) {
+		pesquisa(selecionado, abrirDialogo, null);
+	}
+
+	private void pesquisa(Referencia selecionado, boolean abrirDialogo, String aliasTemp) {
 		SQL sql = Util.criarSQL(selecionado, formulario.getTabelas(), aliasTemp);
 
 		Tabela tabela = selecionado.getTabela(formulario.getTabelas());
 		formulario.textArea.setText(sql.dados);
+		Util.setContentTransfered(sql.dados);
 
-		if (chkAreaTransferencia) {
-			Util.setContentTransfered(sql.dados);
-		}
-
-		if (chkAbrirDialog) {
+		if (abrirDialogo) {
 			try {
 				new DadosDialog(formulario, selecionado, tabela, false, null, aliasTemp);
 			} catch (Exception e) {
@@ -259,6 +247,7 @@ public class PainelTabelas extends PanelBorderLayout {
 		arvore.setShowsRootHandles(chkLinhaRaiz.isSelected());
 		arvore.setRootVisible(chkRaizVisivel.isSelected());
 		splitPane.setDividerLocation(Util.DIVISAO2);
+		table.ajustar(getGraphics());
 	}
 
 	private class OuvinteArvore extends MouseAdapter {
@@ -278,7 +267,7 @@ public class PainelTabelas extends PanelBorderLayout {
 					ultimoSelecionado = selecionado;
 					table.setModel(
 							new ModeloOrdenacao(new ModeloCampo(selecionado.getTabela(formulario.getTabelas()))));
-					table.ajustar(getGraphics(), 20);
+					table.ajustar(getGraphics(), Util.LARGURA_ICONE_ORDENAR);
 				}
 			}
 

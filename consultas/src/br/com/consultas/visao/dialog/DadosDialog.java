@@ -17,6 +17,7 @@ import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
+import javax.swing.JScrollBar;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CellEditorListener;
@@ -54,10 +55,8 @@ import br.com.consultas.visao.modelo.ModeloVazio;
 
 public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 	private static final long serialVersionUID = 1L;
-	private final CheckBox chkAbrirDialogReferencia = new CheckBox("label.abrir_dialog_referencia",
-			"dados_dialog.abrir_dialog_referencia");
-	private final CheckBox chkAbrirAbaReferencia = new CheckBox("label.abrir_aba_referencia",
-			"dados_dialog.abrir_aba_referencia");
+	private final CheckBox chkAbrirDialogRef = new CheckBox("label.abrir_dialog_ref", "dados_dialog.abrir_dialog_ref");
+	private final CheckBox chkAbrirAbaRef = new CheckBox("label.abrir_aba_ref", "dados_dialog.abrir_aba_referencia");
 	private Table tableMetaInfo = new Table(new ModeloOrdenacao(new ModeloVazio()));
 	private Table table = new Table(new ModeloOrdenacao(new ModeloVazio()));
 	private final TextArea textAreaConsulta = new TextArea();
@@ -149,6 +148,7 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 		String string = Util.getSQL(textAreaAtualiza.getText());
 
 		if (string == null) {
+			Util.mensagem(this, Util.getString("labe.consulta_vazia"));
 			return;
 		}
 
@@ -167,6 +167,7 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 		String string = Util.getSQL(textAreaExclusao.getText());
 
 		if (string == null) {
+			Util.mensagem(this, Util.getString("labe.consulta_vazia"));
 			return;
 		}
 
@@ -185,6 +186,7 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 		String string = Util.getSQL(textAreaConsulta.getText());
 
 		if (string == null) {
+			Util.mensagem(this, Util.getString("labe.consulta_vazia"));
 			return;
 		}
 
@@ -216,7 +218,7 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 
 	private void processar(String string, Graphics graphics) throws Exception {
 		Connection conn = getConnection();
-		PreparedStatement psmt = conn.prepareStatement(string);
+		PreparedStatement psmt = conn.prepareStatement(Util.getSQL(string));
 		ResultSet rs = psmt.executeQuery();
 		dados(rs, graphics);
 		rs.close();
@@ -243,11 +245,13 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 		conn.close();
 	}
 
-	public static Vector<Object[]> getRegistrosGroupBy(Referencia ref, Tabelas tabelas) throws Exception {
+	public static Vector<Object[]> getRegistrosAgrupados(Referencia ref, Tabelas tabelas, Campo campo)
+			throws Exception {
 		Vector<Object[]> vector = new Vector<Object[]>();
 		Connection conn = getConnection();
 
-		String consulta = ref.getConsultaGroupByCount(tabelas);
+		String consulta = campo == null ? ref.getConsultaGroupByCount(tabelas)
+				: ref.getConsultaAgregada(tabelas, campo);
 
 		if (Util.getBooleanConfig("consultas.area_transferencia")) {
 			Util.setContentTransfered(consulta);
@@ -323,36 +327,95 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 		tableMetaInfo.ajustar(graphics);
 	}
 
+	private String getMensagemErro(Vector<Object> dados) {
+		if (dados.isEmpty()) {
+			return Util.getString("label.sem_registros_encontrados");
+		}
+
+		if (table.getModel().getRowCount() == 0) {
+			return Util.getString("label.sem_registros_table");
+		}
+
+		if (table.getModel().getRowCount() != dados.size()) {
+			return Util.getString("label.registros_vs_table") + " [" + table.getModel().getRowCount() + "/"
+					+ dados.size() + "]";
+		}
+
+		return null;
+	}
+
+	private static String getTituloCampoAgregado(Referencia ref, String nome) {
+		return ref.getPai().getAlias() + " >> " + ref.getAlias() + "." + nome;
+	}
+
 	@Override
 	public void calcularTotal(Referencia ref) throws Exception {
-		String titulo = "" + ref.getPai().getAlias() + " >> " + ref.getAlias();
+		if (ref.isInverso()) {
+			Util.mensagem(this, Util.getString("erro.relacionamento_inverso"));
+			return;
+		}
 
-		Vector<Object[]> resp = getRegistrosGroupBy(ref, formulario.getTabelas());
-
+		Vector<Object[]> resp = getRegistrosAgrupados(ref, formulario.getTabelas(), null);
 		Vector<Object> dados = new Vector<>();
 
 		for (Object[] array : resp) {
 			dados.add(array[1]);
 		}
 
-		if (dados.isEmpty()) {
-			Util.mensagem(this, Util.getString("label.sem_registros_encontrados"));
+		String mensagemErro = getMensagemErro(dados);
+
+		if (!Util.ehVazio(mensagemErro)) {
+			Util.mensagem(this, mensagemErro);
 			return;
 		}
 
-		if (table.getModel().getRowCount() == 0) {
-			Util.mensagem(this, Util.getString("label.sem_registros_table"));
-			return;
-		}
-
-		if (table.getModel().getRowCount() != dados.size()) {
-			Util.mensagem(this, Util.getString("label.registros_vs_table"));
-			return;
-		}
-
-		table.addColuna(titulo, dados);
+		table.addColuna(getTituloCampoAgregado(ref, "COUNT"), dados, Boolean.TRUE);
 		configTable(table);
 		table.ajustar(getGraphics());
+
+		if (painelRegistros != null) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					painelRegistros.finalScroll();
+				}
+			});
+		}
+	}
+
+	@Override
+	public void agruparColuna(Referencia ref, Campo campo) throws Exception {
+		if (ref.isInverso()) {
+			Util.mensagem(this, Util.getString("erro.relacionamento_inverso"));
+			return;
+		}
+
+		Vector<Object[]> resp = getRegistrosAgrupados(ref, formulario.getTabelas(), campo);
+		Vector<Object> dados = new Vector<>();
+
+		for (Object[] array : resp) {
+			dados.add(array[1]);
+		}
+
+		String mensagemErro = getMensagemErro(dados);
+
+		if (!Util.ehVazio(mensagemErro)) {
+			Util.mensagem(this, mensagemErro);
+			return;
+		}
+
+		table.addColuna(getTituloCampoAgregado(ref, campo.getNome()), dados, Boolean.FALSE);
+		configTable(table);
+		table.ajustar(getGraphics());
+
+		if (painelRegistros != null) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					painelRegistros.finalScroll();
+				}
+			});
+		}
 	}
 
 	private void configTable(Table table) {
@@ -368,22 +431,28 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 		private final Label labelValor = new Label(Color.RED);
 		private final SplitPane splitPane = new SplitPane();
 		private final PainelReferencia painelReferencia;
+		private final ScrollPane scroll;
 
 		PainelRegistros(int largura) {
 			splitPane.setDividerLocation(largura / 2);
 
-			splitPane.setLeftComponent(new ScrollPane(table));
+			scroll = new ScrollPane(table);
+			splitPane.setLeftComponent(scroll);
 			painelReferencia = new PainelReferencia(formulario, tabela, DadosDialog.this);
 			splitPane.setRightComponent(painelReferencia);
 
-			add(BorderLayout.NORTH,
-					new PanelLeft(chkAbrirDialogReferencia, chkAbrirAbaReferencia, labelStatus, labelValor));
+			add(BorderLayout.NORTH, new PanelLeft(chkAbrirDialogRef, chkAbrirAbaRef, labelStatus, labelValor));
 			add(BorderLayout.CENTER, splitPane);
 		}
 
 		void setInfo(String status, String valor) {
 			labelStatus.setText(status);
 			labelValor.setText(valor);
+		}
+
+		void finalScroll() {
+			JScrollBar horizontalScrollBar = scroll.getHorizontalScrollBar();
+			horizontalScrollBar.setValue(table.getWidth());
 		}
 	}
 
@@ -394,12 +463,18 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 		private final Button buttonDelete = new Button("label.execute_delete");
 		private final Button buttonQuery = new Button("label.execute_query");
 		private final Button buttonCopiarIds = new Button("label.copiar_id");
+		private final Button buttonLimparId = new Button("label.limpar_id");
 		private final Button buttonLargura = new Button("label.largura");
 		private final Button buttonFechar = new Button("label.fechar");
 
 		PainelControle() {
-			adicionar(buttonFechar, buttonUpdate, buttonDelete, buttonQuery, buttonGetContent, buttonCopiarIds,
-					buttonLargura);
+			adicionar(buttonFechar, buttonUpdate, buttonDelete, buttonQuery);
+
+			if (tabela != null) {
+				adicionar(buttonLimparId);
+			}
+
+			adicionar(buttonGetContent, buttonCopiarIds, buttonLargura);
 
 			buttonFechar.addActionListener(new ActionListener() {
 				@Override
@@ -426,6 +501,15 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					executeQuery();
+				}
+			});
+
+			buttonLimparId.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Campo campo = tabela.get(0);
+					campo.setValor(null);
+					atualizarViews();
 				}
 			});
 
@@ -464,6 +548,14 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 		}
 	}
 
+	private void atualizarViews() {
+		atualizarTextArea(null);
+
+		painelRegistros.painelReferencia.atualizarCampoID();
+		formulario.atualizarCampoIDForm();
+		abaConsultas.atualizarCampoID();
+	}
+
 	private class CellRenderer extends DefaultTableCellRenderer {
 		private static final long serialVersionUID = 1L;
 	}
@@ -486,10 +578,10 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 
 		@Override
 		public boolean shouldSelectCell(EventObject anEvent) {
-			if (chkAbrirDialogReferencia.isSelected()) {
+			if (chkAbrirDialogRef.isSelected()) {
 				new ReferenciaDialog(formulario, tabela);
 
-			} else if (chkAbrirAbaReferencia.isSelected()) {
+			} else if (chkAbrirAbaRef.isSelected()) {
 				fichario.setSelectedIndex(fichario.getTabCount() - 1);
 			}
 
@@ -515,11 +607,7 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 			Campo campo = tabela.get(0);
 			campo.setValor(valor.toString());
 
-			atualizarTextArea(null);
-
-			painelRegistros.painelReferencia.atualizarCampoID();
-			formulario.atualizarCampoIDForm();
-			abaConsultas.atualizarCampoID();
+			atualizarViews();
 
 			painelRegistros.setInfo(TITLE + "." + campo.getNome(), "[" + campo.getValor() + "]");
 

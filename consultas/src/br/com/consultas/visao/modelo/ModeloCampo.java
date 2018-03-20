@@ -7,7 +7,7 @@ import br.com.consultas.Campo;
 import br.com.consultas.Tabela;
 
 public class ModeloCampo implements TableModel {
-	private final String[] COLUNAS = { "NOME", "VALOR" };
+	private final String[] COLUNAS = { "NOME", "SOMENTE LEITURA", "VALOR" };
 	private final Tabela tabela;
 
 	public ModeloCampo(Tabela tabela) {
@@ -31,26 +31,39 @@ public class ModeloCampo implements TableModel {
 
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
-		return String.class;
+		return columnIndex == 1 ? Boolean.class : String.class;
 	}
 
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return columnIndex == COLUNAS.length - 1;
+		return columnIndex != 0;
 	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		Campo campo = tabela.get(rowIndex);
-		return columnIndex == 0 ? campo.getNome() : campo.getValor();
+
+		if (columnIndex == 0) {
+			return campo.getNome();
+		}
+
+		if (columnIndex == 1) {
+			return campo.isSomenteLeitura();
+		}
+
+		return campo.getValor();
 	}
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		Campo campo = tabela.get(rowIndex);
 
-		if (columnIndex == COLUNAS.length - 1 && aValue != null) {
-			campo.setValor(aValue.toString());
+		if (aValue != null) {
+			if (columnIndex == 1) {
+				campo.setSomenteLeitura(Boolean.parseBoolean(aValue.toString()));
+			} else if (columnIndex == 2) {
+				campo.setValor(aValue.toString());
+			}
 		}
 	}
 

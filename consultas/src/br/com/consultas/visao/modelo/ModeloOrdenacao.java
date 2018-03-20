@@ -88,7 +88,7 @@ public class ModeloOrdenacao extends AbstractTableModel {
 				TableCellRenderer headerRenderer = coluna.getHeaderRenderer();
 
 				if (!(headerRenderer instanceof OrdenacaoRenderer)) {
-					int largura = coluna.getPreferredWidth() + 20;
+					int largura = coluna.getPreferredWidth() + Util.LARGURA_ICONE_ORDENAR;
 					coluna.setPreferredWidth(largura);
 				}
 
@@ -123,12 +123,16 @@ public class ModeloOrdenacao extends AbstractTableModel {
 		}
 	}
 
-	public void addColumn(Object columnName, Vector<?> columnData) {
+	public void addColumn(Object columnName, Vector<?> columnData, Boolean ordenarNumero) {
+		if (!(model instanceof DefaultTableModel)) {
+			throw new IllegalArgumentException();
+		}
+
 		((DefaultTableModel) model).addColumn(columnName, columnData);
 		fireTableStructureChanged();
 
 		if (mapaTipoColuna != null) {
-			mapaTipoColuna.put(model.getColumnCount() - 1, Boolean.TRUE);
+			mapaTipoColuna.put(model.getColumnCount() - 1, ordenarNumero);
 		}
 	}
 
