@@ -140,6 +140,7 @@ public class ModeloOrdenacao extends AbstractTableModel {
 		Map<String, Boolean> map = new HashMap<>();
 		map.put("java.math.BigDecimal", Boolean.TRUE);
 		map.put("java.math.BigInteger", Boolean.TRUE);
+		map.put("java.lang.Integer", Boolean.TRUE);
 		map.put("java.lang.String", Boolean.FALSE);
 		map.put("java.lang.Double", Boolean.TRUE);
 		map.put("java.lang.Long", Boolean.TRUE);
