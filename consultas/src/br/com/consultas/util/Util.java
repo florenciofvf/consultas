@@ -328,9 +328,9 @@ public class Util {
 		return sql;
 	}
 
-	public static SQL criarSQL(Referencia ref, Tabelas tabelas) {
-		return criarSQL(ref, tabelas, null);
-	}
+	// public static SQL criarSQL(Referencia ref, Tabelas tabelas) {
+	// return criarSQL(ref, tabelas, null);
+	// }
 
 	public static String getAliasTemp(Component componente, Referencia referencia) {
 		Object[] opcoes = referencia.getCaminhoArray();

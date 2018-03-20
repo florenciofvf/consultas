@@ -22,8 +22,6 @@ public class CampoDialog extends Dialogo {
 	private final Table table;
 
 	public CampoDialog(Formulario formulario, Tabela tabela) {
-		super(null);
-
 		ModeloCampo modelo = new ModeloCampo(tabela);
 		table = new Table(new ModeloOrdenacao(modelo));
 		table.ajustar(formulario.getGraphics());

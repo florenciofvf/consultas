@@ -33,6 +33,7 @@ import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
 import br.com.consultas.Tabelas;
 import br.com.consultas.util.CellColor;
+import br.com.consultas.util.SQL;
 import br.com.consultas.util.Util;
 import br.com.consultas.visao.Formulario;
 import br.com.consultas.visao.PainelReferencia;
@@ -65,21 +66,28 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 	private final TabbedPane fichario = new TabbedPane();
 	private final PainelRegistros painelRegistros;
 	private final PainelReferencia abaConsultas;
+	private final Referencia selecionado;
 	private final Formulario formulario;
+	private final boolean pesquisa;
 	private final Tabela tabela;
 	private final String TITLE;
 
-	public DadosDialog(Formulario formulario, String consulta, String atualizacao, String exclusao, Tabela tabela)
-			throws Exception {
-		super(null);
-
+	public DadosDialog(Formulario formulario, Referencia selecionado, Tabela tabela, boolean pesquisa, String consulta,
+			String aliasTemp) throws Exception {
 		final int largura = (int) (formulario.getWidth() * .8);
 		TITLE = tabela != null ? tabela.getNome() : "";
 
+		this.selecionado = selecionado;
 		this.formulario = formulario;
+		this.pesquisa = pesquisa;
 		this.tabela = tabela;
 
-		processar(consulta, formulario.getGraphics());
+		if (selecionado == null) {
+			processar(consulta, formulario.getGraphics());
+		} else {
+			SQL sql = Util.criarSQL(selecionado, formulario.getTabelas(), aliasTemp);
+			processar(pesquisa ? sql.select : sql.dados, formulario.getGraphics());
+		}
 
 		if (tabela != null) {
 			painelRegistros = new PainelRegistros(largura);
@@ -104,15 +112,25 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 		add(BorderLayout.CENTER, fichario);
 		add(BorderLayout.SOUTH, new PainelControle());
 
-		textAreaAtualiza.setText(atualizacao);
-		textAreaConsulta.setText(consulta);
-		textAreaExclusao.setText(exclusao);
+		atualizarTextArea(consulta);
 
 		setSize(largura, 500);
 		setLocationRelativeTo(formulario);
 
 		cfg();
 		setVisible(true);
+	}
+
+	private void atualizarTextArea(String consulta) {
+		if (selecionado == null) {
+			textAreaConsulta.setText(consulta);
+		} else {
+			SQL sql = Util.criarSQL(selecionado, formulario.getTabelas(), null);
+
+			textAreaConsulta.setText(pesquisa ? sql.select : sql.dados);
+			textAreaAtualiza.setText(sql.update);
+			textAreaExclusao.setText(sql.delete);
+		}
 	}
 
 	private void cfg() {
@@ -496,6 +514,8 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 			valor = value;
 			Campo campo = tabela.get(0);
 			campo.setValor(valor.toString());
+
+			atualizarTextArea(null);
 
 			painelRegistros.painelReferencia.atualizarCampoID();
 			formulario.atualizarCampoIDForm();

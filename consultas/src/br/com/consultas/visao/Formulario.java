@@ -224,7 +224,7 @@ public class Formulario extends JFrame {
 		}
 
 		try {
-			new DadosDialog(this, string, null, null, null);
+			new DadosDialog(this, null, null, false, string, null);
 		} catch (Exception e) {
 			String msg = Util.getStackTrace(getClass().getName() + ".executeQuery()", e);
 			Util.mensagem(this, msg);

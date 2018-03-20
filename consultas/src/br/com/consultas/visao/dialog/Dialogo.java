@@ -13,4 +13,8 @@ public class Dialogo extends JFrame {
 		setLayout(new BorderLayout());
 		setAlwaysOnTop(true);
 	}
+
+	public Dialogo() {
+		this(null);
+	}
 }

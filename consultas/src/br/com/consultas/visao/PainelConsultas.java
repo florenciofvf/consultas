@@ -71,38 +71,33 @@ public class PainelConsultas extends PanelBorderLayout {
 	}
 
 	public void itemRegistrosDialogoLimpo(Referencia selecionado, Tabelas tabelas) {
-		Tabela tabela = Util.limparID(selecionado, formulario);
+		Util.limparID(selecionado, formulario);
 		formulario.atualizarCampoIDForm();
-		SQL sql = Util.criarSQL(selecionado, tabelas);
-		texto(sql.dados, sql.update, sql.delete, tabela, true, true);
+		textoDados(selecionado, true, true, null);
 	}
 
 	private void itemRegistrosMemoriaLimpo() {
-		Tabela tabela = Util.limparID(selecionado, formulario);
+		Util.limparID(selecionado, formulario);
 		formulario.atualizarCampoIDForm();
-		SQL sql = Util.criarSQL(selecionado, formulario.getTabelas());
-		texto(sql.dados, sql.update, sql.delete, tabela, true, false);
+		textoDados(selecionado, true, false, null);
 	}
 
 	private void itemPesquisaDialogoLimpo() {
-		Tabela tabela = Util.limparID(selecionado, formulario);
+		Util.limparID(selecionado, formulario);
 		formulario.atualizarCampoIDForm();
-		SQL sql = Util.criarSQL(selecionado, formulario.getTabelas());
-		texto(sql.select, sql.update, sql.delete, tabela, true, true);
+		textoSelect(selecionado, true, true, null);
 	}
 
 	private void itemPesquisaMemoriaLimpo() {
-		Tabela tabela = Util.limparID(selecionado, formulario);
+		Util.limparID(selecionado, formulario);
 		formulario.atualizarCampoIDForm();
-		SQL sql = Util.criarSQL(selecionado, formulario.getTabelas());
-		texto(sql.select, sql.update, sql.delete, tabela, true, false);
+		textoSelect(selecionado, true, false, null);
 	}
 
 	private void itemPesquisaDialogoAliasLimpo(String aliasTemp) {
-		Tabela tabela = Util.limparID(selecionado, formulario);
+		Util.limparID(selecionado, formulario);
 		formulario.atualizarCampoIDForm();
-		SQL sql = Util.criarSQL(selecionado, formulario.getTabelas(), aliasTemp);
-		texto(sql.select, sql.update, sql.delete, tabela, true, true);
+		textoSelect(selecionado, true, true, aliasTemp);
 	}
 
 	private void cfg() {
@@ -124,8 +119,7 @@ public class PainelConsultas extends PanelBorderLayout {
 		popup.itemRegistrosDialogo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				SQL sql = Util.criarSQL(selecionado, formulario.getTabelas());
-				texto(sql.dados, sql.update, sql.delete, selecionado.getTabela(formulario.getTabelas()), true, true);
+				textoDados(selecionado, true, true, null);
 			}
 		});
 
@@ -139,8 +133,7 @@ public class PainelConsultas extends PanelBorderLayout {
 		popup.itemRegistrosMemoria.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				SQL sql = Util.criarSQL(selecionado, formulario.getTabelas());
-				texto(sql.dados, sql.update, sql.delete, selecionado.getTabela(formulario.getTabelas()), true, false);
+				textoDados(selecionado, true, false, null);
 			}
 		});
 
@@ -154,8 +147,7 @@ public class PainelConsultas extends PanelBorderLayout {
 		popup.itemPesquisaDialogo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				SQL sql = Util.criarSQL(selecionado, formulario.getTabelas());
-				texto(sql.select, sql.update, sql.delete, selecionado.getTabela(formulario.getTabelas()), true, true);
+				textoSelect(selecionado, true, true, null);
 			}
 		});
 
@@ -165,9 +157,7 @@ public class PainelConsultas extends PanelBorderLayout {
 				String aliasTemp = Util.getAliasTemp(PainelConsultas.this, selecionado);
 
 				if (!Util.ehVazio(aliasTemp)) {
-					SQL sql = Util.criarSQL(selecionado, formulario.getTabelas(), aliasTemp);
-					texto(sql.select, sql.update, sql.delete, selecionado.getTabela(formulario.getTabelas()), true,
-							true);
+					textoSelect(selecionado, true, true, aliasTemp);
 				}
 			}
 		});
@@ -193,8 +183,7 @@ public class PainelConsultas extends PanelBorderLayout {
 		popup.itemPesquisaMemoria.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				SQL sql = Util.criarSQL(selecionado, formulario.getTabelas());
-				texto(sql.select, sql.update, sql.delete, selecionado.getTabela(formulario.getTabelas()), true, false);
+				textoSelect(selecionado, true, false, null);
 			}
 		});
 
@@ -262,18 +251,41 @@ public class PainelConsultas extends PanelBorderLayout {
 		});
 	}
 
-	private void texto(String consulta, String atualizacao, String exclusao, Tabela tabela,
-			boolean chkAreaTransferencia, boolean chkAbrirDialog) {
-		formulario.textArea.setText(consulta);
+	private void textoDados(Referencia selecionado, boolean chkAreaTransferencia, boolean chkAbrirDialog,
+			String aliasTemp) {
+		SQL sql = Util.criarSQL(selecionado, formulario.getTabelas(), aliasTemp);
+
+		Tabela tabela = selecionado.getTabela(formulario.getTabelas());
+		formulario.textArea.setText(sql.dados);
 
 		if (chkAreaTransferencia) {
-			Util.setContentTransfered(consulta);
+			Util.setContentTransfered(sql.dados);
 		}
 
 		if (chkAbrirDialog) {
 			try {
-				new DadosDialog(formulario, Util.getSQL(consulta), Util.getSQL(atualizacao), Util.getSQL(exclusao),
-						tabela);
+				new DadosDialog(formulario, selecionado, tabela, false, null, aliasTemp);
+			} catch (Exception e) {
+				String msg = Util.getStackTrace(getClass().getName() + ".texto()", e);
+				Util.mensagem(this, msg);
+			}
+		}
+	}
+
+	private void textoSelect(Referencia selecionado, boolean chkAreaTransferencia, boolean chkAbrirDialog,
+			String aliasTemp) {
+		SQL sql = Util.criarSQL(selecionado, formulario.getTabelas(), aliasTemp);
+
+		Tabela tabela = selecionado.getTabela(formulario.getTabelas());
+		formulario.textArea.setText(sql.select);
+
+		if (chkAreaTransferencia) {
+			Util.setContentTransfered(sql.select);
+		}
+
+		if (chkAbrirDialog) {
+			try {
+				new DadosDialog(formulario, selecionado, tabela, true, null, aliasTemp);
 			} catch (Exception e) {
 				String msg = Util.getStackTrace(getClass().getName() + ".texto()", e);
 				Util.mensagem(this, msg);
