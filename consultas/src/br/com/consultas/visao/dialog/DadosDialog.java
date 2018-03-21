@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -70,6 +71,7 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 	private final boolean pesquisa;
 	private final Tabela tabela;
 	private final String TITLE;
+	private boolean um;
 
 	public DadosDialog(Formulario formulario, Referencia selecionado, Tabela tabela, boolean pesquisa, String consulta,
 			String aliasTemp) throws Exception {
@@ -456,6 +458,12 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 		}
 	}
 
+	private void limpar() {
+		Campo campo = tabela.get(0);
+		campo.setValor(null);
+		atualizarViews();
+	}
+
 	private class PainelControle extends PanelLeft {
 		private static final long serialVersionUID = 1L;
 		private final Button buttonGetContent = new Button("label.get_content");
@@ -507,9 +515,7 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 			buttonLimparId.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Campo campo = tabela.get(0);
-					campo.setValor(null);
-					atualizarViews();
+					limpar();
 				}
 			});
 
@@ -577,12 +583,28 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 		}
 
 		@Override
-		public boolean shouldSelectCell(EventObject anEvent) {
-			if (chkAbrirDialogRef.isSelected()) {
-				new ReferenciaDialog(formulario, tabela);
+		public boolean shouldSelectCell(EventObject evento) {
+			boolean multiplos = false;
 
-			} else if (chkAbrirAbaRef.isSelected()) {
-				fichario.setSelectedIndex(fichario.getTabCount() - 1);
+			if (evento instanceof MouseEvent) {
+				multiplos = ((MouseEvent) evento).getClickCount() >= 2;
+			}
+
+			if (!multiplos) {
+				if (chkAbrirDialogRef.isSelected()) {
+					new ReferenciaDialog(formulario, tabela);
+
+				} else if (chkAbrirAbaRef.isSelected()) {
+					fichario.setSelectedIndex(fichario.getTabCount() - 1);
+				}
+			} else {
+				um = !um;
+
+				if (!um) {
+					limpar();
+				}
+
+				executeQuery();
 			}
 
 			return true;

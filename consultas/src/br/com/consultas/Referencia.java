@@ -417,20 +417,13 @@ public class Referencia {
 		Campo campoPK = Util.ehVazio(pkNome) ? tabPai.get(pk) : tabPai.get(pkNome);
 		Campo campoFK = Util.ehVazio(fkNome) ? tab.get(fk) : tab.get(fkNome);
 
-		StringBuilder sb = new StringBuilder(
-				"SELECT " + pai.getAlias() + "." + campoPK.getNome() + ", COUNT(" + getAlias() + "." + campoFK.getNome()
-						+ ") AS total FROM " + tabPai.getNome() + " " + pai.getAlias() + QUEBRAR_LINHA);
-		sb.append(" LEFT JOIN " + tab.getNome() + " " + getAlias());
-		sb.append(" ON " + pai.getAlias() + "." + campoPK.getNome() + " = " + getAlias() + "." + campoFK.getNome()
-				+ QUEBRAR_LINHA);
+		StringBuilder sb = new StringBuilder("SELECT " + pai.getAlias() + "." + campoPK.getNome() + ", COUNT("
+				+ getAlias() + "." + campoFK.getNome() + ") AS total FROM");
+		completarConsulta(sb, tabelas);
 
 		sb.append(" WHERE 1=1" + QUEBRAR_LINHA);
 
-		for (Campo c : tabPai.getCampos()) {
-			if (!Util.ehVazio(c.getValor())) {
-				sb.append(" AND " + pai.getAlias() + "." + Util.fragmentoFiltroCampo(c) + QUEBRAR_LINHA);
-			}
-		}
+		filtros(sb, tabelas);
 
 		sb.append(" GROUP BY " + pai.getAlias() + "." + campoPK.getNome() + QUEBRAR_LINHA);
 
@@ -442,24 +435,16 @@ public class Referencia {
 
 	public String getConsultaAgregada(Tabelas tabelas, Campo campo) {
 		Tabela tabPai = tabelas.get(pai.alias);
-		Tabela tab = tabelas.get(alias);
 
 		Campo campoPK = Util.ehVazio(pkNome) ? tabPai.get(pk) : tabPai.get(pkNome);
-		Campo campoFK = Util.ehVazio(fkNome) ? tab.get(fk) : tab.get(fkNome);
 
 		StringBuilder sb = new StringBuilder("SELECT " + pai.getAlias() + "." + campoPK.getNome() + ", " + getAlias()
-				+ "." + campo.getNome() + " FROM " + tabPai.getNome() + " " + pai.getAlias() + QUEBRAR_LINHA);
-		sb.append(" INNER JOIN " + tab.getNome() + " " + getAlias());
-		sb.append(" ON " + pai.getAlias() + "." + campoPK.getNome() + " = " + getAlias() + "." + campoFK.getNome()
-				+ QUEBRAR_LINHA);
+				+ "." + campo.getNome() + " FROM");
+		completarConsulta(sb, tabelas);
 
 		sb.append(" WHERE 1=1" + QUEBRAR_LINHA);
 
-		for (Campo c : tabPai.getCampos()) {
-			if (!Util.ehVazio(c.getValor())) {
-				sb.append(" AND " + pai.getAlias() + "." + Util.fragmentoFiltroCampo(c) + QUEBRAR_LINHA);
-			}
-		}
+		filtros(sb, tabelas);
 
 		sb.append(" ORDER BY " + pai.getAlias() + "." + campoPK.getNome() + aux(Util.getStringConfig("order_by"))
 				+ QUEBRAR_LINHA);
