@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Vector;
 
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -46,6 +47,7 @@ import br.com.consultas.visao.Formulario;
 import br.com.consultas.visao.comp.Arvore;
 import br.com.consultas.visao.comp.TextArea;
 import br.com.consultas.visao.modelo.ModeloArvore;
+import br.com.consultas.visao.modelo.ModeloOrdenacao;
 
 public class Util {
 	public static ResourceBundle bundleConfig = ResourceBundle.getBundle("config");
@@ -538,5 +540,28 @@ public class Util {
 		}
 
 		return sb.toString();
+	}
+
+	public static Vector<Object> criarDados(Vector<Object[]> registros, ModeloOrdenacao modelo) {
+		Vector<Object> resposta = new Vector<>();
+
+		for (int i = 0; i < modelo.getRowCount(); i++) {
+			Object id = modelo.getValueAt(i, 0);
+			Object valor = getValor(id, registros);
+
+			resposta.add(valor != null ? valor : "");
+		}
+
+		return resposta;
+	}
+
+	private static Object getValor(Object id, Vector<Object[]> resp) {
+		for (Object[] objects : resp) {
+			if (objects[0].equals(id)) {
+				return objects[1];
+			}
+		}
+
+		return null;
 	}
 }

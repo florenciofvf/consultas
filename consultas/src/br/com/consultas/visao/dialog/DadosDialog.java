@@ -329,7 +329,7 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 		tableMetaInfo.ajustar(graphics);
 	}
 
-	private String getMensagemErro(Vector<Object> dados) {
+	private String getMensagemErro(Vector<Object[]> dados) {
 		if (dados.isEmpty()) {
 			return Util.getString("label.sem_registros_encontrados");
 		}
@@ -338,7 +338,7 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 			return Util.getString("label.sem_registros_table");
 		}
 
-		if (table.getModel().getRowCount() != dados.size()) {
+		if (table.getModel().getRowCount() < dados.size()) {
 			return Util.getString("label.registros_vs_table") + " [" + table.getModel().getRowCount() + "/"
 					+ dados.size() + "]";
 		}
@@ -358,18 +358,15 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 		}
 
 		Vector<Object[]> resp = getRegistrosAgrupados(ref, formulario.getTabelas(), null);
-		Vector<Object> dados = new Vector<>();
 
-		for (Object[] array : resp) {
-			dados.add(array[1]);
-		}
-
-		String mensagemErro = getMensagemErro(dados);
+		String mensagemErro = getMensagemErro(resp);
 
 		if (!Util.ehVazio(mensagemErro)) {
 			Util.mensagem(this, mensagemErro);
 			return;
 		}
+
+		Vector<Object> dados = Util.criarDados(resp, (ModeloOrdenacao)table.getModel());
 
 		table.addColuna(getTituloCampoAgregado(ref, "COUNT"), dados, Boolean.TRUE);
 		configTable(table);
@@ -393,18 +390,15 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 		}
 
 		Vector<Object[]> resp = getRegistrosAgrupados(ref, formulario.getTabelas(), campo);
-		Vector<Object> dados = new Vector<>();
 
-		for (Object[] array : resp) {
-			dados.add(array[1]);
-		}
-
-		String mensagemErro = getMensagemErro(dados);
+		String mensagemErro = getMensagemErro(resp);
 
 		if (!Util.ehVazio(mensagemErro)) {
 			Util.mensagem(this, mensagemErro);
 			return;
 		}
+
+		Vector<Object> dados = Util.criarDados(resp, (ModeloOrdenacao)table.getModel());
 
 		table.addColuna(getTituloCampoAgregado(ref, campo.getNome()), dados, Boolean.FALSE);
 		configTable(table);
