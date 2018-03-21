@@ -3,9 +3,9 @@
 <consulta>
 
 	<tabelas>
-		<eleicao		ID=""						alias-f="eleicao"  destaque-f="true" />
+		<endereco		ID=""	ID_CANDIDATO=""		LOGRADOURO=""		alias-f="endereco" />
+		<eleicao		ID=""						alias-f="eleicao"	destaque-f="true" />
 		<candidato		ID=""	ELEICAO_ID=""		alias-f="candidato" />
-		<endereco		ID=""	ID_CANDIDATO=""		alias-f="endereco" />
 	</tabelas>
 
 	<refs>
