@@ -373,6 +373,32 @@ public class Util {
 		}
 	}
 
+	public static void expandirRetrairTodos(Arvore tree, boolean expandir) {
+		ModeloArvore modelo = (ModeloArvore) tree.getModel();
+		String raiz = (String) modelo.getRoot();
+		int filhos = modelo.getChildCount(raiz);
+
+		List<Referencia> todos = new ArrayList<>();
+
+		for (int i = 0; i < filhos; i++) {
+			Referencia ref = (Referencia) modelo.getChild(raiz, i);
+			ref.todos(todos);
+		}
+
+		for (Referencia r : todos) {
+			List<Object> lista = new ArrayList<>();
+			r.caminho(lista);
+			lista.add(0, raiz);
+
+			TreePath path = new TreePath(lista.toArray(new Object[] {}));
+			if (expandir) {
+				tree.expandPath(path);
+			} else {
+				tree.collapsePath(path);
+			}
+		}
+	}
+
 	public static void atualizarEstrutura(Arvore tree, Tabelas tabelas, boolean comID) {
 		ModeloArvore modelo = (ModeloArvore) tree.getModel();
 		String raiz = (String) modelo.getRoot();

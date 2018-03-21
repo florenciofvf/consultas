@@ -20,6 +20,7 @@ import br.com.consultas.util.SQL;
 import br.com.consultas.util.TreeCellRenderer;
 import br.com.consultas.util.Util;
 import br.com.consultas.visao.comp.Arvore;
+import br.com.consultas.visao.comp.Button;
 import br.com.consultas.visao.comp.CheckBox;
 import br.com.consultas.visao.comp.PanelBorderLayout;
 import br.com.consultas.visao.comp.PanelLeft;
@@ -54,10 +55,31 @@ public class PainelConsultas extends PanelBorderLayout {
 		splitPane.setLeftComponent(new ScrollPane(arvore));
 		splitPane.setRightComponent(new ScrollPane(table));
 
+		PanelLeft panelNorte = new PanelLeft();
+
 		if (Util.getBooleanConfig("config_arvore")) {
-			add(BorderLayout.NORTH, new PanelLeft(chkRaizVisivel, chkLinhaRaiz));
+			panelNorte.adicionar(chkRaizVisivel, chkLinhaRaiz);
 		}
 
+		Button expandir = new Button("label.expandir");
+		expandir.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Util.expandirRetrairTodos(arvore, true);
+			}
+		});
+
+		Button retrair = new Button("label.retrair");
+		retrair.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Util.expandirRetrairTodos(arvore, false);
+			}
+		});
+
+		panelNorte.adicionar(expandir, retrair);
+
+		add(BorderLayout.NORTH, panelNorte);
 		add(BorderLayout.CENTER, splitPane);
 
 		cfg();

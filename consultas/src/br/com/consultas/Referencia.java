@@ -158,6 +158,14 @@ public class Referencia {
 		}
 	}
 
+	public void todos(List<Referencia> referencias) {
+		for (Referencia r : getReferencias()) {
+			r.todos(referencias);
+		}
+
+		referencias.add(this);
+	}
+
 	public void caminho(List<Object> referencias) {
 		Referencia pai = this.pai;
 

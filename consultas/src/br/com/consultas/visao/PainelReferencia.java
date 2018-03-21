@@ -17,6 +17,7 @@ import br.com.consultas.util.SQL;
 import br.com.consultas.util.TreeCellRenderer;
 import br.com.consultas.util.Util;
 import br.com.consultas.visao.comp.Arvore;
+import br.com.consultas.visao.comp.Button;
 import br.com.consultas.visao.comp.CheckBox;
 import br.com.consultas.visao.comp.Label;
 import br.com.consultas.visao.comp.PanelBorderLayout;
@@ -61,7 +62,23 @@ public class PainelReferencia extends PanelBorderLayout {
 			panelNorte.adicionar(chkRaizVisivel, chkLinhaRaiz);
 		}
 
-		panelNorte.adicionar(chkTopoHierarquia, labelStatus, labelValor);
+		Button expandir = new Button("label.expandir");
+		expandir.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Util.expandirRetrairTodos(arvore, true);
+			}
+		});
+
+		Button retrair = new Button("label.retrair");
+		retrair.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Util.expandirRetrairTodos(arvore, false);
+			}
+		});
+
+		panelNorte.adicionar(chkTopoHierarquia, labelStatus, labelValor, expandir, retrair);
 
 		add(BorderLayout.NORTH, panelNorte);
 		add(BorderLayout.CENTER, new ScrollPane(arvore));
