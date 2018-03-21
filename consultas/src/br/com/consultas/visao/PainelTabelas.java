@@ -133,6 +133,12 @@ public class PainelTabelas extends PanelBorderLayout {
 			}
 		});
 
+		popup.itemPesquisaSelecionados.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Util.pesquisaSelecionadosMemoria(selecionado, formulario.getTabelas());
+			}
+		});
+
 		popup.itemLimparCampos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				selecionado.getTabela(formulario.getTabelas()).limparCampos();

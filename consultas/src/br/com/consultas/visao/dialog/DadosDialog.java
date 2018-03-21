@@ -366,7 +366,7 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 			return;
 		}
 
-		Vector<Object> dados = Util.criarDados(resp, (ModeloOrdenacao)table.getModel());
+		Vector<Object> dados = Util.criarDados(resp, (ModeloOrdenacao) table.getModel());
 
 		table.addColuna(getTituloCampoAgregado(ref, "COUNT"), dados, Boolean.TRUE);
 		configTable(table);
@@ -398,7 +398,7 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 			return;
 		}
 
-		Vector<Object> dados = Util.criarDados(resp, (ModeloOrdenacao)table.getModel());
+		Vector<Object> dados = Util.criarDados(resp, (ModeloOrdenacao) table.getModel());
 
 		table.addColuna(getTituloCampoAgregado(ref, campo.getNome()), dados, Boolean.FALSE);
 		configTable(table);

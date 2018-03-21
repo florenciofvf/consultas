@@ -36,6 +36,18 @@ public class Tabela {
 		return campos;
 	}
 
+	public List<Campo> getCamposSelecionados() {
+		List<Campo> campos = new ArrayList<>();
+
+		for (Campo c : this.campos) {
+			if (c.isSelecionado()) {
+				campos.add(c);
+			}
+		}
+
+		return campos;
+	}
+
 	public List<String> getNomeCampos() {
 		List<String> nomes = new ArrayList<>();
 

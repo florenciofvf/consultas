@@ -564,4 +564,9 @@ public class Util {
 
 		return null;
 	}
+
+	public static void pesquisaSelecionadosMemoria(Referencia ref, Tabelas tabelas) {
+		String pesquisa = ref.getConsultaSelecionados(tabelas);
+		setContentTransfered(pesquisa);
+	}
 }

@@ -7,8 +7,8 @@ import java.util.List;
 import br.com.consultas.util.Util;
 
 public class Referencia {
-	private static final String QUEBRAR_LINHA = "\r\n";
 	private final List<Referencia> referencias;
+	private static final String QL = "\r\n";
 	private boolean exibirTotalRegistros;
 	private boolean cloneCompleto;
 	private final boolean inverso;
@@ -284,8 +284,8 @@ public class Referencia {
 	public String gerarDelete(Tabelas tabelas) {
 		Tabela tab = tabelas.get(alias);
 
-		StringBuilder sb = new StringBuilder("DELETE FROM " + tab.getNome() + QUEBRAR_LINHA);
-		sb.append(" WHERE " + Util.fragmentoFiltroCampo(tab.get(0)) + QUEBRAR_LINHA);
+		StringBuilder sb = new StringBuilder("DELETE FROM " + tab.getNome() + QL);
+		sb.append(" WHERE " + Util.fragmentoFiltroCampo(tab.get(0)) + QL);
 
 		return sb.toString();
 	}
@@ -300,42 +300,40 @@ public class Referencia {
 
 		StringBuilder set = new StringBuilder();
 
-		boolean ativado = false;
-
 		while (it.hasNext()) {
 			Campo c = it.next();
 
-			if (ativado) {
+			if (set.length() > 0) {
 				set.append(", ");
 			}
 
 			set.append(Util.fragmentoFiltroCampo(c));
-			ativado = true;
 		}
 
-		StringBuilder sb = new StringBuilder("UPDATE " + tab.getNome() + QUEBRAR_LINHA);
-		sb.append(" SET " + set.toString().trim() + QUEBRAR_LINHA);
-		sb.append(" WHERE " + Util.fragmentoFiltroCampo(tab.get(0)) + QUEBRAR_LINHA);
+		StringBuilder sb = new StringBuilder("UPDATE " + tab.getNome() + QL);
+		sb.append(" SET " + set.toString().trim() + QL);
+		sb.append(" WHERE " + Util.fragmentoFiltroCampo(tab.get(0)) + QL);
 
 		return sb.toString();
 	}
 
 	public String gerarConsultaDados(Tabelas tabelas) {
 		Tabela tab = tabelas.get(alias);
-		StringBuilder sb = new StringBuilder(
-				"SELECT " + getAlias() + ".* FROM " + tab.getNome() + " " + getAlias() + QUEBRAR_LINHA);
 
-		sb.append(" WHERE 1=1" + QUEBRAR_LINHA);
+		StringBuilder sb = new StringBuilder(
+				"SELECT " + getAlias() + ".* FROM " + tab.getNome() + " " + getAlias() + QL);
+
+		sb.append(" WHERE 1=1" + QL);
 
 		for (Campo c : tab.getCampos()) {
 			if (!Util.ehVazio(c.getValor())) {
-				sb.append(" AND " + getAlias() + "." + Util.fragmentoFiltroCampo(c) + QUEBRAR_LINHA);
+				sb.append(" AND " + getAlias() + "." + Util.fragmentoFiltroCampo(c) + QL);
 			}
 		}
 
-		sb.append(" ORDER BY " + getAlias() + "." + tab.get(0).getNome() + aux(Util.getStringConfig("order_by"))
-				+ QUEBRAR_LINHA);
-		sb.delete(sb.length() - QUEBRAR_LINHA.length(), sb.length()).append(";").append(QUEBRAR_LINHA);
+		sb.append(" ORDER BY " + getAlias() + "." + tab.get(0).getNome() + aux(Util.getStringConfig("order_by")) + QL);
+		sb.delete(sb.length() - QL.length(), sb.length()).append(";").append(QL);
+
 		return sb.toString();
 	}
 
@@ -351,22 +349,17 @@ public class Referencia {
 		}
 
 		Tabela tab = tabelas.get(alias);
+
 		StringBuilder sb = new StringBuilder(
 				"SELECT " + (Util.ehVazio(aliasTemp) ? getAlias() : aliasTemp) + ".* FROM");
+		completarConsulta(sb, tabelas);
 
-		if (pai != null) {
-			completarConsulta(sb, tabelas);
-		} else {
-			sb.append(" " + tab.getNome() + " " + getAlias() + QUEBRAR_LINHA);
-		}
-
-		sb.append(" WHERE 1=1" + QUEBRAR_LINHA);
-
+		sb.append(" WHERE 1=1" + QL);
 		filtros(sb, tabelas);
 
-		sb.append(" ORDER BY " + getAlias() + "." + tab.get(0).getNome() + aux(Util.getStringConfig("order_by"))
-				+ QUEBRAR_LINHA);
-		sb.delete(sb.length() - QUEBRAR_LINHA.length(), sb.length()).append(";").append(QUEBRAR_LINHA);
+		sb.append(" ORDER BY " + getAlias() + "." + tab.get(0).getNome() + aux(Util.getStringConfig("order_by")) + QL);
+		sb.delete(sb.length() - QL.length(), sb.length()).append(";").append(QL);
+
 		return sb.toString();
 	}
 
@@ -383,8 +376,25 @@ public class Referencia {
 
 		for (Campo c : tab.getCampos()) {
 			if (!Util.ehVazio(c.getValor())) {
-				sb.append(" AND " + getAlias() + "." + Util.fragmentoFiltroCampo(c) + QUEBRAR_LINHA);
+				sb.append(" AND " + getAlias() + "." + Util.fragmentoFiltroCampo(c) + QL);
 			}
+		}
+	}
+
+	private void completarCampos(StringBuilder sb, Tabelas tabelas) {
+		if (pai != null) {
+			pai.completarCampos(sb, tabelas);
+		}
+
+		Tabela tab = tabelas.get(alias);
+		List<Campo> campos = tab.getCamposSelecionados();
+
+		for (Campo c : campos) {
+			if (sb.length() > 0) {
+				sb.append(",");
+			}
+
+			sb.append(" " + getAlias() + "." + c.getNome());
 		}
 	}
 
@@ -392,7 +402,7 @@ public class Referencia {
 		Tabela tab = tabelas.get(alias);
 
 		if (pai == null) {
-			sb.append(" " + tab.getNome() + " " + getAlias() + QUEBRAR_LINHA);
+			sb.append(" " + tab.getNome() + " " + getAlias() + QL);
 			return;
 		}
 
@@ -408,13 +418,13 @@ public class Referencia {
 			campoFK = Util.ehVazio(fkNome) ? tab.get(fk) : tab.get(fkNome);
 
 			sb.append(" ON " + pai.getAlias() + "." + campoPK.getNome() + " = " + getAlias() + "." + campoFK.getNome()
-					+ QUEBRAR_LINHA);
+					+ QL);
 		} else {
 			campoPK = Util.ehVazio(pkNome) ? tab.get(pk) : tab.get(pkNome);
 			campoFK = Util.ehVazio(fkNome) ? tabPai.get(fk) : tabPai.get(fkNome);
 
 			sb.append(" ON " + getAlias() + "." + campoPK.getNome() + " = " + pai.getAlias() + "." + campoFK.getNome()
-					+ QUEBRAR_LINHA);
+					+ QL);
 		}
 	}
 
@@ -429,14 +439,11 @@ public class Referencia {
 				+ getAlias() + "." + campoFK.getNome() + ") AS total FROM");
 		completarConsulta(sb, tabelas);
 
-		sb.append(" WHERE 1=1" + QUEBRAR_LINHA);
-
+		sb.append(" WHERE 1=1" + QL);
 		filtros(sb, tabelas);
 
-		sb.append(" GROUP BY " + pai.getAlias() + "." + campoPK.getNome() + QUEBRAR_LINHA);
-
-		sb.append(" ORDER BY " + pai.getAlias() + "." + campoPK.getNome() + aux(Util.getStringConfig("order_by"))
-				+ QUEBRAR_LINHA);
+		sb.append(" GROUP BY " + pai.getAlias() + "." + campoPK.getNome() + QL);
+		sb.append(" ORDER BY " + pai.getAlias() + "." + campoPK.getNome() + aux(Util.getStringConfig("order_by")) + QL);
 
 		return sb.toString();
 	}
@@ -450,12 +457,29 @@ public class Referencia {
 				+ "." + campo.getNome() + " FROM");
 		completarConsulta(sb, tabelas);
 
-		sb.append(" WHERE 1=1" + QUEBRAR_LINHA);
-
+		sb.append(" WHERE 1=1" + QL);
 		filtros(sb, tabelas);
 
-		sb.append(" ORDER BY " + pai.getAlias() + "." + campoPK.getNome() + aux(Util.getStringConfig("order_by"))
-				+ QUEBRAR_LINHA);
+		sb.append(" ORDER BY " + pai.getAlias() + "." + campoPK.getNome() + aux(Util.getStringConfig("order_by")) + QL);
+
+		return sb.toString();
+	}
+
+	public String getConsultaSelecionados(Tabelas tabelas) {
+		StringBuilder sbCampos = new StringBuilder();
+		completarCampos(sbCampos, tabelas);
+
+		if (sbCampos.length() == 0) {
+			return "NENHUM CAMPO SELECIONADO!";
+		}
+
+		StringBuilder sb = new StringBuilder("SELECT " + sbCampos.toString() + " FROM");
+		completarConsulta(sb, tabelas);
+
+		sb.append(" WHERE 1=1" + QL);
+		filtros(sb, tabelas);
+
+		sb.delete(sb.length() - QL.length(), sb.length()).append(";").append(QL);
 
 		return sb.toString();
 	}

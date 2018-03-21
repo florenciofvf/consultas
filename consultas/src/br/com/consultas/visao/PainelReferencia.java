@@ -172,6 +172,12 @@ public class PainelReferencia extends PanelBorderLayout {
 			}
 		});
 
+		popup.itemPesquisaSelecionados.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Util.pesquisaSelecionadosMemoria(selecionado, formulario.getTabelas());
+			}
+		});
+
 		popup.itemPesquisaDialogoLimpo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				itemPesquisaDialogoLimpo(selecionado);

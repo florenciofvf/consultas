@@ -4,6 +4,7 @@ import br.com.consultas.util.Util;
 
 public class Campo {
 	private boolean somenteLeitura;
+	private boolean selecionado;
 	private final String nome;
 	private String valor;
 
@@ -44,6 +45,14 @@ public class Campo {
 
 	public void setSomenteLeitura(boolean somenteLeitura) {
 		this.somenteLeitura = somenteLeitura;
+	}
+
+	public boolean isSelecionado() {
+		return selecionado;
+	}
+
+	public void setSelecionado(boolean selecionado) {
+		this.selecionado = selecionado;
 	}
 
 	@Override
