@@ -392,6 +392,10 @@ public class Util {
 			r.caminho(lista);
 			lista.add(0, raiz);
 
+			if (lista.size() == 1) {
+				continue;
+			}
+
 			TreePath path = new TreePath(lista.toArray(new Object[] {}));
 			if (expandir) {
 				tree.expandPath(path);

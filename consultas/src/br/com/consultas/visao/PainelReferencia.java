@@ -90,8 +90,7 @@ public class PainelReferencia extends PanelBorderLayout {
 		ModeloArvore modelo = (ModeloArvore) arvore.getModel();
 		List<Referencia> caminhos = modelo.getReferencias();
 		Util.atualizarCampoID(caminhos, formulario.getTabelas());
-		arvore.setModel(new ModeloArvore(caminhos, Util.getString("label.caminho")));
-		Util.expandirRetrair(arvore, true);
+		Util.atualizarEstrutura(arvore, formulario.getTabelas(), false);
 		formulario.atualizarCampoIDForm();
 	}
 

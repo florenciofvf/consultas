@@ -352,11 +352,6 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 
 	@Override
 	public void calcularTotal(Referencia ref) throws Exception {
-		if (ref.isInverso()) {
-			Util.mensagem(this, Util.getString("erro.relacionamento_inverso"));
-			return;
-		}
-
 		Vector<Object[]> resp = getRegistrosAgrupados(ref, formulario.getTabelas(), null);
 
 		String mensagemErro = getMensagemErro(resp);
@@ -384,11 +379,6 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 
 	@Override
 	public void agruparColuna(Referencia ref, Campo campo) throws Exception {
-		if (ref.isInverso()) {
-			Util.mensagem(this, Util.getString("erro.relacionamento_inverso"));
-			return;
-		}
-
 		Vector<Object[]> resp = getRegistrosAgrupados(ref, formulario.getTabelas(), campo);
 
 		String mensagemErro = getMensagemErro(resp);
@@ -456,6 +446,7 @@ public class DadosDialog extends Dialogo implements PainelReferenciaListener {
 		Campo campo = tabela.get(0);
 		campo.setValor(null);
 		atualizarViews();
+		painelRegistros.setInfo(TITLE + "." + campo.getNome(), "[]");
 	}
 
 	private class PainelControle extends PanelLeft {
