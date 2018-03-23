@@ -20,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.SwingUtilities;
 
+import br.com.consultas.Persistencia;
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
 import br.com.consultas.Tabelas;
@@ -220,7 +221,7 @@ public class Formulario extends JFrame {
 
 		if (Util.confirmarUpdate(this)) {
 			try {
-				DadosDialog.executeUpdate(string);
+				Persistencia.executeUpdate(string);
 				Util.mensagem(this, Util.getString("label.sucesso"));
 			} catch (Exception e) {
 				String msg = Util.getStackTrace(getClass().getName() + ".executeUpdate()", e);

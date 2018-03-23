@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.swing.tree.TreePath;
 
+import br.com.consultas.Persistencia;
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
 import br.com.consultas.util.SQL;
@@ -55,7 +56,7 @@ public class PainelTabelas extends PanelBorderLayout {
 
 		try {
 			formulario.progresso.exibir(referencias.size());
-			DadosDialog.atualizarTotalRegistros(referencias, formulario.getTabelas(), formulario.progresso);
+			Persistencia.atualizarTotalRegistros(referencias, formulario.getTabelas(), formulario.progresso);
 			formulario.progresso.esconder();
 		} catch (Exception e) {
 			String msg = Util.getStackTrace(getClass().getName() + ".atualizarTotalRegistros()", e);
@@ -201,7 +202,7 @@ public class PainelTabelas extends PanelBorderLayout {
 					try {
 						List<Referencia> referencias = Util.criarReferencias(formulario.getTabelas().getTabelas());
 						formulario.progresso.exibir(referencias.size());
-						DadosDialog.atualizarTotalRegistros(referencias, formulario.getTabelas(), formulario.progresso);
+						Persistencia.atualizarTotalRegistros(referencias, formulario.getTabelas(), formulario.progresso);
 						formulario.progresso.esconder();
 						Util.filtrarRegistros(referencias, formulario.getTabelas());
 						Util.ordenar(referencias);
@@ -215,7 +216,7 @@ public class PainelTabelas extends PanelBorderLayout {
 						ModeloArvore modelo = (ModeloArvore) arvore.getModel();
 						List<Referencia> referencias = modelo.getReferencias();
 						formulario.progresso.exibir(referencias.size());
-						DadosDialog.atualizarTotalRegistros(referencias, formulario.getTabelas(), formulario.progresso);
+						Persistencia.atualizarTotalRegistros(referencias, formulario.getTabelas(), formulario.progresso);
 						formulario.progresso.esconder();
 						Util.atualizarEstrutura(arvore, formulario.getTabelas(), false);
 						arvore.repaint();

@@ -45,6 +45,7 @@ import br.com.consultas.Tabela;
 import br.com.consultas.Tabelas;
 import br.com.consultas.visao.Formulario;
 import br.com.consultas.visao.comp.Arvore;
+import br.com.consultas.visao.comp.Table;
 import br.com.consultas.visao.comp.TextArea;
 import br.com.consultas.visao.modelo.ModeloArvore;
 import br.com.consultas.visao.modelo.ModeloOrdenacao;
@@ -572,5 +573,26 @@ public class Util {
 	public static void pesquisaSelecionadosMemoria(Referencia ref, Tabelas tabelas) {
 		String pesquisa = ref.getConsultaSelecionados(tabelas);
 		setContentTransfered(pesquisa);
+	}
+
+	public static String getMensagemErro(Vector<Object[]> dados, Table table) {
+		if (dados.isEmpty()) {
+			return Util.getString("label.nenhum_registro_encontrado");
+		}
+
+		if (table.getModel().getRowCount() == 0) {
+			return Util.getString("label.sem_registros_table");
+		}
+
+		if (table.getModel().getRowCount() < dados.size()) {
+			return Util.getString("label.registros_vs_table") + " [" + table.getModel().getRowCount() + "/"
+					+ dados.size() + "]";
+		}
+
+		return null;
+	}
+
+	public static String getTituloCampoAgregado(Referencia ref, String nome) {
+		return ref.getPai().getAlias() + " >> " + ref.getAlias() + "." + nome;
 	}
 }
