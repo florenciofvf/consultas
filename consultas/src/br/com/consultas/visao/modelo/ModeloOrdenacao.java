@@ -77,7 +77,7 @@ public class ModeloOrdenacao extends AbstractTableModel {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (e.getClickCount() > 1) {
+			if (e.getClickCount() >= Util.DOIS) {
 				int tableColuna = table.columnAtPoint(e.getPoint());
 				int modelColuna = table.convertColumnIndexToModel(tableColuna);
 

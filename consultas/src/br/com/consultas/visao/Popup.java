@@ -15,6 +15,7 @@ public class Popup extends JPopupMenu {
 	final MenuItem itemRegistrosDialogoLimpo = new MenuItem("label.gerar_dados_dialogo_limpo");
 	final MenuItem itemPesquisaDialogo = new MenuItem("label.gerar_pesquisa_dialogo");
 	final MenuItem itemPesquisaMemoria = new MenuItem("label.gerar_pesquisa_memoria");
+	public final MenuItem itemCopiarComAspas = new MenuItem("label.copiar_com_aspas");
 	final MenuItem itemRegistrosDialogo = new MenuItem("label.gerar_dados_dialogo");
 	final MenuItem itemRegistrosMemoria = new MenuItem("label.gerar_dados_memoria");
 	final MenuItem itemPesquisaSelecionados = new MenuItem("label.pesquisa_sel");
@@ -22,6 +23,7 @@ public class Popup extends JPopupMenu {
 	final MenuItem itemAgruparCampo = new MenuItem("label.agrupar_campo");
 	final MenuItem itemLimparCampos = new MenuItem("label.limpar_campos");
 	final MenuItem itemPropriedades = new MenuItem("label.propriedades");
+	public final MenuItem itemCopiar = new MenuItem("label.copiar");
 	final MenuItem itemDelete = new MenuItem("label.gerar_delete");
 	final MenuItem itemUpdate = new MenuItem("label.gerar_update");
 	final MenuItem itemLimparId = new MenuItem("label.limpar_id");
@@ -31,6 +33,7 @@ public class Popup extends JPopupMenu {
 	final Menu menuMemoria = new Menu("label.memoria");
 	final Menu menuCampo = new Menu("label.campo");
 	final Menu menuDML = new Menu("label.dml");
+	private int tag;
 
 	public void dialogoMeuSQL() {
 		menuDialogo.add(itemRegistrosDialogoLimpo);
@@ -91,11 +94,25 @@ public class Popup extends JPopupMenu {
 		add(itemPropriedades);
 	}
 
+	public void copiar() {
+		add(itemCopiar);
+		addSeparator();
+		add(itemCopiarComAspas);
+	}
+
 	public void dml() {
 		menuDML.add(itemUpdate);
 		menuDML.addSeparator();
 		menuDML.add(itemDelete);
 
 		add(menuDML);
+	}
+
+	public int getTag() {
+		return tag;
+	}
+
+	public void setTag(int tag) {
+		this.tag = tag;
 	}
 }

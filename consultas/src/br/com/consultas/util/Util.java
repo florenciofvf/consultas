@@ -59,6 +59,7 @@ public class Util {
 	private static final boolean LOG_MENSAGEM = true;
 	public static final double DIVISAO2 = 0.70;
 	public static final double DIVISAO3 = 0.70;
+	public static final byte DOIS = 2;
 
 	private Util() {
 	}
@@ -530,21 +531,26 @@ public class Util {
 		return tabela;
 	}
 
-	public static String getStringLista(List<String> lista) {
+	public static String getStringLista(List<String> lista, boolean apostrofes) {
 		StringBuilder sb = new StringBuilder();
 
-		boolean ativado = false;
-
 		for (String string : lista) {
-			if (ativado) {
+			if (ehVazio(string)) {
+				continue;
+			}
+
+			if (sb.length() > 0) {
 				sb.append(", ");
 			}
 
-			sb.append(string);
-			ativado = true;
+			sb.append(apostrofes ? citar(string) : string);
 		}
 
 		return sb.toString();
+	}
+
+	private static String citar(String string) {
+		return "'" + string + "'";
 	}
 
 	public static Vector<Object> criarDados(Vector<Object[]> registros, ModeloOrdenacao modelo) {

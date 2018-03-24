@@ -27,6 +27,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.EventListenerList;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -42,6 +43,7 @@ import br.com.consultas.visao.Formulario;
 import br.com.consultas.visao.PainelAbas;
 import br.com.consultas.visao.PainelReferencia;
 import br.com.consultas.visao.PainelReferenciaListener;
+import br.com.consultas.visao.Popup;
 import br.com.consultas.visao.comp.Button;
 import br.com.consultas.visao.comp.CheckBox;
 import br.com.consultas.visao.comp.Label;
@@ -192,11 +194,57 @@ public class DadosDialog extends Dialogo {
 	private class PainelREGISTROS extends PainelAbas {
 		private static final long serialVersionUID = 1L;
 		private Table table = new Table(new ModeloOrdenacao(new ModeloVazio()));
+		private final JTableHeader tableHeader;
+		private Popup popup = new Popup();
 
 		PainelREGISTROS(Dialogo dialogo) {
 			super(dialogo, false);
 
 			add(BorderLayout.CENTER, new ScrollPane(table));
+
+			tableHeader = table.getTableHeader();
+			cfg();
+		}
+
+		private void cfg() {
+			popup.copiar();
+
+			tableHeader.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+					processar(e);
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					processar(e);
+				}
+
+				private void processar(MouseEvent e) {
+					if (!e.isPopupTrigger()) {
+						return;
+					}
+
+					int tableColuna = table.columnAtPoint(e.getPoint());
+					int modelColuna = table.convertColumnIndexToModel(tableColuna);
+					popup.setTag(modelColuna);
+					popup.show(tableHeader, e.getX(), e.getY());
+				}
+			});
+
+			popup.itemCopiar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					List<String> resp = table.getIds(popup.getTag());
+					Util.setContentTransfered(Util.getStringLista(resp, false));
+				}
+			});
+
+			popup.itemCopiarComAspas.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					List<String> resp = table.getIds(popup.getTag());
+					Util.setContentTransfered(Util.getStringLista(resp, true));
+				}
+			});
 		}
 
 		@Override
@@ -210,11 +258,12 @@ public class DadosDialog extends Dialogo {
 		private CheckBox chkAbrirAbaRef = new CheckBox("label.abrir_aba_ref", "dados_dialog.abrir_aba_referencia");
 		private Table table = new Table(new ModeloOrdenacao(new ModeloVazio()));
 		private Label labelLimpar = new Label("label.limpar", Color.BLUE);
-		private Button buttonCopiarIds = new Button("label.copiar_id");
 		private Label labelValor = new Label(Color.MAGENTA);
 		private Label labelStatus = new Label(Color.BLACK);
 		private SplitPane splitPane = new SplitPane();
 		private PainelReferencia painelReferencia;
+		private final JTableHeader tableHeader;
+		private Popup popup = new Popup();
 		private ScrollPane scroll;
 
 		PainelREGISTROSReferencia(Dialogo dialogo) {
@@ -229,15 +278,6 @@ public class DadosDialog extends Dialogo {
 			splitPane.setRightComponent(painelReferencia);
 			setLocationSplitPane();
 
-			painelControle.adicionar(buttonCopiarIds);
-			buttonCopiarIds.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					List<String> resp = table.getIds(0);
-					Util.setContentTransfered(Util.getStringLista(resp));
-				}
-			});
-
 			labelLimpar.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
@@ -249,6 +289,9 @@ public class DadosDialog extends Dialogo {
 
 			add(BorderLayout.CENTER, splitPane);
 			setInfo("", "");
+
+			tableHeader = table.getTableHeader();
+			cfg();
 		}
 
 		private void setLocationSplitPane() {
@@ -270,6 +313,47 @@ public class DadosDialog extends Dialogo {
 		void finalScroll() {
 			JScrollBar horizontalScrollBar = scroll.getHorizontalScrollBar();
 			horizontalScrollBar.setValue(table.getWidth());
+		}
+
+		private void cfg() {
+			popup.copiar();
+
+			tableHeader.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+					processar(e);
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					processar(e);
+				}
+
+				private void processar(MouseEvent e) {
+					if (!e.isPopupTrigger()) {
+						return;
+					}
+
+					int tableColuna = table.columnAtPoint(e.getPoint());
+					int modelColuna = table.convertColumnIndexToModel(tableColuna);
+					popup.setTag(modelColuna);
+					popup.show(tableHeader, e.getX(), e.getY());
+				}
+			});
+
+			popup.itemCopiar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					List<String> resp = table.getIds(popup.getTag());
+					Util.setContentTransfered(Util.getStringLista(resp, false));
+				}
+			});
+
+			popup.itemCopiarComAspas.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					List<String> resp = table.getIds(popup.getTag());
+					Util.setContentTransfered(Util.getStringLista(resp, true));
+				}
+			});
 		}
 
 		@Override
