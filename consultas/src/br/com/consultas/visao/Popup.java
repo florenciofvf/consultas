@@ -77,6 +77,7 @@ public class Popup extends JPopupMenu {
 	public void campos() {
 		menuCampo.add(itemLimparCampos);
 		menuCampo.add(itemLimparId);
+		menuCampo.addSeparator();
 		menuCampo.add(itemCampos);
 
 		add(menuCampo);

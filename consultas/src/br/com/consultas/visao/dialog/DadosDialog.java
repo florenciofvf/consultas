@@ -294,6 +294,21 @@ public class DadosDialog extends Dialogo {
 			cfg();
 		}
 
+		@Override
+		public void limparID(Tabela tabela) {
+			if (DadosDialog.this.tabela != null && tabela != null) {
+				if (DadosDialog.this.tabela.getNome().equals(tabela.getNome())) {
+					setInfo("", "");
+					atualizarViews();
+				}
+			}
+		}
+
+		@Override
+		public void limparCampos(Tabela tabela) {
+			limparID(tabela);
+		}
+
 		private void setLocationSplitPane() {
 			final int largura = (int) (formulario.getWidth() * Util.DIVISAO3);
 			splitPane.setDividerLocation(largura);
@@ -548,19 +563,39 @@ public class DadosDialog extends Dialogo {
 		}
 	}
 
-	private class PainelREFERENCIA extends PainelAbas {
+	private class PainelREFERENCIA extends PainelAbas implements PainelReferenciaListener {
 		private static final long serialVersionUID = 1L;
 		private final PainelReferencia painelReferencia;
 
 		PainelREFERENCIA(Dialogo dialogo) {
 			super(dialogo, false);
 
-			painelReferencia = new PainelReferencia(formulario, tabela, null);
+			painelReferencia = new PainelReferencia(formulario, tabela, this);
 			add(BorderLayout.CENTER, painelReferencia);
 		}
 
 		@Override
 		public void executar() {
+		}
+
+		@Override
+		public void agruparColuna(Referencia ref, Campo campo) throws Exception {
+			painelREGISTROSReferencia.agruparColuna(ref, campo);
+		}
+
+		@Override
+		public void calcularTotal(Referencia ref) throws Exception {
+			painelREGISTROSReferencia.calcularTotal(ref);
+		}
+
+		@Override
+		public void limparCampos(Tabela tabela) {
+			painelREGISTROSReferencia.limparCampos(tabela);
+		}
+
+		@Override
+		public void limparID(Tabela tabela) {
+			painelREGISTROSReferencia.limparID(tabela);
 		}
 	}
 

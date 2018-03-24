@@ -216,15 +216,25 @@ public class PainelReferencia extends PanelBorderLayout {
 
 		popup.itemLimparCampos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				selecionado.getTabela(formulario.getTabelas()).limparCampos();
+				Tabela tabela = selecionado.getTabela(formulario.getTabelas());
+				tabela.limparCampos();
 				atualizarCampoID();
+
+				if (listener != null) {
+					listener.limparCampos(tabela);
+				}
 			}
 		});
 
 		popup.itemLimparId.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				selecionado.getTabela(formulario.getTabelas()).limparID();
+				Tabela tabela = selecionado.getTabela(formulario.getTabelas());
+				tabela.limparID();
 				atualizarCampoID();
+
+				if (listener != null) {
+					listener.limparID(tabela);
+				}
 			}
 		});
 

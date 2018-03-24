@@ -71,7 +71,7 @@ public class Tabela {
 	}
 
 	public void limparID() {
-		get(0).setValor("");
+		get(0).setValor(null);
 	}
 
 	public Campo getAlias() {
