@@ -595,4 +595,14 @@ public class Util {
 	public static String getTituloCampoAgregado(Referencia ref, String nome) {
 		return ref.getPai().getAlias() + " >> " + ref.getAlias() + "." + nome;
 	}
+
+	public static void selecionarLinhas(int[] is, Vector<Vector<String>> dados, Table table) {
+		if (is != null) {
+			for (int i : is) {
+				if (i < dados.size()) {
+					table.addRowSelectionInterval(i, i);
+				}
+			}
+		}
+	}
 }

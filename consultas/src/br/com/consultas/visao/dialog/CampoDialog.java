@@ -2,7 +2,6 @@ package br.com.consultas.visao.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -10,8 +9,7 @@ import javax.swing.JComponent;
 import br.com.consultas.Tabela;
 import br.com.consultas.util.Util;
 import br.com.consultas.visao.Formulario;
-import br.com.consultas.visao.comp.Button;
-import br.com.consultas.visao.comp.PanelLeft;
+import br.com.consultas.visao.PainelAbas;
 import br.com.consultas.visao.comp.ScrollPane;
 import br.com.consultas.visao.comp.Table;
 import br.com.consultas.visao.modelo.ModeloCampo;
@@ -28,7 +26,7 @@ public class CampoDialog extends Dialogo {
 		setTitle(tabela.getNome() + " - REGISTROS [" + modelo.getRowCount() + "]");
 
 		add(BorderLayout.CENTER, new ScrollPane(table));
-		add(BorderLayout.SOUTH, new PainelControle());
+		add(BorderLayout.SOUTH, new PainelControle(this));
 
 		setSize(400, 400);
 		setLocationRelativeTo(formulario);
@@ -49,19 +47,15 @@ public class CampoDialog extends Dialogo {
 		Util.setWindowListener(this, formulario);
 	}
 
-	private class PainelControle extends PanelLeft {
+	private class PainelControle extends PainelAbas {
 		private static final long serialVersionUID = 1L;
-		private final Button buttonFechar = new Button("label.fechar");
 
-		PainelControle() {
-			add(buttonFechar);
+		PainelControle(Dialogo dialogo) {
+			super(dialogo, false);
+		}
 
-			buttonFechar.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Util.fechar(CampoDialog.this);
-				}
-			});
+		@Override
+		public void executar() {
 		}
 	}
 }

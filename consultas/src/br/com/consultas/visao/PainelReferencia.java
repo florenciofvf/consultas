@@ -1,7 +1,6 @@
 package br.com.consultas.visao;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -19,7 +18,6 @@ import br.com.consultas.util.Util;
 import br.com.consultas.visao.comp.Arvore;
 import br.com.consultas.visao.comp.Button;
 import br.com.consultas.visao.comp.CheckBox;
-import br.com.consultas.visao.comp.Label;
 import br.com.consultas.visao.comp.PanelBorderLayout;
 import br.com.consultas.visao.comp.PanelLeft;
 import br.com.consultas.visao.comp.ScrollPane;
@@ -33,8 +31,6 @@ public class PainelReferencia extends PanelBorderLayout {
 	private final CheckBox chkRaizVisivel = new CheckBox("label.raiz_visivel", "consultas.raiz_visivel");
 	private final CheckBox chkLinhaRaiz = new CheckBox("label.raiz_linha", "consultas.raiz_linha");
 	private final CheckBox chkTopoHierarquia = new CheckBox("label.topo_hierarquia", "false");
-	private final Label labelStatus = new Label(Color.BLUE);
-	private final Label labelValor = new Label(Color.RED);
 	private final PainelReferenciaListener listener;
 	private final List<Referencia> caminhosFiltro;
 	private final List<Referencia> caminhos;
@@ -78,7 +74,7 @@ public class PainelReferencia extends PanelBorderLayout {
 			}
 		});
 
-		panelNorte.adicionar(chkTopoHierarquia, labelStatus, labelValor, expandir, retrair);
+		panelNorte.adicionar(chkTopoHierarquia, expandir, retrair);
 
 		add(BorderLayout.NORTH, panelNorte);
 		add(BorderLayout.CENTER, new ScrollPane(arvore));
@@ -92,11 +88,6 @@ public class PainelReferencia extends PanelBorderLayout {
 		Util.atualizarCampoID(caminhos, formulario.getTabelas());
 		Util.atualizarEstrutura(arvore, formulario.getTabelas(), false);
 		formulario.atualizarCampoIDForm();
-	}
-
-	public void setInfo(String status, String valor) {
-		labelStatus.setText(status);
-		labelValor.setText(valor);
 	}
 
 	private void itemRegistrosDialogoLimpo() {

@@ -2,7 +2,6 @@ package br.com.consultas.visao.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -10,9 +9,8 @@ import javax.swing.JComponent;
 import br.com.consultas.Tabela;
 import br.com.consultas.util.Util;
 import br.com.consultas.visao.Formulario;
+import br.com.consultas.visao.PainelAbas;
 import br.com.consultas.visao.PainelReferencia;
-import br.com.consultas.visao.comp.Button;
-import br.com.consultas.visao.comp.PanelLeft;
 
 public class ReferenciaDialog extends Dialogo {
 	private static final long serialVersionUID = 1L;
@@ -22,8 +20,8 @@ public class ReferenciaDialog extends Dialogo {
 		super(tabela.getNome() + " - " + tabela.getAlias().getValor());
 		this.formulario = formulario;
 
-		add(BorderLayout.SOUTH, new PainelControle());
 		add(BorderLayout.CENTER, new PainelReferencia(formulario, tabela, null));
+		add(BorderLayout.SOUTH, new PainelControle(this));
 
 		setSize(600, 400);
 		setLocationRelativeTo(formulario);
@@ -44,19 +42,15 @@ public class ReferenciaDialog extends Dialogo {
 		Util.setWindowListener(this, formulario);
 	}
 
-	private class PainelControle extends PanelLeft {
+	private class PainelControle extends PainelAbas {
 		private static final long serialVersionUID = 1L;
-		private final Button buttonFechar = new Button("label.fechar");
 
-		PainelControle() {
-			add(buttonFechar);
+		PainelControle(Dialogo dialogo) {
+			super(dialogo, false);
+		}
 
-			buttonFechar.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Util.fechar(ReferenciaDialog.this);
-				}
-			});
+		@Override
+		public void executar() {
 		}
 	}
 }

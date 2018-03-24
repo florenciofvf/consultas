@@ -57,10 +57,10 @@ public class DadosDialog extends Dialogo {
 	private static final long serialVersionUID = 1L;
 	private final TabbedPane fichario = new TabbedPane();
 
-	private final PainelREGISTROSReferencias painelREGISTROSReferencias;
+	private final PainelREGISTROSReferencia painelREGISTROSReferencia;
+	private final PainelREFERENCIA painelREFERENCIA;
 	private final PainelREGISTROS painelREGISTROS;
-	private final PainelMETAIN painelMETAIN;
-	private final PainelREFERE painelREFERE;
+	private final PainelMETAINFO painelMETAINFO;
 	private final PainelSELECT painelSELECT;
 	private final PainelUPDATE painelUPDATE;
 	private final PainelDELETE painelDELETE;
@@ -81,17 +81,17 @@ public class DadosDialog extends Dialogo {
 		this.pesquisa = pesquisa;
 		this.tabela = tabela;
 
+		painelMETAINFO = new PainelMETAINFO(this);
 		painelSELECT = new PainelSELECT(this);
 		painelUPDATE = new PainelUPDATE(this);
 		painelDELETE = new PainelDELETE(this);
-		painelMETAIN = new PainelMETAIN(this);
 
 		if (tabela != null) {
-			painelREGISTROSReferencias = new PainelREGISTROSReferencias(this, largura);
 			painelREGISTROS = null;
-			fichario.addTab("label.consultas", painelREGISTROSReferencias);
+			painelREGISTROSReferencia = new PainelREGISTROSReferencia(this, largura);
+			fichario.addTab("label.consultas", painelREGISTROSReferencia);
 		} else {
-			painelREGISTROSReferencias = null;
+			painelREGISTROSReferencia = null;
 			painelREGISTROS = new PainelREGISTROS(this);
 			fichario.addTab("label.registros", painelREGISTROS);
 		}
@@ -99,13 +99,13 @@ public class DadosDialog extends Dialogo {
 		fichario.addTab("label.select", painelSELECT);
 		fichario.addTab("label.update", painelUPDATE);
 		fichario.addTab("label.delete", painelDELETE);
-		fichario.addTab("label.meta_i", painelMETAIN);
+		fichario.addTab("label.meta_i", painelMETAINFO);
 
 		if (tabela != null) {
-			painelREFERE = new PainelREFERE(this);
-			fichario.addTab("label.consultas", painelREFERE);
+			painelREFERENCIA = new PainelREFERENCIA(this);
+			fichario.addTab("label.consultas", painelREFERENCIA);
 		} else {
-			painelREFERE = null;
+			painelREFERENCIA = null;
 		}
 
 		if (selecionado == null) {
@@ -150,60 +150,13 @@ public class DadosDialog extends Dialogo {
 		Util.setWindowListener(this, formulario);
 	}
 
-	private void processar(String string, Graphics graphics) throws Exception {
-		Connection conn = Persistencia.getConnection();
-		PreparedStatement psmt = conn.prepareStatement(Util.getSQL(string));
-		ResultSet rs = psmt.executeQuery();
-		dados(rs, graphics);
-		rs.close();
-		psmt.close();
-		conn.close();
-	}
-
-	private void dados(ResultSet rs, Graphics graphics) throws Exception {
-		ResultSetMetaData rsmd = rs.getMetaData();
-		int qtdColunas = rsmd.getColumnCount();
-
-		ModeloRSMD modeloRSMD = new ModeloRSMD(rsmd);
-
-		Vector<Vector<String>> dados = Persistencia.getDados(rs, qtdColunas);
-
-		setTitle(Util.ehVazio(TITLE) ? "REGISTROS [" + dados.size() + "]" : TITLE + " - REGISTROS [" + dados.size() + "]");
-
-		Table table = tabela != null ? painelREGISTROSReferencias.table : painelREGISTROS.table;
-
-		int[] is = table.getSelectedRows();
-		ModeloOrdenacao modeloOrdenacao = new ModeloOrdenacao(new DefaultTableModel(dados, modeloRSMD.getNomeColunas()));
-		table.setModel(modeloOrdenacao);
-
-		if (tabela != null) {
-			configTable(table);
-		}
-
-		table.ajustar(graphics);
-
-		if (is != null) {
-			for (int i : is) {
-				if (i < dados.size()) {
-					table.addRowSelectionInterval(i, i);
-				}
-			}
-		}
-
-		modeloOrdenacao.configMapaTipoColuna(modeloRSMD.getTipoColunas());
-
-		painelMETAIN.table.setModel(new ModeloOrdenacao(modeloRSMD));
-		painelMETAIN.table.ajustar(graphics);
-	}
-
-
-	//------------------------------------------------------------------------------------
 	private class PainelREGISTROS extends PainelAbas {
 		private static final long serialVersionUID = 1L;
 		private Table table = new Table(new ModeloOrdenacao(new ModeloVazio()));
 
 		PainelREGISTROS(Dialogo dialogo) {
 			super(dialogo, false);
+
 			add(BorderLayout.CENTER, new ScrollPane(table));
 		}
 
@@ -211,8 +164,8 @@ public class DadosDialog extends Dialogo {
 		public void executar() {
 		}
 	}
-	//------------------------------------------------------------------------------------
-	private class PainelREGISTROSReferencias extends PainelAbas implements PainelReferenciaListener {
+
+	private class PainelREGISTROSReferencia extends PainelAbas implements PainelReferenciaListener {
 		private static final long serialVersionUID = 1L;
 		private CheckBox chkAbrirDialogRef = new CheckBox("label.abrir_dialog_ref", "dados_dialog.abrir_dialog_ref");
 		private CheckBox chkAbrirAbaRef = new CheckBox("label.abrir_aba_ref", "dados_dialog.abrir_aba_referencia");
@@ -226,7 +179,7 @@ public class DadosDialog extends Dialogo {
 		private PainelReferencia painelReferencia;
 		private ScrollPane scroll;
 
-		PainelREGISTROSReferencias(Dialogo dialogo, int largura) {
+		PainelREGISTROSReferencia(Dialogo dialogo, int largura) {
 			super(dialogo, false);
 
 			add(BorderLayout.NORTH, new PanelLeft(chkAbrirDialogRef, chkAbrirAbaRef, labelStatus, labelValor));
@@ -289,9 +242,9 @@ public class DadosDialog extends Dialogo {
 		private void atualizarViews() {
 			atualizarTextArea(null);
 
-			painelReferencia.atualizarCampoID();
 			formulario.atualizarCampoIDForm();
-			painelREFERE.abaConsultas.atualizarCampoID();
+			painelReferencia.atualizarCampoID();
+			painelREFERENCIA.painelReferencia.atualizarCampoID();
 		}
 
 		@Override
@@ -311,11 +264,11 @@ public class DadosDialog extends Dialogo {
 			configTable(table);
 			table.ajustar(getGraphics());
 
-			if (painelREGISTROSReferencias != null) {
+			if (painelREGISTROSReferencia != null) {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						painelREGISTROSReferencias.finalScroll();
+						painelREGISTROSReferencia.finalScroll();
 					}
 				});
 			}
@@ -338,17 +291,17 @@ public class DadosDialog extends Dialogo {
 			configTable(table);
 			table.ajustar(getGraphics());
 
-			if (painelREGISTROSReferencias != null) {
+			if (painelREGISTROSReferencia != null) {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						painelREGISTROSReferencias.finalScroll();
+						painelREGISTROSReferencia.finalScroll();
 					}
 				});
 			}
 		}
 	}
-	//------------------------------------------------------------------------------------
+
 	private class PainelSELECT extends PainelAbas {
 		private static final long serialVersionUID = 1L;
 		private Table table = new Table(new ModeloOrdenacao(new ModeloVazio()));
@@ -390,115 +343,102 @@ public class DadosDialog extends Dialogo {
 
 		@Override
 		public void executar() {
-			executeQuery(textArea.getText());
-		}
-	}
+			String string = Util.getSQL(textArea.getText());
 
-	private void largura() {
-		int largura = formulario.getWidth() - 20;
-		setSize(largura, getHeight());
-		setLocation(formulario.getX() + 10, getY());
-	}
-
-	private void executeQuery(String sql) {
-		String string = Util.getSQL(sql);
-
-		if (string == null) {
-			Util.mensagem(this, Util.getString("labe.consulta_vazia"));
-			return;
-		}
-
-		try {
-			processar(string, getGraphics());
-			fichario.setSelectedIndex(0);
-
-			if (painelREGISTROSReferencias != null) {
-				painelREGISTROSReferencias.painelReferencia.atualizarCampoID();
+			if (string == null) {
+				Util.mensagem(DadosDialog.this, Util.getString("labe.consulta_vazia"));
+				return;
 			}
 
-			if (painelREFERE != null) {
-				painelREFERE.abaConsultas.atualizarCampoID();
-			}
+			try {
+				processar(string, getGraphics());
+				fichario.setSelectedIndex(0);
 
-			formulario.atualizarCampoIDForm();
-		} catch (Exception e) {
-			String msg = Util.getStackTrace(getClass().getName() + ".executeQuery()", e);
-			Util.mensagem(this, msg);
+				if (painelREGISTROSReferencia != null) {
+					painelREGISTROSReferencia.painelReferencia.atualizarCampoID();
+				}
+
+				if (painelREFERENCIA != null) {
+					painelREFERENCIA.painelReferencia.atualizarCampoID();
+				}
+
+				formulario.atualizarCampoIDForm();
+			} catch (Exception e) {
+				String msg = Util.getStackTrace(getClass().getName() + ".executeQuery()", e);
+				Util.mensagem(DadosDialog.this, msg);
+			}
 		}
 	}
-	//------------------------------------------------------------------------------------
+
 	private class PainelUPDATE extends PainelAbas {
 		private static final long serialVersionUID = 1L;
 		private TextArea textArea = new TextArea();
 
 		PainelUPDATE(Dialogo dialogo) {
 			super(dialogo, true);
+
+			add(BorderLayout.CENTER, textArea);
 		}
 
 		@Override
 		public void executar() {
-			executeUpdate(textArea.getText());
-		}
-	}
+			String string = Util.getSQL(textArea.getText());
 
-	private void executeUpdate(String sql) {
-		String string = Util.getSQL(sql);
+			if (string == null) {
+				Util.mensagem(DadosDialog.this, Util.getString("labe.consulta_vazia"));
+				return;
+			}
 
-		if (string == null) {
-			Util.mensagem(this, Util.getString("labe.consulta_vazia"));
-			return;
-		}
-
-		if (Util.confirmarUpdate(this)) {
-			try {
-				int i = Persistencia.executeUpdate(string);
-				Util.mensagem(this, Util.getString("label.sucesso") + " (" + i + ")");
-			} catch (Exception e) {
-				String msg = Util.getStackTrace(getClass().getName() + ".executeUpdate()", e);
-				Util.mensagem(this, msg);
+			if (Util.confirmarUpdate(DadosDialog.this)) {
+				try {
+					int i = Persistencia.executeUpdate(string);
+					Util.mensagem(DadosDialog.this, Util.getString("label.sucesso") + " (" + i + ")");
+				} catch (Exception e) {
+					String msg = Util.getStackTrace(getClass().getName() + ".executeUpdate()", e);
+					Util.mensagem(DadosDialog.this, msg);
+				}
 			}
 		}
 	}
-	//------------------------------------------------------------------------------------
+
 	private class PainelDELETE extends PainelAbas {
 		private static final long serialVersionUID = 1L;
 		private TextArea textArea = new TextArea();
 
 		PainelDELETE(Dialogo dialogo) {
 			super(dialogo, true);
+
+			add(BorderLayout.CENTER, textArea);
 		}
 
 		@Override
 		public void executar() {
-			executeDelete(textArea.getText());
-		}
-	}
+			String string = Util.getSQL(textArea.getText());
 
-	private void executeDelete(String sql) {
-		String string = Util.getSQL(sql);
+			if (string == null) {
+				Util.mensagem(DadosDialog.this, Util.getString("labe.consulta_vazia"));
+				return;
+			}
 
-		if (string == null) {
-			Util.mensagem(this, Util.getString("labe.consulta_vazia"));
-			return;
-		}
-
-		if (Util.confirmarUpdate(this)) {
-			try {
-				int i = Persistencia.executeUpdate(string);
-				Util.mensagem(this, Util.getString("label.sucesso") + " (" + i + ")");
-			} catch (Exception e) {
-				String msg = Util.getStackTrace(getClass().getName() + ".executeDelete()", e);
-				Util.mensagem(this, msg);
+			if (Util.confirmarUpdate(DadosDialog.this)) {
+				try {
+					int i = Persistencia.executeUpdate(string);
+					Util.mensagem(DadosDialog.this, Util.getString("label.sucesso") + " (" + i + ")");
+				} catch (Exception e) {
+					String msg = Util.getStackTrace(getClass().getName() + ".executeDelete()", e);
+					Util.mensagem(DadosDialog.this, msg);
+				}
 			}
 		}
 	}
-	//------------------------------------------------------------------------------------
-	private class PainelMETAIN extends PainelAbas {
+
+	private class PainelMETAINFO extends PainelAbas {
 		private static final long serialVersionUID = 1L;
 		private Table table = new Table(new ModeloOrdenacao(new ModeloVazio()));
 
-		PainelMETAIN(Dialogo dialogo) {
+		PainelMETAINFO(Dialogo dialogo) {
 			super(dialogo, false);
+
 			add(BorderLayout.CENTER, new ScrollPane(table));
 		}
 
@@ -506,35 +446,21 @@ public class DadosDialog extends Dialogo {
 		public void executar() {
 		}
 	}
-	//------------------------------------------------------------------------------------
-	private class PainelREFERE extends PainelAbas {
-		private static final long serialVersionUID = 1L;
-		private final PainelReferencia abaConsultas;
 
-		PainelREFERE(Dialogo dialogo) {
+	private class PainelREFERENCIA extends PainelAbas {
+		private static final long serialVersionUID = 1L;
+		private final PainelReferencia painelReferencia;
+
+		PainelREFERENCIA(Dialogo dialogo) {
 			super(dialogo, false);
-			abaConsultas = new PainelReferencia(formulario, tabela, null);
-			add(BorderLayout.CENTER, abaConsultas);
+
+			painelReferencia = new PainelReferencia(formulario, tabela, null);
+			add(BorderLayout.CENTER, painelReferencia);
 		}
 
 		@Override
 		public void executar() {
 		}
-	}
-	//------------------------------------------------------------------------------------
-
-	private void limpar() {
-		Campo campo = tabela.get(0);
-		campo.setValor(null);
-		painelREGISTROSReferencias.atualizarViews();
-		painelREGISTROSReferencias.setInfo(TITLE + "." + campo.getNome(), "[]");
-	}
-
-	private void configTable(Table table) {
-		TableColumnModel columnModel = table.getColumnModel();
-		TableColumn column = columnModel.getColumn(0);
-		column.setCellRenderer(new CellColor());
-		column.setCellEditor(new CellEditor());
 	}
 
 	private class CellRenderer extends DefaultTableCellRenderer {
@@ -566,10 +492,10 @@ public class DadosDialog extends Dialogo {
 			}
 
 			if (!multiplos) {
-				if (painelREGISTROSReferencias.chkAbrirDialogRef.isSelected()) {
+				if (painelREGISTROSReferencia.chkAbrirDialogRef.isSelected()) {
 					new ReferenciaDialog(formulario, tabela);
 
-				} else if (painelREGISTROSReferencias.chkAbrirAbaRef.isSelected()) {
+				} else if (painelREGISTROSReferencia.chkAbrirAbaRef.isSelected()) {
 					fichario.setSelectedIndex(fichario.getTabCount() - 1);
 				}
 			} else {
@@ -604,9 +530,9 @@ public class DadosDialog extends Dialogo {
 			Campo campo = tabela.get(0);
 			campo.setValor(valor.toString());
 
-			painelREGISTROSReferencias.atualizarViews();
+			painelREGISTROSReferencia.atualizarViews();
 
-			painelREGISTROSReferencias.setInfo(TITLE + "." + campo.getNome(), "[" + campo.getValor() + "]");
+			painelREGISTROSReferencia.setInfo(TITLE + "." + campo.getNome(), "[" + campo.getValor() + "]");
 
 			Component c = getTableCellRendererComponent(table, value, isSelected, true, row, column);
 			c.setForeground(table.getSelectionForeground());
@@ -644,5 +570,68 @@ public class DadosDialog extends Dialogo {
 				}
 			}
 		}
+	}
+
+	private void processar(String string, Graphics graphics) throws Exception {
+		Connection conn = Persistencia.getConnection();
+		PreparedStatement psmt = conn.prepareStatement(Util.getSQL(string));
+		ResultSet rs = psmt.executeQuery();
+
+		coletar(rs, graphics);
+
+		rs.close();
+		psmt.close();
+		conn.close();
+	}
+
+	private void coletar(ResultSet rs, Graphics graphics) throws Exception {
+		ResultSetMetaData rsmd = rs.getMetaData();
+
+		ModeloRSMD modeloRSMD = new ModeloRSMD(rsmd);
+		Vector<Vector<String>> dados = Persistencia.getDados(rs, rsmd.getColumnCount());
+
+		titulo(dados);
+
+		Table table = tabela != null ? painelREGISTROSReferencia.table : painelREGISTROS.table;
+
+		int[] is = table.getSelectedRows();
+		Vector<String> nomeColunas = modeloRSMD.getNomeColunas();
+		ModeloOrdenacao modeloOrdenacao = new ModeloOrdenacao(new DefaultTableModel(dados, nomeColunas));
+		table.setModel(modeloOrdenacao);
+
+		if (tabela != null) {
+			configTable(table);
+		}
+
+		table.ajustar(graphics);
+		Util.selecionarLinhas(is, dados, table);
+		modeloOrdenacao.configMapaTipoColuna(modeloRSMD.getTipoColunas());
+
+		painelMETAINFO.table.setModel(new ModeloOrdenacao(modeloRSMD));
+		painelMETAINFO.table.ajustar(graphics);
+	}
+
+	private void largura() {
+		int largura = formulario.getWidth() - 20;
+		setSize(largura, getHeight());
+		setLocation(formulario.getX() + 10, getY());
+	}
+
+	private void limpar() {
+		Campo campo = tabela.get(0);
+		campo.setValor(null);
+		painelREGISTROSReferencia.atualizarViews();
+		painelREGISTROSReferencia.setInfo(TITLE + "." + campo.getNome(), "[]");
+	}
+
+	private void configTable(Table table) {
+		TableColumnModel columnModel = table.getColumnModel();
+		TableColumn column = columnModel.getColumn(0);
+		column.setCellRenderer(new CellColor());
+		column.setCellEditor(new CellEditor());
+	}
+
+	private void titulo(Vector<Vector<String>> dados) {
+		setTitle(Util.ehVazio(TITLE) ? "REGISTROS [" + dados.size() + "]" : TITLE + " - REGISTROS [" + dados.size() + "]");
 	}
 }
