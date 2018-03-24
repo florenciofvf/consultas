@@ -80,7 +80,8 @@ public class DadosDialog extends Dialogo {
 	private final String TITLE;
 	private boolean um;
 
-	public DadosDialog(Formulario formulario, Referencia selecionado, Tabela tabela, boolean pesquisa, String consulta, String aliasTemp) throws Exception {
+	public DadosDialog(Formulario formulario, Referencia selecionado, Tabela tabela, boolean pesquisa, String consulta,
+			String aliasTemp) throws Exception {
 		TITLE = tabela != null ? tabela.getNome() : "";
 
 		this.selecionado = selecionado;
@@ -155,7 +156,7 @@ public class DadosDialog extends Dialogo {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						if(painelREGISTROSReferencia != null) {
+						if (painelREGISTROSReferencia != null) {
 							painelREGISTROSReferencia.setLocationSplitPane();
 						}
 					}
@@ -219,7 +220,8 @@ public class DadosDialog extends Dialogo {
 		PainelREGISTROSReferencia(Dialogo dialogo) {
 			super(dialogo, false);
 
-			add(BorderLayout.NORTH, new PanelLeft(chkAbrirDialogRef, chkAbrirAbaRef, labelLimpar, labelStatus, labelValor));
+			add(BorderLayout.NORTH,
+					new PanelLeft(chkAbrirDialogRef, chkAbrirAbaRef, labelLimpar, labelStatus, labelValor));
 			painelReferencia = new PainelReferencia(formulario, tabela, this);
 
 			scroll = new ScrollPane(table);
@@ -647,6 +649,7 @@ public class DadosDialog extends Dialogo {
 	}
 
 	private void titulo(Vector<Vector<String>> dados) {
-		setTitle(Util.ehVazio(TITLE) ? "REGISTROS [" + dados.size() + "]" : TITLE + " - REGISTROS [" + dados.size() + "]");
+		setTitle(Util.ehVazio(TITLE) ? "REGISTROS [" + dados.size() + "]"
+				: TITLE + " - REGISTROS [" + dados.size() + "]");
 	}
 }

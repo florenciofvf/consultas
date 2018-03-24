@@ -37,7 +37,8 @@ public class Persistencia {
 		return i;
 	}
 
-	public static void atualizarTotalRegistros(List<Referencia> referencias, Tabelas tabelas, ProgressoDialog progresso) throws Exception {
+	public static void atualizarTotalRegistros(List<Referencia> referencias, Tabelas tabelas, ProgressoDialog progresso)
+			throws Exception {
 		Connection conn = getConnection();
 
 		int i = 0;
@@ -58,11 +59,13 @@ public class Persistencia {
 		conn.close();
 	}
 
-	public static Vector<Object[]> getRegistrosAgrupados(Referencia ref, Tabelas tabelas, Campo campo) throws Exception {
+	public static Vector<Object[]> getRegistrosAgrupados(Referencia ref, Tabelas tabelas, Campo campo)
+			throws Exception {
 		Vector<Object[]> vector = new Vector<Object[]>();
 		Connection conn = getConnection();
 
-		String consulta = campo == null ? ref.getConsultaGroupByCount(tabelas) : ref.getConsultaAgregada(tabelas, campo);
+		String consulta = campo == null ? ref.getConsultaGroupByCount(tabelas)
+				: ref.getConsultaAgregada(tabelas, campo);
 
 		if (Util.getBooleanConfig("consultas.area_transferencia")) {
 			Util.setContentTransfered(consulta);
