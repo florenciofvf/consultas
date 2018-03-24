@@ -183,7 +183,7 @@ public class Formulario extends JFrame {
 		fichario.addTab("label.destaques", painelDestaques);
 		fichario.addTab("label.tabRegtros", painelRegistros);
 		fichario.addTab("label.tabelas", painelTabelas);
-		fichario.addTab("label.consultas", abaConsultas);
+		fichario.addTab("label.referencias", abaConsultas);
 		fichario.addTab("label.config", new ScrollPane(tableConfig));
 		fichario.addTab("label.mensagens", new ScrollPane(tableMsg));
 

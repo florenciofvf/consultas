@@ -97,7 +97,7 @@ public class DadosDialog extends Dialogo {
 		if (tabela != null) {
 			painelREGISTROS = null;
 			painelREGISTROSReferencia = new PainelREGISTROSReferencia(this);
-			fichario.addTab("label.consultas", painelREGISTROSReferencia);
+			fichario.addTab("label.registros", painelREGISTROSReferencia);
 		} else {
 			painelREGISTROSReferencia = null;
 			painelREGISTROS = new PainelREGISTROS(this);
@@ -111,7 +111,7 @@ public class DadosDialog extends Dialogo {
 
 		if (tabela != null) {
 			painelREFERENCIA = new PainelREFERENCIA(this);
-			fichario.addTab("label.consultas", painelREFERENCIA);
+			fichario.addTab("label.referencias", painelREFERENCIA);
 		} else {
 			painelREFERENCIA = null;
 		}
