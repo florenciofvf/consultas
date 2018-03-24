@@ -171,12 +171,12 @@ public class DadosDialog extends Dialogo {
 		private CheckBox chkAbrirDialogRef = new CheckBox("label.abrir_dialog_ref", "dados_dialog.abrir_dialog_ref");
 		private CheckBox chkAbrirAbaRef = new CheckBox("label.abrir_aba_ref", "dados_dialog.abrir_aba_referencia");
 		private Table table = new Table(new ModeloOrdenacao(new ModeloVazio()));
-		private Label labelLimpar = new Label("label.limpar", Color.GREEN);
+		private Label labelLimpar = new Label("label.limpar", Color.BLUE);
 		private Button buttonCopiarIds = new Button("label.copiar_id");
-		private Button buttonLimparId = new Button("label.limpar_id");
+		//private Button buttonLimparId = new Button("label.limpar_id");
 		private Button buttonLargura = new Button("label.largura");
-		private Label labelStatus = new Label(Color.BLUE);
-		private Label labelValor = new Label(Color.RED);
+		private Label labelValor = new Label(Color.MAGENTA);
+		private Label labelStatus = new Label(Color.BLACK);
 		private SplitPane splitPane = new SplitPane();
 		private PainelReferencia painelReferencia;
 		private ScrollPane scroll;
@@ -184,7 +184,7 @@ public class DadosDialog extends Dialogo {
 		PainelREGISTROSReferencia(Dialogo dialogo, int largura) {
 			super(dialogo, false);
 
-			add(BorderLayout.NORTH, new PanelLeft(chkAbrirDialogRef, chkAbrirAbaRef, labelStatus, labelValor, labelLimpar));
+			add(BorderLayout.NORTH, new PanelLeft(chkAbrirDialogRef, chkAbrirAbaRef, labelLimpar, labelStatus, labelValor));
 			painelReferencia = new PainelReferencia(formulario, tabela, this);
 
 			scroll = new ScrollPane(table);
@@ -201,13 +201,13 @@ public class DadosDialog extends Dialogo {
 				}
 			});
 
-			painelControle.adicionar(buttonLimparId);
-			buttonLimparId.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					limpar();
-				}
-			});
+//			painelControle.adicionar(buttonLimparId);
+//			buttonLimparId.addActionListener(new ActionListener() {
+//				@Override
+//				public void actionPerformed(ActionEvent e) {
+//					limpar();
+//				}
+//			});
 
 			painelControle.adicionar(buttonLargura);
 			buttonLargura.addActionListener(new ActionListener() {
@@ -227,7 +227,7 @@ public class DadosDialog extends Dialogo {
 			labelLimpar.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					um = !um;
+					um = false;
 					limpar();
 					painelSELECT.executar();
 				}
@@ -238,7 +238,12 @@ public class DadosDialog extends Dialogo {
 		}
 
 		void setInfo(String status, String valor) {
-			labelLimpar.setVisible(!Util.ehVazio(valor));
+			boolean visivel = !Util.ehVazio(valor);
+
+			labelLimpar.setVisible(visivel);
+			labelStatus.setVisible(visivel);
+			labelValor.setVisible(visivel);
+
 			labelStatus.setText(status);
 			labelValor.setText(valor);
 		}
@@ -317,9 +322,7 @@ public class DadosDialog extends Dialogo {
 
 	private class PainelSELECT extends PainelAbas {
 		private static final long serialVersionUID = 1L;
-		private Table table = new Table(new ModeloOrdenacao(new ModeloVazio()));
 		private Button buttonGetContent = new Button("label.get_content");
-		private Button buttonCopiarIds = new Button("label.copiar_id");
 		private Button buttonLargura = new Button("label.largura");
 		private TextArea textArea = new TextArea();
 
@@ -331,15 +334,6 @@ public class DadosDialog extends Dialogo {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					textArea.setText(Util.getContentTransfered());
-				}
-			});
-
-			painelControle.adicionar(buttonCopiarIds);
-			buttonCopiarIds.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					List<String> resp = table.getIds(0);
-					Util.setContentTransfered(Util.getStringLista(resp));
 				}
 			});
 
