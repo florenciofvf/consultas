@@ -43,11 +43,17 @@ public class PainelReferencia extends PanelBorderLayout {
 	public PainelReferencia(Formulario formulario, Tabela tabela, PainelReferenciaListener listener) {
 		caminhos = Util.pesquisarReferencias(formulario.getReferencias(), tabela, formulario.getTabelas());
 		caminhosFiltro = Util.filtrarTopo(caminhos, tabela, formulario.getTabelas());
+		boolean filtro = !caminhosFiltro.isEmpty();
 
-		arvore = new Arvore(new ModeloArvore(caminhos, Util.getString("label.caminho")));
+		arvore = new Arvore(new ModeloArvore(filtro ? caminhosFiltro : caminhos, Util.getString("label.caminho")));
 		arvore.setCellRenderer(new TreeCellRenderer());
 		arvore.addMouseListener(new OuvinteArvore());
-		Util.expandirRetrair(arvore, true);
+		chkTopoHierarquia.setSelected(filtro);
+
+		if (!filtro) {
+			Util.expandirRetrair(arvore, true);
+		}
+
 		this.formulario = formulario;
 		this.listener = listener;
 		this.tabela = tabela;
@@ -317,10 +323,8 @@ public class PainelReferencia extends PanelBorderLayout {
 	private void setModel() {
 		if (chkTopoHierarquia.isSelected()) {
 			arvore.setModel(new ModeloArvore(caminhosFiltro, Util.getString("label.caminho")));
-			Util.expandirRetrair(arvore, true);
 		} else {
 			arvore.setModel(new ModeloArvore(caminhos, Util.getString("label.caminho")));
-			Util.expandirRetrair(arvore, true);
 		}
 	}
 
