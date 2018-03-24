@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -170,6 +171,7 @@ public class DadosDialog extends Dialogo {
 		private CheckBox chkAbrirDialogRef = new CheckBox("label.abrir_dialog_ref", "dados_dialog.abrir_dialog_ref");
 		private CheckBox chkAbrirAbaRef = new CheckBox("label.abrir_aba_ref", "dados_dialog.abrir_aba_referencia");
 		private Table table = new Table(new ModeloOrdenacao(new ModeloVazio()));
+		private Label labelLimpar = new Label("label.limpar", Color.GREEN);
 		private Button buttonCopiarIds = new Button("label.copiar_id");
 		private Button buttonLimparId = new Button("label.limpar_id");
 		private Button buttonLargura = new Button("label.largura");
@@ -182,7 +184,7 @@ public class DadosDialog extends Dialogo {
 		PainelREGISTROSReferencia(Dialogo dialogo, int largura) {
 			super(dialogo, false);
 
-			add(BorderLayout.NORTH, new PanelLeft(chkAbrirDialogRef, chkAbrirAbaRef, labelStatus, labelValor));
+			add(BorderLayout.NORTH, new PanelLeft(chkAbrirDialogRef, chkAbrirAbaRef, labelStatus, labelValor, labelLimpar));
 			painelReferencia = new PainelReferencia(formulario, tabela, this);
 
 			scroll = new ScrollPane(table);
@@ -221,11 +223,22 @@ public class DadosDialog extends Dialogo {
 					});
 				}
 			});
+
+			labelLimpar.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					um = !um;
+					limpar();
+					painelSELECT.executar();
+				}
+			});
 			
 			add(BorderLayout.CENTER, splitPane);
+			setInfo("", "");
 		}
 
 		void setInfo(String status, String valor) {
+			labelLimpar.setVisible(!Util.ehVazio(valor));
 			labelStatus.setText(status);
 			labelValor.setText(valor);
 		}
@@ -621,7 +634,7 @@ public class DadosDialog extends Dialogo {
 		Campo campo = tabela.get(0);
 		campo.setValor(null);
 		painelREGISTROSReferencia.atualizarViews();
-		painelREGISTROSReferencia.setInfo(TITLE + "." + campo.getNome(), "[]");
+		painelREGISTROSReferencia.setInfo(TITLE + "." + campo.getNome(), "");
 	}
 
 	private void configTable(Table table) {
