@@ -50,10 +50,6 @@ public class PainelReferencia extends PanelBorderLayout {
 		arvore.addMouseListener(new OuvinteArvore());
 		chkTopoHierarquia.setSelected(filtro);
 
-		if (!filtro) {
-			Util.expandirRetrair(arvore, true);
-		}
-
 		this.formulario = formulario;
 		this.listener = listener;
 		this.tabela = tabela;
