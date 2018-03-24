@@ -18,6 +18,7 @@ import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
+import javax.swing.JMenuBar;
 import javax.swing.JScrollBar;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -44,6 +45,8 @@ import br.com.consultas.visao.PainelReferenciaListener;
 import br.com.consultas.visao.comp.Button;
 import br.com.consultas.visao.comp.CheckBox;
 import br.com.consultas.visao.comp.Label;
+import br.com.consultas.visao.comp.Menu;
+import br.com.consultas.visao.comp.MenuItem;
 import br.com.consultas.visao.comp.PanelLeft;
 import br.com.consultas.visao.comp.ScrollPane;
 import br.com.consultas.visao.comp.SplitPane;
@@ -56,7 +59,11 @@ import br.com.consultas.visao.modelo.ModeloVazio;
 
 public class DadosDialog extends Dialogo {
 	private static final long serialVersionUID = 1L;
+	private final MenuItem itemLargura = new MenuItem("label.largura");
+	private final MenuItem itemFechar = new MenuItem("label.fechar");
+	private final Menu menuArquivo = new Menu("label.arquivo");
 	private final TabbedPane fichario = new TabbedPane();
+	private final JMenuBar menuBar = new JMenuBar();
 
 	private final PainelREGISTROSReferencia painelREGISTROSReferencia;
 	private final PainelREFERENCIA painelREFERENCIA;
@@ -74,7 +81,6 @@ public class DadosDialog extends Dialogo {
 	private boolean um;
 
 	public DadosDialog(Formulario formulario, Referencia selecionado, Tabela tabela, boolean pesquisa, String consulta, String aliasTemp) throws Exception {
-		final int largura = (int) (formulario.getWidth() * .8);
 		TITLE = tabela != null ? tabela.getNome() : "";
 
 		this.selecionado = selecionado;
@@ -89,7 +95,7 @@ public class DadosDialog extends Dialogo {
 
 		if (tabela != null) {
 			painelREGISTROS = null;
-			painelREGISTROSReferencia = new PainelREGISTROSReferencia(this, largura);
+			painelREGISTROSReferencia = new PainelREGISTROSReferencia(this);
 			fichario.addTab("label.consultas", painelREGISTROSReferencia);
 		} else {
 			painelREGISTROSReferencia = null;
@@ -117,14 +123,45 @@ public class DadosDialog extends Dialogo {
 		}
 
 		add(BorderLayout.CENTER, fichario);
-
 		atualizarTextArea(consulta);
+		montarMenu();
 
-		setSize(largura, 500);
+		setSize((int) (formulario.getWidth() * Util.DIVISAO3), 500);
 		setLocationRelativeTo(formulario);
 
 		cfg();
 		setVisible(true);
+	}
+
+	private void montarMenu() {
+		menuBar.add(menuArquivo);
+		menuArquivo.add(itemLargura);
+		menuArquivo.addSeparator();
+		menuArquivo.add(itemFechar);
+		setJMenuBar(menuBar);
+
+		itemFechar.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Util.fechar(DadosDialog.this);
+			}
+		});
+
+		itemLargura.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				largura();
+
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						if(painelREGISTROSReferencia != null) {
+							painelREGISTROSReferencia.setLocationSplitPane();
+						}
+					}
+				});
+			}
+		});
 	}
 
 	private void atualizarTextArea(String consulta) {
@@ -173,15 +210,13 @@ public class DadosDialog extends Dialogo {
 		private Table table = new Table(new ModeloOrdenacao(new ModeloVazio()));
 		private Label labelLimpar = new Label("label.limpar", Color.BLUE);
 		private Button buttonCopiarIds = new Button("label.copiar_id");
-		//private Button buttonLimparId = new Button("label.limpar_id");
-		private Button buttonLargura = new Button("label.largura");
 		private Label labelValor = new Label(Color.MAGENTA);
 		private Label labelStatus = new Label(Color.BLACK);
 		private SplitPane splitPane = new SplitPane();
 		private PainelReferencia painelReferencia;
 		private ScrollPane scroll;
 
-		PainelREGISTROSReferencia(Dialogo dialogo, int largura) {
+		PainelREGISTROSReferencia(Dialogo dialogo) {
 			super(dialogo, false);
 
 			add(BorderLayout.NORTH, new PanelLeft(chkAbrirDialogRef, chkAbrirAbaRef, labelLimpar, labelStatus, labelValor));
@@ -190,7 +225,7 @@ public class DadosDialog extends Dialogo {
 			scroll = new ScrollPane(table);
 			splitPane.setLeftComponent(scroll);
 			splitPane.setRightComponent(painelReferencia);
-			splitPane.setDividerLocation(largura / 2);
+			setLocationSplitPane();
 
 			painelControle.adicionar(buttonCopiarIds);
 			buttonCopiarIds.addActionListener(new ActionListener() {
@@ -198,29 +233,6 @@ public class DadosDialog extends Dialogo {
 				public void actionPerformed(ActionEvent e) {
 					List<String> resp = table.getIds(0);
 					Util.setContentTransfered(Util.getStringLista(resp));
-				}
-			});
-
-//			painelControle.adicionar(buttonLimparId);
-//			buttonLimparId.addActionListener(new ActionListener() {
-//				@Override
-//				public void actionPerformed(ActionEvent e) {
-//					limpar();
-//				}
-//			});
-
-			painelControle.adicionar(buttonLargura);
-			buttonLargura.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					largura();
-
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							splitPane.setDividerLocation((int) (largura * Util.DIVISAO3));
-						}
-					});
 				}
 			});
 
@@ -232,9 +244,14 @@ public class DadosDialog extends Dialogo {
 					painelSELECT.executar();
 				}
 			});
-			
+
 			add(BorderLayout.CENTER, splitPane);
 			setInfo("", "");
+		}
+
+		private void setLocationSplitPane() {
+			final int largura = (int) (formulario.getWidth() * Util.DIVISAO3);
+			splitPane.setDividerLocation(largura);
 		}
 
 		void setInfo(String status, String valor) {
@@ -323,7 +340,6 @@ public class DadosDialog extends Dialogo {
 	private class PainelSELECT extends PainelAbas {
 		private static final long serialVersionUID = 1L;
 		private Button buttonGetContent = new Button("label.get_content");
-		private Button buttonLargura = new Button("label.largura");
 		private TextArea textArea = new TextArea();
 
 		PainelSELECT(Dialogo dialogo) {
@@ -334,14 +350,6 @@ public class DadosDialog extends Dialogo {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					textArea.setText(Util.getContentTransfered());
-				}
-			});
-
-			painelControle.adicionar(buttonLargura);
-			buttonLargura.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					largura();
 				}
 			});
 

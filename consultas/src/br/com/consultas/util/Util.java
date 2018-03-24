@@ -295,7 +295,7 @@ public class Util {
 		String valor = campo.getValor();
 
 		if (ehVazio(valor)) {
-			sb.append("=" + valor);
+			sb.append("=");
 		} else {
 			if (valor.startsWith(PREFIXO_FILTRO_CAMPO) && valor.endsWith(SUFIXO_FILTRO_CAMPO)) {
 				int posIni = valor.indexOf(PREFIXO_FILTRO_CAMPO);
