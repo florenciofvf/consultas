@@ -332,7 +332,7 @@ public class PainelConsultas extends PanelBorderLayout {
 				}
 			}
 
-			if (e.getClickCount() > 1 && ultimoSelecionado != null) {
+			if (e.getClickCount() >= Util.DOIS && ultimoSelecionado != null) {
 				itemPesquisaDialogoLimpo(ultimoSelecionado);
 			}
 		}
