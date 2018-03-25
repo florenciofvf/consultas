@@ -84,41 +84,45 @@ public class PainelReferencia extends PanelBorderLayout {
 		cfg();
 	}
 
-	public void atualizarCampoID() {
+	public void atualizarCampoID(boolean form) {
 		ModeloArvore modelo = (ModeloArvore) arvore.getModel();
 		List<Referencia> caminhos = modelo.getReferencias();
+
 		Util.atualizarCampoID(caminhos, formulario.getTabelas());
 		Util.atualizarEstrutura(arvore, formulario.getTabelas(), false);
-		formulario.atualizarCampoIDForm();
+
+		if (form) {
+			formulario.atualizarCampoIDForm();
+		}
 	}
 
 	private void itemRegistrosDialogoLimpo() {
 		Util.limparID(selecionado, formulario);
-		atualizarCampoID();
+		atualizarCampoID(true);
 		registros(selecionado, true);
 	}
 
 	private void itemPesquisaDialogoLimpo(Referencia selecionado) {
 		Util.limparID(selecionado, formulario);
-		atualizarCampoID();
+		atualizarCampoID(true);
 		pesquisa(selecionado, true);
 	}
 
 	private void itemRegistrosMemoriaLimpo() {
 		Util.limparID(selecionado, formulario);
-		atualizarCampoID();
+		atualizarCampoID(true);
 		registros(selecionado, false);
 	}
 
 	private void itemPesquisaMemoriaLimpo() {
 		Util.limparID(selecionado, formulario);
-		atualizarCampoID();
+		atualizarCampoID(true);
 		pesquisa(selecionado, false);
 	}
 
 	private void itemPesquisaDialogoAliasLimpo(String aliasTemp) {
 		Util.limparID(selecionado, formulario);
-		atualizarCampoID();
+		atualizarCampoID(true);
 		pesquisa(selecionado, true, aliasTemp);
 	}
 
@@ -218,7 +222,7 @@ public class PainelReferencia extends PanelBorderLayout {
 			public void actionPerformed(ActionEvent e) {
 				Tabela tabela = selecionado.getTabela(formulario.getTabelas());
 				tabela.limparCampos();
-				atualizarCampoID();
+				atualizarCampoID(true);
 
 				if (listener != null) {
 					listener.limparCampos(tabela);
@@ -230,7 +234,7 @@ public class PainelReferencia extends PanelBorderLayout {
 			public void actionPerformed(ActionEvent e) {
 				Tabela tabela = selecionado.getTabela(formulario.getTabelas());
 				tabela.limparID();
-				atualizarCampoID();
+				atualizarCampoID(true);
 
 				if (listener != null) {
 					listener.limparID(tabela);

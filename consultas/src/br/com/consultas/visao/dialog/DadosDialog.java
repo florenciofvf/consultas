@@ -77,6 +77,7 @@ public class DadosDialog extends Dialogo {
 
 	private final Referencia selecionado;
 	private final Formulario formulario;
+	private final byte PRIMEIRA_ABA = 0;
 	private final boolean pesquisa;
 	private final Tabela tabela;
 	private final String TITLE;
@@ -281,9 +282,7 @@ public class DadosDialog extends Dialogo {
 			labelLimpar.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					um = false;
 					limpar();
-					painelSELECT.executar();
 				}
 			});
 
@@ -298,8 +297,7 @@ public class DadosDialog extends Dialogo {
 		public void limparID(Tabela tabela) {
 			if (DadosDialog.this.tabela != null && tabela != null) {
 				if (DadosDialog.this.tabela.getNome().equals(tabela.getNome())) {
-					setInfo("", "");
-					atualizarViews();
+					limpar();
 				}
 			}
 		}
@@ -379,8 +377,8 @@ public class DadosDialog extends Dialogo {
 			atualizarTextArea(null);
 
 			formulario.atualizarCampoIDForm();
-			painelReferencia.atualizarCampoID();
-			painelREFERENCIA.painelReferencia.atualizarCampoID();
+			painelReferencia.atualizarCampoID(false);
+			painelREFERENCIA.painelReferencia.atualizarCampoID(false);
 		}
 
 		@Override
@@ -468,17 +466,17 @@ public class DadosDialog extends Dialogo {
 
 			try {
 				processar(string, getGraphics());
-				fichario.setSelectedIndex(0);
+				fichario.setSelectedIndex(PRIMEIRA_ABA);
+
+				formulario.atualizarCampoIDForm();
 
 				if (painelREGISTROSReferencia != null) {
-					painelREGISTROSReferencia.painelReferencia.atualizarCampoID();
+					painelREGISTROSReferencia.painelReferencia.atualizarCampoID(false);
 				}
 
 				if (painelREFERENCIA != null) {
-					painelREFERENCIA.painelReferencia.atualizarCampoID();
+					painelREFERENCIA.painelReferencia.atualizarCampoID(false);
 				}
-
-				formulario.atualizarCampoIDForm();
 			} catch (Exception e) {
 				String msg = Util.getStackTrace(getClass().getName() + ".executeQuery()", e);
 				Util.mensagem(DadosDialog.this, msg);
@@ -581,21 +579,25 @@ public class DadosDialog extends Dialogo {
 		@Override
 		public void agruparColuna(Referencia ref, Campo campo) throws Exception {
 			painelREGISTROSReferencia.agruparColuna(ref, campo);
+			fichario.setSelectedIndex(PRIMEIRA_ABA);
 		}
 
 		@Override
 		public void calcularTotal(Referencia ref) throws Exception {
 			painelREGISTROSReferencia.calcularTotal(ref);
+			fichario.setSelectedIndex(PRIMEIRA_ABA);
 		}
 
 		@Override
 		public void limparCampos(Tabela tabela) {
 			painelREGISTROSReferencia.limparCampos(tabela);
+			fichario.setSelectedIndex(PRIMEIRA_ABA);
 		}
 
 		@Override
 		public void limparID(Tabela tabela) {
 			painelREGISTROSReferencia.limparID(tabela);
+			fichario.setSelectedIndex(PRIMEIRA_ABA);
 		}
 	}
 
@@ -754,10 +756,12 @@ public class DadosDialog extends Dialogo {
 	}
 
 	private void limpar() {
+		um = false;
 		Campo campo = tabela.get(0);
 		campo.setValor(null);
 		painelREGISTROSReferencia.atualizarViews();
 		painelREGISTROSReferencia.setInfo(TITLE + "." + campo.getNome(), "");
+		painelSELECT.executar();
 	}
 
 	private void configTable(Table table) {
