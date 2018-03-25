@@ -85,39 +85,39 @@ public class PainelConsultas extends PanelBorderLayout {
 		cfg();
 	}
 
-	public void atualizarCampoID() {
+	public void atualizarCampoID(Tabela tabela) {
 		Util.atualizarCampoID(formulario.getReferencias(), formulario.getTabelas());
-		Util.atualizarEstrutura(arvore, formulario.getTabelas(), true);
+		Util.atualizarEstrutura(arvore, formulario.getTabelas(), tabela);
 		arvore.repaint();
 	}
 
 	public void itemRegistrosDialogoLimpo(Referencia selecionado) {
-		Util.limparID(selecionado, formulario);
-		formulario.atualizarCampoIDForm();
+		Tabela tabela = Util.limparID(selecionado, formulario);
+		formulario.atualizarCampoIDForm(tabela);
 		registros(selecionado, true);
 	}
 
 	private void itemPesquisaDialogoLimpo(Referencia selecionado) {
-		Util.limparID(selecionado, formulario);
-		formulario.atualizarCampoIDForm();
+		Tabela tabela = Util.limparID(selecionado, formulario);
+		formulario.atualizarCampoIDForm(tabela);
 		pesquisa(selecionado, true);
 	}
 
 	private void itemRegistrosMemoriaLimpo() {
-		Util.limparID(selecionado, formulario);
-		formulario.atualizarCampoIDForm();
+		Tabela tabela = Util.limparID(selecionado, formulario);
+		formulario.atualizarCampoIDForm(tabela);
 		registros(selecionado, false);
 	}
 
 	private void itemPesquisaMemoriaLimpo() {
-		Util.limparID(selecionado, formulario);
-		formulario.atualizarCampoIDForm();
+		Tabela tabela = Util.limparID(selecionado, formulario);
+		formulario.atualizarCampoIDForm(tabela);
 		pesquisa(selecionado, false);
 	}
 
 	private void itemPesquisaDialogoAliasLimpo(String aliasTemp) {
-		Util.limparID(selecionado, formulario);
-		formulario.atualizarCampoIDForm();
+		Tabela tabela = Util.limparID(selecionado, formulario);
+		formulario.atualizarCampoIDForm(tabela);
 		pesquisa(selecionado, true, aliasTemp);
 	}
 
@@ -206,15 +206,17 @@ public class PainelConsultas extends PanelBorderLayout {
 
 		popup.itemLimparCampos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				selecionado.getTabela(formulario.getTabelas()).limparCampos();
-				formulario.atualizarCampoIDForm();
+				Tabela tabela = selecionado.getTabela(formulario.getTabelas());
+				tabela.limparCampos();
+				formulario.atualizarCampoIDForm(tabela);
 			}
 		});
 
 		popup.itemLimparId.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				selecionado.getTabela(formulario.getTabelas()).limparID();
-				formulario.atualizarCampoIDForm();
+				Tabela tabela = selecionado.getTabela(formulario.getTabelas());
+				tabela.limparID();
+				formulario.atualizarCampoIDForm(tabela);
 			}
 		});
 

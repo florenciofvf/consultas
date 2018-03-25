@@ -282,7 +282,7 @@ public class DadosDialog extends Dialogo {
 			labelLimpar.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					limpar();
+					limpar(tabela);
 				}
 			});
 
@@ -296,8 +296,8 @@ public class DadosDialog extends Dialogo {
 		@Override
 		public void limparID(Tabela tabela) {
 			if (DadosDialog.this.tabela != null && tabela != null) {
-				if (DadosDialog.this.tabela.getNome().equals(tabela.getNome())) {
-					limpar();
+				if (DadosDialog.this.tabela.equals(tabela)) {
+					limpar(tabela);
 				}
 			}
 		}
@@ -373,12 +373,12 @@ public class DadosDialog extends Dialogo {
 		public void executar() {
 		}
 
-		private void atualizarViews() {
+		private void atualizarViews(Tabela tabela) {
 			atualizarTextArea(null);
 
-			formulario.atualizarCampoIDForm();
-			painelReferencia.atualizarCampoID(false);
-			painelREFERENCIA.painelReferencia.atualizarCampoID(false);
+			formulario.atualizarCampoIDForm(tabela);
+			painelReferencia.atualizarCampoID(false, tabela);
+			painelREFERENCIA.painelReferencia.atualizarCampoID(false, tabela);
 		}
 
 		@Override
@@ -468,14 +468,14 @@ public class DadosDialog extends Dialogo {
 				processar(string, getGraphics());
 				fichario.setSelectedIndex(PRIMEIRA_ABA);
 
-				formulario.atualizarCampoIDForm();
+				formulario.atualizarCampoIDForm(tabela);
 
 				if (painelREGISTROSReferencia != null) {
-					painelREGISTROSReferencia.painelReferencia.atualizarCampoID(false);
+					painelREGISTROSReferencia.painelReferencia.atualizarCampoID(false, tabela);
 				}
 
 				if (painelREFERENCIA != null) {
-					painelREFERENCIA.painelReferencia.atualizarCampoID(false);
+					painelREFERENCIA.painelReferencia.atualizarCampoID(false, tabela);
 				}
 			} catch (Exception e) {
 				String msg = Util.getStackTrace(getClass().getName() + ".executeQuery()", e);
@@ -640,7 +640,7 @@ public class DadosDialog extends Dialogo {
 				um = !um;
 
 				if (!um) {
-					limpar();
+					limpar(tabela);
 				}
 
 				painelSELECT.executar();
@@ -668,7 +668,7 @@ public class DadosDialog extends Dialogo {
 			Campo campo = tabela.get(0);
 			campo.setValor(valor.toString());
 
-			painelREGISTROSReferencia.atualizarViews();
+			painelREGISTROSReferencia.atualizarViews(tabela);
 
 			painelREGISTROSReferencia.setInfo(TITLE + "." + campo.getNome(), "[" + campo.getValor() + "]");
 
@@ -755,11 +755,11 @@ public class DadosDialog extends Dialogo {
 		setLocation(formulario.getX() + 10, getY());
 	}
 
-	private void limpar() {
+	private void limpar(Tabela tabela) {
 		um = false;
 		Campo campo = tabela.get(0);
 		campo.setValor(null);
-		painelREGISTROSReferencia.atualizarViews();
+		painelREGISTROSReferencia.atualizarViews(tabela);
 		painelREGISTROSReferencia.setInfo(TITLE + "." + campo.getNome(), "");
 		painelSELECT.executar();
 	}

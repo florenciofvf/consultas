@@ -103,8 +103,12 @@ public class Formulario extends JFrame {
 				for (Tabela t : tabelas.getTabelas()) {
 					t.limparCampos();
 				}
+
 				Util.setEspecialFalse(referencias);
-				atualizarCampoIDForm();
+
+				for (Tabela t : tabelas.getTabelas()) {
+					atualizarCampoIDForm(t);
+				}
 			}
 		});
 
@@ -114,8 +118,12 @@ public class Formulario extends JFrame {
 				for (Tabela t : tabelas.getTabelas()) {
 					t.limparID();
 				}
+
 				Util.setEspecialFalse(referencias);
-				atualizarCampoIDForm();
+
+				for (Tabela t : tabelas.getTabelas()) {
+					atualizarCampoIDForm(t);
+				}
 			}
 		});
 
@@ -173,8 +181,8 @@ public class Formulario extends JFrame {
 		return referencias;
 	}
 
-	public void atualizarCampoIDForm() {
-		abaConsultas.atualizarCampoID();
+	public void atualizarCampoIDForm(Tabela tabela) {
+		abaConsultas.atualizarCampoID(tabela);
 	}
 
 	private void montarLayout() {

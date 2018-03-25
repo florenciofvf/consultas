@@ -92,12 +92,21 @@ public class Tabela {
 
 	public Campo get(String nome) {
 		for (Campo c : campos) {
-			if (c.getNome().equalsIgnoreCase(nome)) {
+			if (c.getNome().equals(nome)) {
 				return c;
 			}
 		}
 
 		return null;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Tabela) {
+			return nome.equals(((Tabela) obj).getNome());
+		}
+
+		return false;
 	}
 
 	@Override

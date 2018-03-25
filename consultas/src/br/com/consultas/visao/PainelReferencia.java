@@ -84,45 +84,45 @@ public class PainelReferencia extends PanelBorderLayout {
 		cfg();
 	}
 
-	public void atualizarCampoID(boolean form) {
+	public void atualizarCampoID(boolean form, Tabela tabela) {
 		ModeloArvore modelo = (ModeloArvore) arvore.getModel();
 		List<Referencia> caminhos = modelo.getReferencias();
 
 		Util.atualizarCampoID(caminhos, formulario.getTabelas());
-		Util.atualizarEstrutura(arvore, formulario.getTabelas(), false);
+		Util.atualizarEstrutura(arvore, formulario.getTabelas(), tabela);
 
 		if (form) {
-			formulario.atualizarCampoIDForm();
+			formulario.atualizarCampoIDForm(tabela);
 		}
 	}
 
 	private void itemRegistrosDialogoLimpo() {
-		Util.limparID(selecionado, formulario);
-		atualizarCampoID(true);
+		Tabela tabela = Util.limparID(selecionado, formulario);
+		atualizarCampoID(true, tabela);
 		registros(selecionado, true);
 	}
 
 	private void itemPesquisaDialogoLimpo(Referencia selecionado) {
-		Util.limparID(selecionado, formulario);
-		atualizarCampoID(true);
+		Tabela tabela = Util.limparID(selecionado, formulario);
+		atualizarCampoID(true, tabela);
 		pesquisa(selecionado, true);
 	}
 
 	private void itemRegistrosMemoriaLimpo() {
-		Util.limparID(selecionado, formulario);
-		atualizarCampoID(true);
+		Tabela tabela = Util.limparID(selecionado, formulario);
+		atualizarCampoID(true, tabela);
 		registros(selecionado, false);
 	}
 
 	private void itemPesquisaMemoriaLimpo() {
-		Util.limparID(selecionado, formulario);
-		atualizarCampoID(true);
+		Tabela tabela = Util.limparID(selecionado, formulario);
+		atualizarCampoID(true, tabela);
 		pesquisa(selecionado, false);
 	}
 
 	private void itemPesquisaDialogoAliasLimpo(String aliasTemp) {
-		Util.limparID(selecionado, formulario);
-		atualizarCampoID(true);
+		Tabela tabela = Util.limparID(selecionado, formulario);
+		atualizarCampoID(true, tabela);
 		pesquisa(selecionado, true, aliasTemp);
 	}
 
@@ -222,7 +222,7 @@ public class PainelReferencia extends PanelBorderLayout {
 			public void actionPerformed(ActionEvent e) {
 				Tabela tabela = selecionado.getTabela(formulario.getTabelas());
 				tabela.limparCampos();
-				atualizarCampoID(true);
+				atualizarCampoID(true, tabela);
 
 				if (listener != null) {
 					listener.limparCampos(tabela);
@@ -234,7 +234,7 @@ public class PainelReferencia extends PanelBorderLayout {
 			public void actionPerformed(ActionEvent e) {
 				Tabela tabela = selecionado.getTabela(formulario.getTabelas());
 				tabela.limparID();
-				atualizarCampoID(true);
+				atualizarCampoID(true, tabela);
 
 				if (listener != null) {
 					listener.limparID(tabela);

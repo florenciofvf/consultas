@@ -91,14 +91,14 @@ public class PainelTabelas extends PanelBorderLayout {
 	}
 
 	private void itemRegistrosDialogoLimpo(Referencia selecionado) {
-		Util.limparID(selecionado, formulario);
-		formulario.atualizarCampoIDForm();
+		Tabela tabela = Util.limparID(selecionado, formulario);
+		formulario.atualizarCampoIDForm(tabela);
 		registros(selecionado, true);
 	}
 
 	private void itemRegistrosMemoriaLimpo() {
-		Util.limparID(selecionado, formulario);
-		formulario.atualizarCampoIDForm();
+		Tabela tabela = Util.limparID(selecionado, formulario);
+		formulario.atualizarCampoIDForm(tabela);
 		registros(selecionado, false);
 	}
 
@@ -142,15 +142,17 @@ public class PainelTabelas extends PanelBorderLayout {
 
 		popup.itemLimparCampos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				selecionado.getTabela(formulario.getTabelas()).limparCampos();
-				formulario.atualizarCampoIDForm();
+				Tabela tabela = selecionado.getTabela(formulario.getTabelas());
+				tabela.limparCampos();
+				formulario.atualizarCampoIDForm(tabela);
 			}
 		});
 
 		popup.itemLimparId.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				selecionado.getTabela(formulario.getTabelas()).limparID();
-				formulario.atualizarCampoIDForm();
+				Tabela tabela = selecionado.getTabela(formulario.getTabelas());
+				tabela.limparID();
+				formulario.atualizarCampoIDForm(tabela);
 			}
 		});
 
@@ -201,12 +203,15 @@ public class PainelTabelas extends PanelBorderLayout {
 				if (comRegistros) {
 					try {
 						List<Referencia> referencias = Util.criarReferencias(formulario.getTabelas().getTabelas());
+
 						formulario.progresso.exibir(referencias.size());
 						Persistencia.atualizarTotalRegistros(referencias, formulario.getTabelas(),
 								formulario.progresso);
 						formulario.progresso.esconder();
+
 						Util.filtrarRegistros(referencias, formulario.getTabelas());
 						Util.ordenar(referencias);
+
 						arvore.setModel(new ModeloArvore(referencias, Util.getString("label.tabelas")));
 					} catch (Exception ex) {
 						String msg = Util.getStackTrace(getClass().getName() + ".atualizarTotalRegistros()", ex);
@@ -216,11 +221,13 @@ public class PainelTabelas extends PanelBorderLayout {
 					try {
 						ModeloArvore modelo = (ModeloArvore) arvore.getModel();
 						List<Referencia> referencias = modelo.getReferencias();
+
 						formulario.progresso.exibir(referencias.size());
 						Persistencia.atualizarTotalRegistros(referencias, formulario.getTabelas(),
 								formulario.progresso);
 						formulario.progresso.esconder();
-						Util.atualizarEstrutura(arvore, formulario.getTabelas(), false);
+
+						Util.atualizarTodaEstrutura(arvore);
 						arvore.repaint();
 					} catch (Exception ex) {
 						String msg = Util.getStackTrace(getClass().getName() + ".atualizarTotalRegistros()", ex);

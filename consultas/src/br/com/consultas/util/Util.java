@@ -407,19 +407,67 @@ public class Util {
 		}
 	}
 
+	public static void atualizarTodaEstrutura(Arvore tree) {
+		ModeloArvore modelo = (ModeloArvore) tree.getModel();
+		String raiz = (String) modelo.getRoot();
+		int filhos = modelo.getChildCount(raiz);
+
+		List<Referencia> referencias = new ArrayList<>();
+
+		for (int i = 0; i < filhos; i++) {
+			Referencia ref = (Referencia) modelo.getChild(raiz, i);
+			ref.atualizarTodaEstrutura(referencias);
+		}
+
+		for (Referencia r : referencias) {
+			List<Object> lista = new ArrayList<>();
+			r.caminho(lista);
+			lista.add(0, raiz);
+			lista.add(r);
+
+			TreePath path = new TreePath(lista.toArray(new Object[] {}));
+			TreeModelEvent event = new TreeModelEvent(r, path);
+			modelo.treeNodesChanged(event);
+		}
+	}
+
+	public static void atualizarEstrutura(Arvore tree, Tabelas tabelas, Tabela tabela) {
+		ModeloArvore modelo = (ModeloArvore) tree.getModel();
+		String raiz = (String) modelo.getRoot();
+		int filhos = modelo.getChildCount(raiz);
+
+		List<Referencia> referencias = new ArrayList<>();
+
+		for (int i = 0; i < filhos; i++) {
+			Referencia ref = (Referencia) modelo.getChild(raiz, i);
+			ref.atualizar(referencias, tabelas, tabela);
+		}
+
+		for (Referencia r : referencias) {
+			List<Object> lista = new ArrayList<>();
+			r.caminho(lista);
+			lista.add(0, raiz);
+			lista.add(r);
+
+			TreePath path = new TreePath(lista.toArray(new Object[] {}));
+			TreeModelEvent event = new TreeModelEvent(r, path);
+			modelo.treeNodesChanged(event);
+		}
+	}
+
 	public static void atualizarEstrutura(Arvore tree, Tabelas tabelas, boolean comID) {
 		ModeloArvore modelo = (ModeloArvore) tree.getModel();
 		String raiz = (String) modelo.getRoot();
 		int filhos = modelo.getChildCount(raiz);
 
-		List<Referencia> folhas = new ArrayList<>();
+		List<Referencia> referencias = new ArrayList<>();
 
 		for (int i = 0; i < filhos; i++) {
 			Referencia ref = (Referencia) modelo.getChild(raiz, i);
-			ref.atualizar(folhas, tabelas, comID);
+			ref.atualizar(referencias, tabelas, comID);
 		}
 
-		for (Referencia r : folhas) {
+		for (Referencia r : referencias) {
 			List<Object> lista = new ArrayList<>();
 			r.caminho(lista);
 			lista.add(0, raiz);

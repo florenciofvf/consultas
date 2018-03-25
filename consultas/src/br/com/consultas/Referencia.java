@@ -133,6 +133,26 @@ public class Referencia {
 		}
 	}
 
+	public void atualizarTodaEstrutura(List<Referencia> referencias) {
+		referencias.add(this);
+
+		for (Referencia r : getReferencias()) {
+			r.atualizarTodaEstrutura(referencias);
+		}
+	}
+
+	public void atualizar(List<Referencia> referencias, Tabelas tabelas, Tabela tabela) {
+		Tabela tab = tabelas.get(alias);
+
+		if (tab.equals(tabela)) {
+			referencias.add(this);
+		}
+
+		for (Referencia r : getReferencias()) {
+			r.atualizar(referencias, tabelas, tabela);
+		}
+	}
+
 	public void atualizar(List<Referencia> referencias, Tabelas tabelas, boolean comID) {
 		Tabela tab = tabelas.get(alias);
 		Campo campo = tab.get(0);
