@@ -757,8 +757,8 @@ public class DadosDialog extends Dialogo {
 
 	private void limpar(Tabela tabela) {
 		um = false;
+		tabela.limparID();
 		Campo campo = tabela.get(0);
-		campo.setValor(null);
 		painelREGISTROSReferencia.atualizarViews(tabela);
 		painelREGISTROSReferencia.setInfo(TITLE + "." + campo.getNome(), "");
 		painelSELECT.executar();
