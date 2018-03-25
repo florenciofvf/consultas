@@ -605,7 +605,7 @@ public class Util {
 		Vector<Object> resposta = new Vector<>();
 
 		for (int i = 0; i < modelo.getRowCount(); i++) {
-			Object id = modelo.getValueAt(i, 0);
+			Object id = modelo.getValueAt2(i, 0);
 			Object valor = getValor(id, registros);
 
 			resposta.add(valor != null ? valor : "");
@@ -615,13 +615,20 @@ public class Util {
 	}
 
 	private static Object getValor(Object id, Vector<Object[]> resp) {
+		StringBuilder sb = new StringBuilder();
+
 		for (Object[] objects : resp) {
 			if (objects[0].equals(id)) {
-				return objects[1];
+
+				if (sb.length() > 0) {
+					sb.append(", ");
+				}
+
+				sb.append(objects[1]);
 			}
 		}
 
-		return null;
+		return sb.length() > 0 ? sb.toString() : null;
 	}
 
 	public static void pesquisaSelecionadosMemoria(Referencia ref, Tabelas tabelas) {

@@ -192,6 +192,10 @@ public class ModeloOrdenacao extends AbstractTableModel {
 		return model.getValueAt(linhas[rowIndex].indice, columnIndex);
 	}
 
+	public Object getValueAt2(int rowIndex, int columnIndex) {
+		return model.getValueAt(rowIndex, columnIndex);
+	}
+
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		return model.isCellEditable(linhas[rowIndex].indice, columnIndex);
