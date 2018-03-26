@@ -22,6 +22,7 @@ public class ModeloReferencia implements TableModel {
 			campos.add(new CampoReferencia("aliasAlt", true));
 			campos.add(new CampoReferencia("prefixo"));
 			campos.add(new CampoReferencia("inverso"));
+			campos.add(new CampoReferencia("especial"));
 			campos.add(new CampoReferencia("pk"));
 			campos.add(new CampoReferencia("fk"));
 			campos.add(new CampoReferencia("pkNome"));

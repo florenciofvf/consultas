@@ -29,6 +29,7 @@ import br.com.consultas.visao.comp.SplitPane;
 import br.com.consultas.visao.comp.Table;
 import br.com.consultas.visao.dialog.CampoDialog;
 import br.com.consultas.visao.dialog.DadosDialog;
+import br.com.consultas.visao.dialog.ReferenciaPropDialog;
 import br.com.consultas.visao.modelo.CampoReferencia;
 import br.com.consultas.visao.modelo.ModeloArvore;
 import br.com.consultas.visao.modelo.ModeloOrdenacao;
@@ -130,6 +131,9 @@ public class PainelConsultas extends PanelBorderLayout {
 		popup.addSeparator();
 		popup.dml();
 
+		popup.addSeparator();
+		popup.propriedades();
+
 		popup.itemRegistrosDialogoLimpo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				itemRegistrosDialogoLimpo(selecionado);
@@ -223,6 +227,12 @@ public class PainelConsultas extends PanelBorderLayout {
 		popup.itemCampos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new CampoDialog(formulario, selecionado.getTabela(formulario.getTabelas()));
+			}
+		});
+
+		popup.itemPropriedades.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new ReferenciaPropDialog(formulario, selecionado);
 			}
 		});
 

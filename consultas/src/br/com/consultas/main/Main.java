@@ -32,7 +32,7 @@ public class Main {
 			Util.mensagem(null, "Arquivo inexistente!\r\n\r\n" + file.getAbsolutePath());
 
 		} else if (!file.canRead()) {
-			Util.mensagem(null, "O arquivo não pode ser lido!\r\n\r\n" + file.getAbsolutePath());
+			Util.mensagem(null, "O arquivo nao pode ser lido!\r\n\r\n" + file.getAbsolutePath());
 
 		} else {
 			Util.mensagem(null, "Erro!");

@@ -24,6 +24,7 @@ public class ModeloRSMD implements TableModel {
 			Vector<String> registro = new Vector<>();
 
 			registro.add("" + rsmd.getColumnClassName(i));
+			registro.add("" + rsmd.getColumnTypeName(i));
 			registro.add("" + rsmd.getColumnLabel(i));
 			registro.add("" + rsmd.getColumnName(i));
 			registro.add("" + rsmd.getPrecision(i));
@@ -39,7 +40,6 @@ public class ModeloRSMD implements TableModel {
 			registro.add("" + rsmd.getTableName(i));
 			registro.add("" + rsmd.getCatalogName(i));
 			registro.add("" + rsmd.getColumnType(i));
-			registro.add("" + rsmd.getColumnTypeName(i));
 			registro.add("" + rsmd.isReadOnly(i));
 			registro.add("" + rsmd.isWritable(i));
 			registro.add("" + rsmd.isDefinitelyWritable(i));
@@ -55,6 +55,7 @@ public class ModeloRSMD implements TableModel {
 		Vector<String> vector = new Vector<>();
 
 		vector.add("getColumnClassName");
+		vector.add("getColumnTypeName");
 		vector.add("getColumnLabel");
 		vector.add("getColumnName");
 		vector.add("getPrecision");
@@ -70,7 +71,6 @@ public class ModeloRSMD implements TableModel {
 		vector.add("getTableName");
 		vector.add("getCatalogName");
 		vector.add("getColumnType");
-		vector.add("getColumnTypeName");
 		vector.add("isReadOnly");
 		vector.add("isWritable");
 		vector.add("isDefinitelyWritable");

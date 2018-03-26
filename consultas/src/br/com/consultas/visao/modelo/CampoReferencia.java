@@ -30,6 +30,9 @@ public class CampoReferencia {
 		} else if ("inverso".equals(nome)) {
 			return referencia.isInverso();
 
+		} else if ("especial".equals(nome)) {
+			return referencia.isEspecial();
+
 		} else if ("cloneCompleto".equals(nome)) {
 			return referencia.isCloneCompleto();
 
@@ -67,6 +70,8 @@ public class CampoReferencia {
 			referencia.setAliasAlt(valor);
 
 		} else if ("inverso".equals(nome)) {
+
+		} else if ("especial".equals(nome)) {
 
 		} else if ("cloneCompleto".equals(nome)) {
 			referencia.setCloneCompleto(Boolean.parseBoolean(valor));

@@ -57,7 +57,7 @@ public class Util {
 	private static final String SUFIXO_FILTRO_CAMPO = "}";
 	public static final int LARGURA_ICONE_ORDENAR = 20;
 	private static final boolean LOG_MENSAGEM = true;
-	public static final double DIVISAO2 = 0.70;
+	public static final double DIVISAO2 = 0.65;
 	public static final double DIVISAO3 = 0.70;
 	public static final byte DOIS = 2;
 

@@ -58,11 +58,10 @@ public class Table extends JTable {
 		List<String> resposta = new ArrayList<>();
 
 		ModeloOrdenacao atual = (ModeloOrdenacao) getModel();
-		TableModel model = atual.getModel();
-		int total = model.getRowCount();
+		int total = atual.getRowCount();
 
 		for (int i = 0; i < total; i++) {
-			Object obj = model.getValueAt(i, coluna);
+			Object obj = atual.getValueAt(i, coluna);
 
 			if (obj != null && !Util.ehVazio(obj.toString())) {
 				resposta.add(obj.toString());
