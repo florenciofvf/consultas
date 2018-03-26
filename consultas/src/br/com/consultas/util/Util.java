@@ -543,6 +543,8 @@ public class Util {
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowIconified(WindowEvent e) {
 				frame.setState(JFrame.NORMAL);
+				frame.setVisible(false);
+				frame.setVisible(true);
 			}
 
 			public void windowOpened(WindowEvent e) {
