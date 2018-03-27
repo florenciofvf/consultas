@@ -419,41 +419,51 @@ public class Referencia {
 	}
 
 	private void completarConsulta(StringBuilder sb, Tabelas tabelas) {
-		Tabela tab = tabelas.get(alias);
+		Tabela tabThis = tabelas.get(alias);
 
 		if (pai == null) {
-			sb.append(" " + tab.getNome() + " " + getAlias() + QL);
+			sb.append(" " + tabThis.getNome() + " " + getAlias() + QL);
 			return;
 		}
 
 		pai.completarConsulta(sb, tabelas);
-		sb.append(" " + getPreJoin() + " JOIN " + tab.getNome() + " " + getAlias());
+		sb.append(" " + getPreJoin() + " JOIN " + tabThis.getNome() + " " + getAlias());
 
-		Campo campoPK = null;
-		Campo campoFK = null;
-		Tabela tabPai = tabelas.get(pai.alias);
+		Tabela tabParent = tabelas.get(pai.alias);
+		Campo campoPK = getCampoPK(tabParent, tabThis);
+		Campo campoFK = getCampoFK(tabParent, tabThis);
 
-		if (!inverso) {
-			campoPK = Util.ehVazio(pkNome) ? tabPai.get(pk) : tabPai.get(pkNome);
-			campoFK = Util.ehVazio(fkNome) ? tab.get(fk) : tab.get(fkNome);
-
-			sb.append(" ON " + pai.getAlias() + "." + campoPK.getNome() + " = " + getAlias() + "." + campoFK.getNome()
+		if (inverso) {
+			sb.append(" ON " + getAlias() + "." + campoPK.getNome() + " = " + pai.getAlias() + "." + campoFK.getNome()
 					+ QL);
 		} else {
-			campoPK = Util.ehVazio(pkNome) ? tab.get(pk) : tab.get(pkNome);
-			campoFK = Util.ehVazio(fkNome) ? tabPai.get(fk) : tabPai.get(fkNome);
-
-			sb.append(" ON " + getAlias() + "." + campoPK.getNome() + " = " + pai.getAlias() + "." + campoFK.getNome()
+			sb.append(" ON " + pai.getAlias() + "." + campoPK.getNome() + " = " + getAlias() + "." + campoFK.getNome()
 					+ QL);
 		}
 	}
 
-	public String getConsultaGroupByCount(Tabelas tabelas) {
-		Tabela tabPai = tabelas.get(pai.alias);
-		Tabela tab = tabelas.get(alias);
+	private Campo getCampoPK(Tabela tabParent, Tabela tabThis) {
+		if (inverso) {
+			return Util.ehVazio(pkNome) ? tabThis.get(pk) : tabThis.get(pkNome);
+		}
 
-		Campo campoPK = Util.ehVazio(pkNome) ? tabPai.get(pk) : tabPai.get(pkNome);
-		Campo campoFK = Util.ehVazio(fkNome) ? tab.get(fk) : tab.get(fkNome);
+		return Util.ehVazio(pkNome) ? tabParent.get(pk) : tabParent.get(pkNome);
+	}
+
+	private Campo getCampoFK(Tabela tabParent, Tabela tabThis) {
+		if (inverso) {
+			return Util.ehVazio(fkNome) ? tabParent.get(fk) : tabParent.get(fkNome);
+		}
+
+		return Util.ehVazio(fkNome) ? tabThis.get(fk) : tabThis.get(fkNome);
+	}
+
+	public String getConsultaGroupByCount(Tabelas tabelas) {
+		Tabela tabParent = tabelas.get(pai.alias);
+		Tabela tabThis = tabelas.get(alias);
+
+		Campo campoPK = getCampoPK(tabParent, tabThis);
+		Campo campoFK = getCampoFK(tabParent, tabThis);
 
 		StringBuilder sb = new StringBuilder("SELECT " + pai.getAlias() + "." + campoPK.getNome() + ", COUNT("
 				+ getAlias() + "." + campoFK.getNome() + ") AS total FROM");
@@ -469,9 +479,10 @@ public class Referencia {
 	}
 
 	public String getConsultaAgregada(Tabelas tabelas, Campo campo) {
-		Tabela tabPai = tabelas.get(pai.alias);
+		Tabela tabParent = tabelas.get(pai.alias);
+		Tabela tabThis = tabelas.get(alias);
 
-		Campo campoPK = Util.ehVazio(pkNome) ? tabPai.get(pk) : tabPai.get(pkNome);
+		Campo campoPK = getCampoPK(tabParent, tabThis);
 
 		StringBuilder sb = new StringBuilder("SELECT " + pai.getAlias() + "." + campoPK.getNome() + ", " + getAlias()
 				+ "." + campo.getNome() + " FROM");
@@ -486,9 +497,10 @@ public class Referencia {
 	}
 
 	public String getConsultaAgregada(Referencia pai, Tabelas tabelas, Campo campo) {
-		Tabela tabPai = tabelas.get(pai.alias);
+		Tabela tabParent = tabelas.get(pai.alias);
+		Tabela tabThis = tabelas.get(alias);
 
-		Campo campoPK = Util.ehVazio(pkNome) ? tabPai.get(pk) : tabPai.get(pkNome);
+		Campo campoPK = getCampoPK(tabParent, tabThis);
 
 		StringBuilder sb = new StringBuilder("SELECT " + pai.getAlias() + "." + campoPK.getNome() + ", " + getAlias()
 				+ "." + campo.getNome() + " FROM");

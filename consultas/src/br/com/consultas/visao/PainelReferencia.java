@@ -274,7 +274,7 @@ public class PainelReferencia extends PanelBorderLayout {
 						}
 					} else {
 						Util.mensagem(PainelReferencia.this,
-								Util.getString("msg.selecione_tabela_pai") + " " + selecionado.getAlias() + ".");
+								Util.getString("msg.selecione_tabela_pai") + " [" + selecionado.getAlias() + "]");
 					}
 				}
 			}
