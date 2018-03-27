@@ -485,6 +485,23 @@ public class Referencia {
 		return sb.toString();
 	}
 
+	public String getConsultaAgregada(Referencia pai, Tabelas tabelas, Campo campo) {
+		Tabela tabPai = tabelas.get(pai.alias);
+
+		Campo campoPK = Util.ehVazio(pkNome) ? tabPai.get(pk) : tabPai.get(pkNome);
+
+		StringBuilder sb = new StringBuilder("SELECT " + pai.getAlias() + "." + campoPK.getNome() + ", " + getAlias()
+				+ "." + campo.getNome() + " FROM");
+		completarConsulta(sb, tabelas);
+
+		sb.append(" WHERE 1=1" + QL);
+		filtros(sb, tabelas);
+
+		sb.append(" ORDER BY " + pai.getAlias() + "." + campoPK.getNome() + aux(Util.getStringConfig("order_by")) + QL);
+
+		return sb.toString();
+	}
+
 	public String getConsultaSelecionados(Tabelas tabelas) {
 		StringBuilder sbCampos = new StringBuilder();
 		completarCampos(sbCampos, tabelas);

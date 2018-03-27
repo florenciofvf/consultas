@@ -294,6 +294,7 @@ public class PainelReferencia extends PanelBorderLayout {
 						try {
 							Tabela tabela = selecionado.getTabela(formulario.getTabelas());
 							String nomeCampo = Util.getNomeCampo(PainelReferencia.this, tabela);
+
 							if (!Util.ehVazio(nomeCampo)) {
 								Campo campo = tabela.get(nomeCampo);
 								listener.agruparColuna(selecionado, campo);
@@ -305,7 +306,36 @@ public class PainelReferencia extends PanelBorderLayout {
 						}
 					} else {
 						Util.mensagem(PainelReferencia.this,
-								Util.getString("msg.selecione_tabela_pai") + " " + selecionado.getAlias() + ".");
+								Util.getString("msg.selecione_tabela_pai") + " [" + selecionado.getAlias() + "]");
+					}
+				}
+			}
+		});
+
+		popup.itemAgruparCampoPai.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (listener == null) {
+					Util.mensagem(PainelReferencia.this, Util.getString("msg.nao_implementado"));
+				} else if (selecionado.getPai() == null) {
+					Util.mensagem(PainelReferencia.this, Util.getString("msg.objeto_deve_conter_pai"));
+				} else {
+					Referencia pai = Util.getPai(PainelReferencia.this, selecionado);
+
+					if (pai != null) {
+						try {
+							Tabela tabela = selecionado.getTabela(formulario.getTabelas());
+							String nomeCampo = Util.getNomeCampo(PainelReferencia.this, tabela);
+
+							if (!Util.ehVazio(nomeCampo)) {
+								Campo campo = tabela.get(nomeCampo);
+								listener.agruparColuna(selecionado, pai, campo);
+							}
+						} catch (Exception ex) {
+							String msg = Util
+									.getStackTrace(PainelReferencia.this.getClass().getName() + ".agruparColuna()", ex);
+							Util.mensagem(PainelReferencia.this, msg);
+						}
 					}
 				}
 			}

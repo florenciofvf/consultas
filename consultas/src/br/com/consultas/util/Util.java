@@ -351,6 +351,41 @@ public class Util {
 		return selecionado == null ? null : selecionado.toString();
 	}
 
+	public static Referencia getPai(Component componente, Referencia referencia) {
+		Object[] opcoes = referencia.getCaminhoArray();
+
+		int indice = opcoes.length - 1;
+		Referencia ref = referencia;
+
+		while (ref != null) {
+			opcoes[indice] = indice + " - " + opcoes[indice];
+
+			indice--;
+			ref = ref.getPai();
+		}
+
+		Object selecionado = JOptionPane.showInputDialog(componente, "Selecione o Pai", getString("label.opcoes"),
+				JOptionPane.INFORMATION_MESSAGE, null, opcoes, opcoes[opcoes.length - 1]);
+
+		if (selecionado == null) {
+			return null;
+		}
+
+		indice = opcoes.length - 1;
+		ref = referencia;
+
+		while (ref != null) {
+			if (selecionado.equals(opcoes[indice])) {
+				return ref;
+			}
+
+			indice--;
+			ref = ref.getPai();
+		}
+
+		return ref;
+	}
+
 	public static void expandirRetrair(Arvore tree, boolean expandir) {
 		ModeloArvore modelo = (ModeloArvore) tree.getModel();
 		String raiz = (String) modelo.getRoot();

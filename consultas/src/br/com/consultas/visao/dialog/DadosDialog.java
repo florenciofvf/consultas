@@ -434,6 +434,33 @@ public class DadosDialog extends Dialogo {
 				});
 			}
 		}
+
+		@Override
+		public void agruparColuna(Referencia ref, Referencia pai, Campo campo) throws Exception {
+			Vector<Object[]> resp = Persistencia.getRegistrosAgrupados(ref, pai, formulario.getTabelas(), campo);
+
+			String mensagemErro = Util.getMensagemErro(resp, table);
+
+			if (!Util.ehVazio(mensagemErro)) {
+				Util.mensagem(this, mensagemErro);
+				return;
+			}
+
+			Vector<Object> dados = Util.criarDados(resp, (ModeloOrdenacao) table.getModel());
+
+			table.addColuna(Util.getTituloCampoAgregado(ref, campo.getNome()), dados, Boolean.FALSE);
+			configTable(table);
+			table.ajustar(getGraphics());
+
+			if (painelREGISTROSReferencia != null) {
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						painelREGISTROSReferencia.finalScroll();
+					}
+				});
+			}
+		}
 	}
 
 	private class PainelSELECT extends PainelAbas {
@@ -577,14 +604,20 @@ public class DadosDialog extends Dialogo {
 		}
 
 		@Override
+		public void calcularTotal(Referencia ref) throws Exception {
+			painelREGISTROSReferencia.calcularTotal(ref);
+			fichario.setSelectedIndex(PRIMEIRA_ABA);
+		}
+
+		@Override
 		public void agruparColuna(Referencia ref, Campo campo) throws Exception {
 			painelREGISTROSReferencia.agruparColuna(ref, campo);
 			fichario.setSelectedIndex(PRIMEIRA_ABA);
 		}
 
 		@Override
-		public void calcularTotal(Referencia ref) throws Exception {
-			painelREGISTROSReferencia.calcularTotal(ref);
+		public void agruparColuna(Referencia ref, Referencia pai, Campo campo) throws Exception {
+			painelREGISTROSReferencia.agruparColuna(ref, pai, campo);
 			fichario.setSelectedIndex(PRIMEIRA_ABA);
 		}
 

@@ -9,7 +9,7 @@
 	</tabelas>
 
 	<refs>
-		<obj alias="eleicao">
+		<obj alias="eleicao" cloneCompleto="true">
 			<obj alias="candidato">
 				<obj alias="endereco" />
 			</obj>
