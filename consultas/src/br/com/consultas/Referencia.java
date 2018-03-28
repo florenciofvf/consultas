@@ -462,11 +462,18 @@ public class Referencia {
 		Tabela tabParent = tabelas.get(pai.alias);
 		Tabela tabThis = tabelas.get(alias);
 
-		Campo campoPK = getCampoPK(tabParent, tabThis);
+		Campo campoPK = tabParent.get(0);
 		Campo campoFK = getCampoFK(tabParent, tabThis);
 
-		StringBuilder sb = new StringBuilder("SELECT " + pai.getAlias() + "." + campoPK.getNome() + ", COUNT("
-				+ getAlias() + "." + campoFK.getNome() + ") AS total FROM");
+		StringBuilder sb = new StringBuilder("SELECT ");
+		if (inverso) {
+			campoPK = tabThis.get(0);
+			sb.append(pai.getAlias() + "." + campoPK.getNome() + ", COUNT(" + getAlias() + "." + campoPK.getNome()
+					+ ") AS total FROM");
+		} else {
+			sb.append(pai.getAlias() + "." + campoPK.getNome() + ", COUNT(" + getAlias() + "." + campoFK.getNome()
+					+ ") AS total FROM");
+		}
 		completarConsulta(sb, tabelas);
 
 		sb.append(" WHERE 1=1" + QL);
@@ -480,12 +487,11 @@ public class Referencia {
 
 	public String getConsultaAgregada(Tabelas tabelas, Campo campo) {
 		Tabela tabParent = tabelas.get(pai.alias);
-		Tabela tabThis = tabelas.get(alias);
 
-		Campo campoPK = getCampoPK(tabParent, tabThis);
+		Campo campoPK = tabParent.get(0);
 
-		StringBuilder sb = new StringBuilder("SELECT " + pai.getAlias() + "." + campoPK.getNome() + ", " + getAlias()
-				+ "." + campo.getNome() + " FROM");
+		StringBuilder sb = new StringBuilder("SELECT ");
+		sb.append(pai.getAlias() + "." + campoPK.getNome() + ", " + getAlias() + "." + campo.getNome() + " FROM");
 		completarConsulta(sb, tabelas);
 
 		sb.append(" WHERE 1=1" + QL);
@@ -498,12 +504,11 @@ public class Referencia {
 
 	public String getConsultaAgregada(Referencia pai, Tabelas tabelas, Campo campo) {
 		Tabela tabParent = tabelas.get(pai.alias);
-		Tabela tabThis = tabelas.get(alias);
 
-		Campo campoPK = getCampoPK(tabParent, tabThis);
+		Campo campoPK = tabParent.get(0);
 
-		StringBuilder sb = new StringBuilder("SELECT " + pai.getAlias() + "." + campoPK.getNome() + ", " + getAlias()
-				+ "." + campo.getNome() + " FROM");
+		StringBuilder sb = new StringBuilder("SELECT ");
+		sb.append(pai.getAlias() + "." + campoPK.getNome() + ", " + getAlias() + "." + campo.getNome() + " FROM");
 		completarConsulta(sb, tabelas);
 
 		sb.append(" WHERE 1=1" + QL);

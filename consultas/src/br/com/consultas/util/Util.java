@@ -584,8 +584,6 @@ public class Util {
 
 			public void windowOpened(WindowEvent e) {
 				formulario.abrirJanela();
-				frame.requestFocusInWindow();
-				frame.requestFocus();
 			}
 
 			public void windowClosing(WindowEvent e) {

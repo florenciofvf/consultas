@@ -14,6 +14,15 @@
 				<obj alias="endereco" />
 			</obj>
 		</obj>
+
+		<obj alias="candidato">
+			<obj alias="endereco" />
+		</obj>
+
+		<obj alias="endereco">
+			<obj alias="candidato" inverso="true" />
+		</obj>
+
 	</refs>
 
 </consulta>
