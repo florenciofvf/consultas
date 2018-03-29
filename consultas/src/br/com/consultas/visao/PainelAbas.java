@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import br.com.consultas.util.Icones;
 import br.com.consultas.util.Util;
 import br.com.consultas.visao.comp.Button;
 import br.com.consultas.visao.comp.PanelBorderLayout;
@@ -12,8 +13,8 @@ import br.com.consultas.visao.dialog.Dialogo;
 
 public abstract class PainelAbas extends PanelBorderLayout {
 	private static final long serialVersionUID = 1L;
-	protected final Button buttonExecutar = new Button("label.executar");
-	protected final Button buttonFechar = new Button("label.fechar");
+	protected final Button buttonExecutar = new Button("label.executar", Icones.EXECUTAR);
+	protected final Button buttonFechar = new Button("label.fechar", Icones.SAIR);
 	protected final PanelLeft painelControle = new PanelLeft();
 	protected final Dialogo dialogo;
 

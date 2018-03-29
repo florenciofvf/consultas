@@ -14,6 +14,7 @@ import javax.swing.tree.TreePath;
 import br.com.consultas.Persistencia;
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
+import br.com.consultas.util.Icones;
 import br.com.consultas.util.SQL;
 import br.com.consultas.util.TreeCellRenderer;
 import br.com.consultas.util.Util;
@@ -37,7 +38,7 @@ public class PainelTabelas extends PanelBorderLayout {
 	private final Table table = new Table(new ModeloOrdenacao(new ModeloCampo(Util.criarTabela())));
 	private final CheckBox chkLinhaRaiz = new CheckBox("label.raiz_linha", "tabelas.raiz_linha");
 	protected final SplitPane splitPane = new SplitPane(SplitPane.HORIZONTAL_SPLIT);
-	private final Button buttonAtualizar = new Button("label.atualizar");
+	private final Button buttonAtualizar = new Button("label.atualizar", Icones.ATUALIZAR);
 	private final Popup popup = new Popup();
 	private final Formulario formulario;
 	private final boolean comRegistros;
@@ -70,7 +71,7 @@ public class PainelTabelas extends PanelBorderLayout {
 		Util.ordenar(referencias);
 
 		arvore = new Arvore(new ModeloArvore(referencias, Util.getString("label.tabelas")));
-		arvore.setCellRenderer(new TreeCellRenderer());
+		arvore.setCellRenderer(new TreeCellRenderer(Icones.TABELA));
 		arvore.addMouseListener(new OuvinteArvore());
 
 		splitPane.setLeftComponent(new ScrollPane(arvore));

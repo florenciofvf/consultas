@@ -37,6 +37,7 @@ import br.com.consultas.Persistencia;
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
 import br.com.consultas.util.CellColor;
+import br.com.consultas.util.Icones;
 import br.com.consultas.util.SQL;
 import br.com.consultas.util.Util;
 import br.com.consultas.visao.Formulario;
@@ -61,8 +62,8 @@ import br.com.consultas.visao.modelo.ModeloVazio;
 
 public class DadosDialog extends Dialogo {
 	private static final long serialVersionUID = 1L;
-	private final MenuItem itemLargura = new MenuItem("label.largura");
-	private final MenuItem itemFechar = new MenuItem("label.fechar");
+	private final MenuItem itemLargura = new MenuItem("label.largura", Icones.LARGURA);
+	private final MenuItem itemFechar = new MenuItem("label.fechar", Icones.SAIR);
 	private final Menu menuArquivo = new Menu("label.arquivo");
 	private final TabbedPane fichario = new TabbedPane();
 	private final JMenuBar menuBar = new JMenuBar();
@@ -465,7 +466,7 @@ public class DadosDialog extends Dialogo {
 
 	private class PainelSELECT extends PainelAbas {
 		private static final long serialVersionUID = 1L;
-		private Button buttonGetContent = new Button("label.get_content");
+		private Button buttonGetContent = new Button("label.get_content", Icones.BAIXAR);
 		private TextArea textArea = new TextArea();
 
 		PainelSELECT(Dialogo dialogo) {

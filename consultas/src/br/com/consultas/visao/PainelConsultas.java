@@ -16,6 +16,7 @@ import javax.swing.tree.TreePath;
 
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
+import br.com.consultas.util.Icones;
 import br.com.consultas.util.SQL;
 import br.com.consultas.util.TreeCellRenderer;
 import br.com.consultas.util.Util;
@@ -50,7 +51,7 @@ public class PainelConsultas extends PanelBorderLayout {
 		this.formulario = formulario;
 
 		arvore = new Arvore(new ModeloArvore(formulario.getReferencias(), Util.getString("label.consultas")));
-		arvore.setCellRenderer(new TreeCellRenderer());
+		arvore.setCellRenderer(new TreeCellRenderer(Icones.REFERENCIA));
 		arvore.addMouseListener(new OuvinteArvore());
 
 		splitPane.setLeftComponent(new ScrollPane(arvore));
@@ -62,7 +63,7 @@ public class PainelConsultas extends PanelBorderLayout {
 			panelNorte.adicionar(chkRaizVisivel, chkLinhaRaiz);
 		}
 
-		Button expandir = new Button("label.expandir");
+		Button expandir = new Button("label.expandir", Icones.EXPANDIR);
 		expandir.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -70,7 +71,7 @@ public class PainelConsultas extends PanelBorderLayout {
 			}
 		});
 
-		Button retrair = new Button("label.retrair");
+		Button retrair = new Button("label.retrair", Icones.RETRAIR);
 		retrair.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

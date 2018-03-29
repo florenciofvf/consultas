@@ -12,6 +12,7 @@ import javax.swing.tree.TreePath;
 import br.com.consultas.Campo;
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
+import br.com.consultas.util.Icones;
 import br.com.consultas.util.SQL;
 import br.com.consultas.util.TreeCellRenderer;
 import br.com.consultas.util.Util;
@@ -46,7 +47,7 @@ public class PainelReferencia extends PanelBorderLayout {
 		boolean filtro = !caminhosFiltro.isEmpty();
 
 		arvore = new Arvore(new ModeloArvore(filtro ? caminhosFiltro : caminhos, Util.getString("label.caminho")));
-		arvore.setCellRenderer(new TreeCellRenderer());
+		arvore.setCellRenderer(new TreeCellRenderer(Icones.REFERENCIA));
 		arvore.addMouseListener(new OuvinteArvore());
 		chkTopoHierarquia.setSelected(filtro);
 
@@ -60,7 +61,7 @@ public class PainelReferencia extends PanelBorderLayout {
 			panelNorte.adicionar(chkRaizVisivel, chkLinhaRaiz);
 		}
 
-		Button expandir = new Button("label.expandir");
+		Button expandir = new Button("label.expandir", Icones.EXPANDIR);
 		expandir.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -68,7 +69,7 @@ public class PainelReferencia extends PanelBorderLayout {
 			}
 		});
 
-		Button retrair = new Button("label.retrair");
+		Button retrair = new Button("label.retrair", Icones.RETRAIR);
 		retrair.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

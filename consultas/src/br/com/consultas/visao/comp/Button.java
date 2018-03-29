@@ -1,5 +1,6 @@
 package br.com.consultas.visao.comp;
 
+import javax.swing.Icon;
 import javax.swing.JButton;
 
 import br.com.consultas.util.Util;
@@ -9,5 +10,9 @@ public class Button extends JButton {
 
 	public Button(String chaveRotulo) {
 		super(Util.getString(chaveRotulo));
+	}
+
+	public Button(String chaveRotulo, Icon icon) {
+		super(Util.getString(chaveRotulo), icon);
 	}
 }

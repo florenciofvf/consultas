@@ -24,6 +24,7 @@ import br.com.consultas.Persistencia;
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
 import br.com.consultas.Tabelas;
+import br.com.consultas.util.Icones;
 import br.com.consultas.util.Util;
 import br.com.consultas.visao.comp.Button;
 import br.com.consultas.visao.comp.Label;
@@ -45,11 +46,11 @@ public class Formulario extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private final Table tableConfig = new Table(new ModeloOrdenacao(new ModeloBundle(Util.bundleConfig, true)));
 	private final Table tableMsg = new Table(new ModeloOrdenacao(new ModeloBundle(Util.bundleMsg, false)));
-	private final MenuItem itemLimparSL = new MenuItem("label.limpar_somente_leitura");
-	private final MenuItem itemLimparCampos = new MenuItem("label.limpar_campos");
+	private final MenuItem itemLimparSL = new MenuItem("label.limpar_somente_leitura", Icones.LIMPAR);
+	private final MenuItem itemLimparCampos = new MenuItem("label.limpar_campos", Icones.LIMPAR);
+	private final MenuItem itemLimparIds = new MenuItem("label.limpar_ids", Icones.LIMPAR);
+	private final MenuItem itemFechar = new MenuItem("label.fechar", Icones.SAIR);
 	private final SplitPane splitPane = new SplitPane(SplitPane.VERTICAL_SPLIT);
-	private final MenuItem itemLimparIds = new MenuItem("label.limpar_ids");
-	private final MenuItem itemFechar = new MenuItem("label.fechar");
 	private final List<Referencia> referencias = new ArrayList<>();
 	protected ProgressoDialog progresso = new ProgressoDialog();
 	private final Menu menuArquivo = new Menu("label.arquivo");
@@ -276,11 +277,11 @@ public class Formulario extends JFrame {
 	private class PainelControle extends PanelLeft {
 		private static final long serialVersionUID = 1L;
 		private final Label labelValorVersao = new Label("versao_valor", new Color(0x99949991));
-		private final Button buttonGetContent = new Button("label.get_content");
-		private final Button buttonUpdate = new Button("label.execute_update");
-		private final Button buttonQuery = new Button("label.execute_query");
+		private final Button buttonGetContent = new Button("label.get_content", Icones.BAIXAR);
+		private final Button buttonUpdate = new Button("label.execute_update", Icones.EXECUTAR);
+		private final Button buttonQuery = new Button("label.execute_query", Icones.EXECUTAR);
+		private final Button buttonLimpar = new Button("label.limpar", Icones.LIMPAR);
 		private final Label labelTabelas = new Label("label.total_tabelas");
-		private final Button buttonLimpar = new Button("label.limpar");
 		private final Label labelValorTabelas = new Label(Color.BLUE);
 
 		PainelControle() {
