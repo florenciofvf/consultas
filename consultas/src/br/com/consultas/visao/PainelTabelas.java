@@ -37,8 +37,8 @@ public class PainelTabelas extends PanelBorderLayout {
 	private final CheckBox chkRaizVisivel = new CheckBox("label.raiz_visivel", "tabelas.raiz_visivel");
 	private final Table table = new Table(new ModeloOrdenacao(new ModeloCampo(Util.criarTabela())));
 	private final CheckBox chkLinhaRaiz = new CheckBox("label.raiz_linha", "tabelas.raiz_linha");
-	protected final SplitPane splitPane = new SplitPane(SplitPane.HORIZONTAL_SPLIT);
 	private final Button buttonAtualizar = new Button("label.atualizar", Icones.ATUALIZAR);
+	protected final SplitPane splitPane = new SplitPane(SplitPane.HORIZONTAL_SPLIT);
 	private final Popup popup = new Popup();
 	private final Formulario formulario;
 	private final boolean comRegistros;
