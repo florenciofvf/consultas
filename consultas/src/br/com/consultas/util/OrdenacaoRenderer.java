@@ -1,10 +1,7 @@
 package br.com.consultas.util;
 
 import java.awt.Component;
-import java.net.URL;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
@@ -13,13 +10,11 @@ import br.com.consultas.visao.comp.Label;
 public class OrdenacaoRenderer extends Label implements TableCellRenderer {
 	private static final long serialVersionUID = 1L;
 	private final boolean descendente;
-	private final Icon iconeDesc;
-	private final Icon iconeAsc;
+	private final boolean numero;
 
-	public OrdenacaoRenderer(boolean descendente) {
-		iconeDesc = criarImagem("desc.png");
-		iconeAsc = criarImagem("asc.png");
-		this.descendente = descendente;
+	public OrdenacaoRenderer(boolean descendente, boolean numero) {
+		this.descendente = !descendente;
+		this.numero = numero;
 	}
 
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
@@ -27,13 +22,13 @@ public class OrdenacaoRenderer extends Label implements TableCellRenderer {
 
 		setText(value.toString());
 		setToolTipText(value.toString());
-		setIcon(descendente ? iconeDesc : iconeAsc);
+
+		if (numero) {
+			setIcon(descendente ? Icones.DESC_NUMERO : Icones.ASC_NUMERO);
+		} else {
+			setIcon(descendente ? Icones.DESC_TEXTO : Icones.ASC_TEXTO);
+		}
 
 		return this;
-	}
-
-	public ImageIcon criarImagem(String nome) {
-		URL url = getClass().getResource("/resources/" + nome);
-		return new ImageIcon(url);
 	}
 }

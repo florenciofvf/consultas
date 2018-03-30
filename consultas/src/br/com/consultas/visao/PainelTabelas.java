@@ -105,6 +105,7 @@ public class PainelTabelas extends PanelBorderLayout {
 
 	private void cfg() {
 		popup.dialogoMeuSQL();
+		popup.addSeparator();
 		popup.memoriaMeuSQL();
 		popup.addSeparator();
 		popup.campos();

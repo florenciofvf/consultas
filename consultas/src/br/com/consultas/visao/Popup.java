@@ -2,6 +2,7 @@ package br.com.consultas.visao;
 
 import javax.swing.JPopupMenu;
 
+import br.com.consultas.util.Icones;
 import br.com.consultas.visao.comp.Menu;
 import br.com.consultas.visao.comp.MenuItem;
 
@@ -20,20 +21,20 @@ public class Popup extends JPopupMenu {
 	final MenuItem itemRegistrosMemoria = new MenuItem("label.gerar_dados_memoria");
 	final MenuItem itemPesquisaSelecionados = new MenuItem("label.pesquisa_sel");
 	final MenuItem itemAgruparCampoPai = new MenuItem("label.agrupar_campo_pai");
+	final Menu menuCalculado = new Menu("label.calculado", Icones.CALCULADO);
 	final MenuItem itemAgruparTotal = new MenuItem("label.agrupar_total");
 	final MenuItem itemAgruparCampo = new MenuItem("label.agrupar_campo");
 	final MenuItem itemLimparCampos = new MenuItem("label.limpar_campos");
 	final MenuItem itemPropriedades = new MenuItem("label.propriedades");
+	final Menu menuDialogo = new Menu("label.dialogo", Icones.DIALOGO);
+	final Menu menuMemoria = new Menu("label.memoria", Icones.MEMORIA);
 	public final MenuItem itemCopiar = new MenuItem("label.copiar");
 	final MenuItem itemDelete = new MenuItem("label.gerar_delete");
 	final MenuItem itemUpdate = new MenuItem("label.gerar_update");
 	final MenuItem itemLimparId = new MenuItem("label.limpar_id");
+	final Menu menuCampo = new Menu("label.campo", Icones.CAMPOS);
 	final MenuItem itemCampos = new MenuItem("label.campos");
-	final Menu menuCalculado = new Menu("label.calculado");
-	final Menu menuDialogo = new Menu("label.dialogo");
-	final Menu menuMemoria = new Menu("label.memoria");
-	final Menu menuCampo = new Menu("label.campo");
-	final Menu menuDML = new Menu("label.dml");
+	final Menu menuDML = new Menu("label.dml", Icones.DML);
 	private int tag;
 
 	public void dialogoMeuSQL() {

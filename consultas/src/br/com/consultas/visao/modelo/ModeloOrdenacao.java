@@ -98,7 +98,7 @@ public class ModeloOrdenacao extends AbstractTableModel {
 					ordenarNumero = isNumero(modelColuna);
 				}
 
-				coluna.setHeaderRenderer(new OrdenacaoRenderer(descendente));
+				coluna.setHeaderRenderer(new OrdenacaoRenderer(descendente, ordenarNumero));
 				ordenar(modelColuna);
 			}
 		}
