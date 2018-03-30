@@ -64,20 +64,10 @@ public class PainelConsultas extends PanelBorderLayout {
 		}
 
 		Button expandir = new Button("label.expandir", Icones.EXPANDIR);
-		expandir.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Util.expandirRetrairTodos(arvore, true);
-			}
-		});
+		expandir.addActionListener(e -> Util.expandirRetrairTodos(arvore, true));
 
 		Button retrair = new Button("label.retrair", Icones.RETRAIR);
-		retrair.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Util.expandirRetrairTodos(arvore, false);
-			}
-		});
+		retrair.addActionListener(e -> Util.expandirRetrairTodos(arvore, false));
 
 		panelNorte.adicionar(expandir, retrair);
 
