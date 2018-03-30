@@ -145,27 +145,21 @@ public class DadosDialog extends Dialogo {
 		menuArquivo.add(itemFechar);
 		setJMenuBar(menuBar);
 
-		itemFechar.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Util.fechar(DadosDialog.this);
-			}
-		});
+		itemFechar.addActionListener(e ->
 
-		itemLargura.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				largura();
+		Util.fechar(DadosDialog.this));
 
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						if (painelREGISTROSReferencia != null) {
-							painelREGISTROSReferencia.setLocationSplitPane();
-						}
+		itemLargura.addActionListener(e -> {
+			largura();
+
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					if (painelREGISTROSReferencia != null) {
+						painelREGISTROSReferencia.setLocationSplitPane();
 					}
-				});
-			}
+				}
+			});
 		});
 	}
 
@@ -234,18 +228,14 @@ public class DadosDialog extends Dialogo {
 				}
 			});
 
-			popup.itemCopiar.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					List<String> resp = table.getIds(popup.getTag());
-					Util.setContentTransfered(Util.getStringLista(resp, false));
-				}
+			popup.itemCopiar.addActionListener(e -> {
+				List<String> resp = table.getIds(popup.getTag());
+				Util.setContentTransfered(Util.getStringLista(resp, false));
 			});
 
-			popup.itemCopiarComAspas.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					List<String> resp = table.getIds(popup.getTag());
-					Util.setContentTransfered(Util.getStringLista(resp, true));
-				}
+			popup.itemCopiarComAspas.addActionListener(e -> {
+				List<String> resp = table.getIds(popup.getTag());
+				Util.setContentTransfered(Util.getStringLista(resp, true));
 			});
 		}
 
@@ -355,18 +345,14 @@ public class DadosDialog extends Dialogo {
 				}
 			});
 
-			popup.itemCopiar.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					List<String> resp = table.getIds(popup.getTag());
-					Util.setContentTransfered(Util.getStringLista(resp, false));
-				}
+			popup.itemCopiar.addActionListener(e -> {
+				List<String> resp = table.getIds(popup.getTag());
+				Util.setContentTransfered(Util.getStringLista(resp, false));
 			});
 
-			popup.itemCopiarComAspas.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					List<String> resp = table.getIds(popup.getTag());
-					Util.setContentTransfered(Util.getStringLista(resp, true));
-				}
+			popup.itemCopiarComAspas.addActionListener(e -> {
+				List<String> resp = table.getIds(popup.getTag());
+				Util.setContentTransfered(Util.getStringLista(resp, true));
 			});
 		}
 
@@ -473,12 +459,7 @@ public class DadosDialog extends Dialogo {
 			super(dialogo, true);
 
 			painelControle.adicionar(buttonGetContent);
-			buttonGetContent.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					textArea.setText(Util.getContentTransfered());
-				}
-			});
+			buttonGetContent.addActionListener(e -> textArea.setText(Util.getContentTransfered()));
 
 			add(BorderLayout.CENTER, textArea);
 		}

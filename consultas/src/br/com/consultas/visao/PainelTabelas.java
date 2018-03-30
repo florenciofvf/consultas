@@ -1,12 +1,8 @@
 package br.com.consultas.visao;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import javax.swing.tree.TreePath;
@@ -112,129 +108,82 @@ public class PainelTabelas extends PanelBorderLayout {
 		popup.addSeparator();
 		popup.dml();
 
-		popup.itemRegistrosDialogoLimpo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				itemRegistrosDialogoLimpo(selecionado);
+		popup.itemRegistrosDialogoLimpo.addActionListener(e -> itemRegistrosDialogoLimpo(selecionado));
+
+		popup.itemRegistrosDialogo.addActionListener(e -> registros(selecionado, true));
+
+		popup.itemRegistrosMemoriaLimpo.addActionListener(e -> itemRegistrosMemoriaLimpo());
+
+		popup.itemRegistrosMemoria.addActionListener(e -> registros(selecionado, false));
+
+		popup.itemPesquisaSelecionados
+				.addActionListener(e -> Util.pesquisaSelecionadosMemoria(selecionado, formulario.getTabelas()));
+
+		popup.itemLimparCampos.addActionListener(e -> {
+			Tabela tabela = selecionado.getTabela(formulario.getTabelas());
+			tabela.limparCampos();
+			formulario.atualizarCampoIDForm(tabela);
+		});
+
+		popup.itemLimparId.addActionListener(e -> {
+			Tabela tabela = selecionado.getTabela(formulario.getTabelas());
+			tabela.limparID();
+			formulario.atualizarCampoIDForm(tabela);
+		});
+
+		popup.itemCampos
+				.addActionListener(e -> new CampoDialog(formulario, selecionado.getTabela(formulario.getTabelas())));
+
+		popup.itemUpdate
+				.addActionListener(e -> formulario.textArea.setText(selecionado.gerarUpdate(formulario.getTabelas())));
+
+		popup.itemDelete
+				.addActionListener(e -> formulario.textArea.setText(selecionado.gerarDelete(formulario.getTabelas())));
+
+		chkRaizVisivel.addActionListener(e -> arvore.setRootVisible(chkRaizVisivel.isSelected()));
+
+		chkLinhaRaiz.addActionListener(e -> arvore.setShowsRootHandles(chkLinhaRaiz.isSelected()));
+
+		splitPane.addPropertyChangeListener(evt -> {
+			SplitPane splitPane = (SplitPane) evt.getSource();
+			String propertyName = evt.getPropertyName();
+
+			if (SplitPane.DIVIDER_LOCATION_PROPERTY.equals(propertyName)) {
+				formulario.divisao(splitPane.getDividerLocation());
 			}
 		});
 
-		popup.itemRegistrosDialogo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				registros(selecionado, true);
-			}
-		});
+		buttonAtualizar.addActionListener(e -> {
+			if (comRegistros) {
+				try {
+					List<Referencia> referencias = Util.criarReferencias(formulario.getTabelas().getTabelas());
 
-		popup.itemRegistrosMemoriaLimpo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				itemRegistrosMemoriaLimpo();
-			}
-		});
+					formulario.progresso.exibir(referencias.size());
+					Persistencia.atualizarTotalRegistros(referencias, formulario.getTabelas(), formulario.progresso);
+					formulario.progresso.esconder();
 
-		popup.itemRegistrosMemoria.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				registros(selecionado, false);
-			}
-		});
+					Util.filtrarRegistros(referencias, formulario.getTabelas());
+					Util.ordenar(referencias);
 
-		popup.itemPesquisaSelecionados.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Util.pesquisaSelecionadosMemoria(selecionado, formulario.getTabelas());
-			}
-		});
-
-		popup.itemLimparCampos.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Tabela tabela = selecionado.getTabela(formulario.getTabelas());
-				tabela.limparCampos();
-				formulario.atualizarCampoIDForm(tabela);
-			}
-		});
-
-		popup.itemLimparId.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Tabela tabela = selecionado.getTabela(formulario.getTabelas());
-				tabela.limparID();
-				formulario.atualizarCampoIDForm(tabela);
-			}
-		});
-
-		popup.itemCampos.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new CampoDialog(formulario, selecionado.getTabela(formulario.getTabelas()));
-			}
-		});
-
-		popup.itemUpdate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				formulario.textArea.setText(selecionado.gerarUpdate(formulario.getTabelas()));
-			}
-		});
-
-		popup.itemDelete.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				formulario.textArea.setText(selecionado.gerarDelete(formulario.getTabelas()));
-			}
-		});
-
-		chkRaizVisivel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				arvore.setRootVisible(chkRaizVisivel.isSelected());
-			}
-		});
-
-		chkLinhaRaiz.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				arvore.setShowsRootHandles(chkLinhaRaiz.isSelected());
-			}
-		});
-
-		splitPane.addPropertyChangeListener(new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent evt) {
-				SplitPane splitPane = (SplitPane) evt.getSource();
-				String propertyName = evt.getPropertyName();
-
-				if (SplitPane.DIVIDER_LOCATION_PROPERTY.equals(propertyName)) {
-					formulario.divisao(splitPane.getDividerLocation());
+					arvore.setModel(new ModeloArvore(referencias, Util.getString("label.tabelas")));
+				} catch (Exception ex) {
+					String msg = Util.getStackTrace(getClass().getName() + ".atualizarTotalRegistros()", ex);
+					Util.mensagem(PainelTabelas.this, msg);
 				}
-			}
-		});
+			} else {
+				try {
+					ModeloArvore modelo = (ModeloArvore) arvore.getModel();
+					List<Referencia> referencias = modelo.getReferencias();
 
-		buttonAtualizar.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (comRegistros) {
-					try {
-						List<Referencia> referencias = Util.criarReferencias(formulario.getTabelas().getTabelas());
+					formulario.progresso.exibir(referencias.size());
+					Persistencia.atualizarTotalRegistros(referencias, formulario.getTabelas(), formulario.progresso);
+					formulario.progresso.esconder();
 
-						formulario.progresso.exibir(referencias.size());
-						Persistencia.atualizarTotalRegistros(referencias, formulario.getTabelas(),
-								formulario.progresso);
-						formulario.progresso.esconder();
-
-						Util.filtrarRegistros(referencias, formulario.getTabelas());
-						Util.ordenar(referencias);
-
-						arvore.setModel(new ModeloArvore(referencias, Util.getString("label.tabelas")));
-					} catch (Exception ex) {
-						String msg = Util.getStackTrace(getClass().getName() + ".atualizarTotalRegistros()", ex);
-						Util.mensagem(PainelTabelas.this, msg);
-					}
-				} else {
-					try {
-						ModeloArvore modelo = (ModeloArvore) arvore.getModel();
-						List<Referencia> referencias = modelo.getReferencias();
-
-						formulario.progresso.exibir(referencias.size());
-						Persistencia.atualizarTotalRegistros(referencias, formulario.getTabelas(),
-								formulario.progresso);
-						formulario.progresso.esconder();
-
-						Util.atualizarTodaEstrutura(arvore);
-						arvore.repaint();
-					} catch (Exception ex) {
-						String msg = Util.getStackTrace(getClass().getName() + ".atualizarTotalRegistros()", ex);
-						Util.mensagem(PainelTabelas.this, msg);
-					}
+					Util.atualizarTodaEstrutura(arvore);
+					arvore.repaint();
+				} catch (Exception ex) {
+					String msg = Util.getStackTrace(getClass().getName() + ".atualizarTotalRegistros()", ex);
+					Util.mensagem(PainelTabelas.this, msg);
 				}
 			}
 		});

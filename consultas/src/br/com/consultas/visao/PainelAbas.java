@@ -1,8 +1,6 @@
 package br.com.consultas.visao;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import br.com.consultas.util.Icones;
 import br.com.consultas.util.Util;
@@ -27,19 +25,9 @@ public abstract class PainelAbas extends PanelBorderLayout {
 			painelControle.adicionar(buttonExecutar);
 		}
 
-		buttonFechar.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Util.fechar(dialogo);
-			}
-		});
+		buttonFechar.addActionListener(e -> Util.fechar(dialogo));
 
-		buttonExecutar.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				executar();
-			}
-		});
+		buttonExecutar.addActionListener(e -> executar());
 
 		add(BorderLayout.SOUTH, painelControle);
 	}

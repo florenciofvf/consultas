@@ -3,8 +3,6 @@ package br.com.consultas.visao;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -98,51 +96,33 @@ public class Formulario extends JFrame {
 			}
 		}
 
-		itemLimparCampos.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				for (Tabela t : tabelas.getTabelas()) {
-					t.limparCampos();
-				}
+		itemLimparCampos.addActionListener(e -> {
+			for (Tabela t : tabelas.getTabelas()) {
+				t.limparCampos();
+			}
 
-				Util.setEspecialFalse(referencias);
+			Util.setEspecialFalse(referencias);
 
-				for (Tabela t : tabelas.getTabelas()) {
-					atualizarCampoIDForm(t);
-				}
+			for (Tabela t : tabelas.getTabelas()) {
+				atualizarCampoIDForm(t);
 			}
 		});
 
-		itemLimparIds.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				for (Tabela t : tabelas.getTabelas()) {
-					t.limparID();
-				}
+		itemLimparIds.addActionListener(e -> {
+			for (Tabela t : tabelas.getTabelas()) {
+				t.limparID();
+			}
 
-				Util.setEspecialFalse(referencias);
+			Util.setEspecialFalse(referencias);
 
-				for (Tabela t : tabelas.getTabelas()) {
-					atualizarCampoIDForm(t);
-				}
+			for (Tabela t : tabelas.getTabelas()) {
+				atualizarCampoIDForm(t);
 			}
 		});
 
-		itemLimparSL.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				for (Tabela t : tabelas.getTabelas()) {
-					t.limparSolenteLeitura();
-				}
-			}
-		});
+		itemLimparSL.addActionListener(e -> tabelas.getTabelas().forEach(Tabela::limparSolenteLeitura));
 
-		itemFechar.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
+		itemFechar.addActionListener(e -> System.exit(0));
 
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -304,29 +284,13 @@ public class Formulario extends JFrame {
 				}
 			});
 
-			buttonLimpar.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					limpar();
-				}
-			});
+			buttonLimpar.addActionListener(e -> limpar());
 
-			buttonUpdate.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					executeUpdate();
-				}
-			});
+			buttonUpdate.addActionListener(e -> executeUpdate());
 
-			buttonQuery.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					executeQuery();
-				}
-			});
+			buttonQuery.addActionListener(e -> executeQuery());
 
-			buttonGetContent.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					textArea.setText(Util.getContentTransfered());
-				}
-			});
+			buttonGetContent.addActionListener(e -> textArea.setText(Util.getContentTransfered()));
 		}
 	}
 }
