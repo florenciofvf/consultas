@@ -3,12 +3,8 @@ package br.com.consultas.visao;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -125,140 +121,74 @@ public class PainelConsultas extends PanelBorderLayout {
 		popup.addSeparator();
 		popup.propriedades();
 
-		popup.itemRegistrosDialogoLimpo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				itemRegistrosDialogoLimpo(selecionado);
+		popup.itemRegistrosDialogoLimpo.addActionListener(e -> itemRegistrosDialogoLimpo(selecionado));
+
+		popup.itemRegistrosDialogo.addActionListener(e -> registros(selecionado, true));
+
+		popup.itemRegistrosMemoriaLimpo.addActionListener(e -> itemRegistrosMemoriaLimpo());
+
+		popup.itemRegistrosMemoria.addActionListener(e -> registros(selecionado, false));
+
+		popup.itemPesquisaSelecionados
+				.addActionListener(e -> Util.pesquisaSelecionadosMemoria(selecionado, formulario.getTabelas()));
+
+		popup.itemPesquisaDialogoLimpo.addActionListener(e -> itemPesquisaDialogoLimpo(selecionado));
+
+		popup.itemPesquisaDialogo.addActionListener(e -> pesquisa(selecionado, true));
+
+		popup.itemPesquisaDialogoAlias.addActionListener(e -> {
+			String aliasTemp = Util.getAliasTemp(PainelConsultas.this, selecionado);
+
+			if (!Util.ehVazio(aliasTemp)) {
+				pesquisa(selecionado, true, aliasTemp);
 			}
 		});
 
-		popup.itemRegistrosDialogo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				registros(selecionado, true);
+		popup.itemPesquisaDialogoAliasLimpo.addActionListener(e -> {
+			String aliasTemp = Util.getAliasTemp(PainelConsultas.this, selecionado);
+
+			if (!Util.ehVazio(aliasTemp)) {
+				itemPesquisaDialogoAliasLimpo(aliasTemp);
 			}
 		});
 
-		popup.itemRegistrosMemoriaLimpo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				itemRegistrosMemoriaLimpo();
-			}
+		popup.itemPesquisaMemoriaLimpo.addActionListener(e -> itemPesquisaMemoriaLimpo());
+
+		popup.itemPesquisaMemoria.addActionListener(e -> pesquisa(selecionado, false));
+
+		popup.itemLimparCampos.addActionListener(e -> {
+			Tabela tabela = selecionado.getTabela(formulario.getTabelas());
+			tabela.limparCampos();
+			formulario.atualizarCampoIDForm(tabela);
 		});
 
-		popup.itemRegistrosMemoria.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				registros(selecionado, false);
-			}
+		popup.itemLimparId.addActionListener(e -> {
+			Tabela tabela = selecionado.getTabela(formulario.getTabelas());
+			tabela.limparID();
+			formulario.atualizarCampoIDForm(tabela);
 		});
 
-		popup.itemPesquisaSelecionados.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Util.pesquisaSelecionadosMemoria(selecionado, formulario.getTabelas());
-			}
-		});
+		popup.itemCampos
+				.addActionListener(e -> new CampoDialog(formulario, selecionado.getTabela(formulario.getTabelas())));
 
-		popup.itemPesquisaDialogoLimpo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				itemPesquisaDialogoLimpo(selecionado);
-			}
-		});
+		popup.itemPropriedades.addActionListener(e -> new ReferenciaPropDialog(formulario, selecionado));
 
-		popup.itemPesquisaDialogo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				pesquisa(selecionado, true);
-			}
-		});
+		popup.itemUpdate
+				.addActionListener(e -> formulario.textArea.setText(selecionado.gerarUpdate(formulario.getTabelas())));
 
-		popup.itemPesquisaDialogoAlias.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String aliasTemp = Util.getAliasTemp(PainelConsultas.this, selecionado);
+		popup.itemDelete
+				.addActionListener(e -> formulario.textArea.setText(selecionado.gerarDelete(formulario.getTabelas())));
 
-				if (!Util.ehVazio(aliasTemp)) {
-					pesquisa(selecionado, true, aliasTemp);
-				}
-			}
-		});
+		chkRaizVisivel.addActionListener(e -> arvore.setRootVisible(chkRaizVisivel.isSelected()));
 
-		popup.itemPesquisaDialogoAliasLimpo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String aliasTemp = Util.getAliasTemp(PainelConsultas.this, selecionado);
+		chkLinhaRaiz.addActionListener(e -> arvore.setShowsRootHandles(chkLinhaRaiz.isSelected()));
 
-				if (!Util.ehVazio(aliasTemp)) {
-					itemPesquisaDialogoAliasLimpo(aliasTemp);
-				}
-			}
-		});
+		splitPane.addPropertyChangeListener(evt -> {
+			SplitPane splitPane = (SplitPane) evt.getSource();
+			String propertyName = evt.getPropertyName();
 
-		popup.itemPesquisaMemoriaLimpo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				itemPesquisaMemoriaLimpo();
-			}
-		});
-
-		popup.itemPesquisaMemoria.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				pesquisa(selecionado, false);
-			}
-		});
-
-		popup.itemLimparCampos.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Tabela tabela = selecionado.getTabela(formulario.getTabelas());
-				tabela.limparCampos();
-				formulario.atualizarCampoIDForm(tabela);
-			}
-		});
-
-		popup.itemLimparId.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Tabela tabela = selecionado.getTabela(formulario.getTabelas());
-				tabela.limparID();
-				formulario.atualizarCampoIDForm(tabela);
-			}
-		});
-
-		popup.itemCampos.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new CampoDialog(formulario, selecionado.getTabela(formulario.getTabelas()));
-			}
-		});
-
-		popup.itemPropriedades.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new ReferenciaPropDialog(formulario, selecionado);
-			}
-		});
-
-		popup.itemUpdate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				formulario.textArea.setText(selecionado.gerarUpdate(formulario.getTabelas()));
-			}
-		});
-
-		popup.itemDelete.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				formulario.textArea.setText(selecionado.gerarDelete(formulario.getTabelas()));
-			}
-		});
-
-		chkRaizVisivel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				arvore.setRootVisible(chkRaizVisivel.isSelected());
-			}
-		});
-
-		chkLinhaRaiz.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				arvore.setShowsRootHandles(chkLinhaRaiz.isSelected());
-			}
-		});
-
-		splitPane.addPropertyChangeListener(new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent evt) {
-				SplitPane splitPane = (SplitPane) evt.getSource();
-				String propertyName = evt.getPropertyName();
-
-				if (SplitPane.DIVIDER_LOCATION_PROPERTY.equals(propertyName)) {
-					formulario.divisao(splitPane.getDividerLocation());
-				}
+			if (SplitPane.DIVIDER_LOCATION_PROPERTY.equals(propertyName)) {
+				formulario.divisao(splitPane.getDividerLocation());
 			}
 		});
 	}
