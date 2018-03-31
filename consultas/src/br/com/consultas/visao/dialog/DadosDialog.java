@@ -149,12 +149,9 @@ public class DadosDialog extends Dialogo {
 		itemLargura.addActionListener(e -> {
 			largura();
 
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					if (painelREGISTROSReferencia != null) {
-						painelREGISTROSReferencia.setLocationSplitPane();
-					}
+			SwingUtilities.invokeLater(() -> {
+				if (painelREGISTROSReferencia != null) {
+					painelREGISTROSReferencia.setLocationSplitPane();
 				}
 			});
 		});
@@ -383,12 +380,7 @@ public class DadosDialog extends Dialogo {
 			table.ajustar(getGraphics());
 
 			if (painelREGISTROSReferencia != null) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						painelREGISTROSReferencia.finalScroll();
-					}
-				});
+				SwingUtilities.invokeLater(() -> painelREGISTROSReferencia.finalScroll());
 			}
 		}
 
@@ -410,12 +402,7 @@ public class DadosDialog extends Dialogo {
 			table.ajustar(getGraphics());
 
 			if (painelREGISTROSReferencia != null) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						painelREGISTROSReferencia.finalScroll();
-					}
-				});
+				SwingUtilities.invokeLater(() -> painelREGISTROSReferencia.finalScroll());
 			}
 		}
 
@@ -437,12 +424,7 @@ public class DadosDialog extends Dialogo {
 			table.ajustar(getGraphics());
 
 			if (painelREGISTROSReferencia != null) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						painelREGISTROSReferencia.finalScroll();
-					}
-				});
+				SwingUtilities.invokeLater(() -> painelREGISTROSReferencia.finalScroll());
 			}
 		}
 	}

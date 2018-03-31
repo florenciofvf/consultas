@@ -7,7 +7,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowStateListener;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -98,7 +97,6 @@ public class Formulario extends JFrame {
 
 		itemLimparCampos.addActionListener(e -> {
 			tabelas.getTabelas().forEach(Tabela::limparCampos);
-
 			Util.setEspecialFalse(referencias);
 
 			for (Tabela t : tabelas.getTabelas()) {
@@ -107,10 +105,7 @@ public class Formulario extends JFrame {
 		});
 
 		itemLimparIds.addActionListener(e -> {
-			for (Tabela t : tabelas.getTabelas()) {
-				t.limparID();
-			}
-
+			tabelas.getTabelas().forEach(Tabela::limparID);
 			Util.setEspecialFalse(referencias);
 
 			for (Tabela t : tabelas.getTabelas()) {
@@ -134,20 +129,15 @@ public class Formulario extends JFrame {
 			}
 		});
 
-		addWindowStateListener(new WindowStateListener() {
-			@Override
-			public void windowStateChanged(WindowEvent e) {
-				if ((e.getNewState() & MAXIMIZED_BOTH) == MAXIMIZED_BOTH) {
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							splitPane.setDividerLocation((int) (getHeight() * DIVISAO_TEXT_AREA));
-							painelRegistros.windowOpened();
-							painelDestaques.windowOpened();
-							abaConsultas.windowOpened();
-							painelTabelas.windowOpened();
-						}
-					});
-				}
+		addWindowStateListener(e -> {
+			if ((e.getNewState() & MAXIMIZED_BOTH) == MAXIMIZED_BOTH) {
+				SwingUtilities.invokeLater(() -> {
+					splitPane.setDividerLocation((int) (getHeight() * DIVISAO_TEXT_AREA));
+					painelRegistros.windowOpened();
+					painelDestaques.windowOpened();
+					abaConsultas.windowOpened();
+					painelTabelas.windowOpened();
+				});
 			}
 		});
 	}

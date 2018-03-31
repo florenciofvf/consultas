@@ -598,11 +598,13 @@ public class Util {
 		if (e != null) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			PrintStream ps = new PrintStream(baos);
+
 			if (LOG_MENSAGEM) {
 				e.printStackTrace(ps);
 			} else {
 				e.printStackTrace();
 			}
+
 			sb.append(new String(baos.toByteArray()));
 		}
 
