@@ -97,9 +97,7 @@ public class Formulario extends JFrame {
 		}
 
 		itemLimparCampos.addActionListener(e -> {
-			for (Tabela t : tabelas.getTabelas()) {
-				t.limparCampos();
-			}
+			tabelas.getTabelas().forEach(Tabela::limparCampos);
 
 			Util.setEspecialFalse(referencias);
 

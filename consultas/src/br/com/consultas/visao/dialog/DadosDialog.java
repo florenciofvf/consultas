@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
@@ -145,9 +144,7 @@ public class DadosDialog extends Dialogo {
 		menuArquivo.add(itemFechar);
 		setJMenuBar(menuBar);
 
-		itemFechar.addActionListener(e ->
-
-		Util.fechar(DadosDialog.this));
+		itemFechar.addActionListener(e -> Util.fechar(DadosDialog.this));
 
 		itemLargura.addActionListener(e -> {
 			largura();

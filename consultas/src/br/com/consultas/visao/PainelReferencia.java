@@ -141,9 +141,8 @@ public class PainelReferencia extends PanelBorderLayout {
 
 		popup.itemRegistrosMemoria.addActionListener(e -> registros(selecionado, false));
 
-		popup.itemPesquisaSelecionados.addActionListener(e ->
-
-		Util.pesquisaSelecionadosMemoria(selecionado, formulario.getTabelas()));
+		popup.itemPesquisaSelecionados
+				.addActionListener(e -> Util.pesquisaSelecionadosMemoria(selecionado, formulario.getTabelas()));
 
 		popup.itemPesquisaDialogoLimpo.addActionListener(e -> itemPesquisaDialogoLimpo(selecionado));
 
