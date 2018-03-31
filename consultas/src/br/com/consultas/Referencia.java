@@ -467,8 +467,8 @@ public class Referencia {
 
 		StringBuilder sb = new StringBuilder("SELECT ");
 		if (inverso) {
-			sb.append(pai.getAlias() + "." + campoPK.getNome() + ", COUNT(" + getAlias() + "." + tabThis.get(0).getNome()
-					+ ") AS total FROM");
+			sb.append(pai.getAlias() + "." + campoPK.getNome() + ", COUNT(" + getAlias() + "."
+					+ tabThis.get(0).getNome() + ") AS total FROM");
 		} else {
 			sb.append(pai.getAlias() + "." + campoPK.getNome() + ", COUNT(" + getAlias() + "." + campoFK.getNome()
 					+ ") AS total FROM");

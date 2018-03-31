@@ -1,8 +1,6 @@
 package br.com.consultas.visao;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -62,20 +60,10 @@ public class PainelReferencia extends PanelBorderLayout {
 		}
 
 		Button expandir = new Button("label.expandir", Icones.EXPANDIR);
-		expandir.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Util.expandirRetrairTodos(arvore, true);
-			}
-		});
+		expandir.addActionListener(e -> Util.expandirRetrairTodos(arvore, true));
 
 		Button retrair = new Button("label.retrair", Icones.RETRAIR);
-		retrair.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Util.expandirRetrairTodos(arvore, false);
-			}
-		});
+		retrair.addActionListener(e -> Util.expandirRetrairTodos(arvore, false));
 
 		panelNorte.adicionar(chkTopoHierarquia, expandir, retrair);
 
@@ -145,220 +133,150 @@ public class PainelReferencia extends PanelBorderLayout {
 		arvore.setShowsRootHandles(chkLinhaRaiz.isSelected());
 		arvore.setRootVisible(chkRaizVisivel.isSelected());
 
-		popup.itemRegistrosDialogoLimpo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				itemRegistrosDialogoLimpo();
+		popup.itemRegistrosDialogoLimpo.addActionListener(e -> itemRegistrosDialogoLimpo());
+
+		popup.itemRegistrosDialogo.addActionListener(e -> registros(selecionado, true));
+
+		popup.itemRegistrosMemoriaLimpo.addActionListener(e -> itemRegistrosMemoriaLimpo());
+
+		popup.itemRegistrosMemoria.addActionListener(e -> registros(selecionado, false));
+
+		popup.itemPesquisaSelecionados.addActionListener(e ->
+
+		Util.pesquisaSelecionadosMemoria(selecionado, formulario.getTabelas()));
+
+		popup.itemPesquisaDialogoLimpo.addActionListener(e -> itemPesquisaDialogoLimpo(selecionado));
+
+		popup.itemPesquisaDialogo.addActionListener(e -> pesquisa(selecionado, true));
+
+		popup.itemPesquisaDialogoAlias.addActionListener(e -> {
+			String aliasTemp = Util.getAliasTemp(PainelReferencia.this, selecionado);
+
+			if (!Util.ehVazio(aliasTemp)) {
+				pesquisa(selecionado, true, aliasTemp);
 			}
 		});
 
-		popup.itemRegistrosDialogo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				registros(selecionado, true);
+		popup.itemPesquisaDialogoAliasLimpo.addActionListener(e -> {
+			String aliasTemp = Util.getAliasTemp(PainelReferencia.this, selecionado);
+
+			if (!Util.ehVazio(aliasTemp)) {
+				itemPesquisaDialogoAliasLimpo(aliasTemp);
 			}
 		});
 
-		popup.itemRegistrosMemoriaLimpo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				itemRegistrosMemoriaLimpo();
+		popup.itemPesquisaMemoriaLimpo.addActionListener(e -> itemPesquisaMemoriaLimpo());
+
+		popup.itemPesquisaMemoria.addActionListener(e -> pesquisa(selecionado, false));
+
+		popup.itemLimparCampos.addActionListener(e -> {
+			Tabela tabela = selecionado.getTabela(formulario.getTabelas());
+			tabela.limparCampos();
+			atualizarCampoID(true, tabela);
+
+			if (listener != null) {
+				listener.limparCampos(tabela);
 			}
 		});
 
-		popup.itemRegistrosMemoria.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				registros(selecionado, false);
+		popup.itemLimparId.addActionListener(e -> {
+			Tabela tabela = selecionado.getTabela(formulario.getTabelas());
+			tabela.limparID();
+			atualizarCampoID(true, tabela);
+
+			if (listener != null) {
+				listener.limparID(tabela);
 			}
 		});
 
-		popup.itemPesquisaSelecionados.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Util.pesquisaSelecionadosMemoria(selecionado, formulario.getTabelas());
-			}
-		});
+		popup.itemCampos
+				.addActionListener(e -> new CampoDialog(formulario, selecionado.getTabela(formulario.getTabelas())));
 
-		popup.itemPesquisaDialogoLimpo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				itemPesquisaDialogoLimpo(selecionado);
-			}
-		});
+		popup.itemPropriedades.addActionListener(e -> new ReferenciaPropDialog(formulario, selecionado));
 
-		popup.itemPesquisaDialogo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				pesquisa(selecionado, true);
-			}
-		});
+		popup.itemAgruparTotal.addActionListener(e -> {
+			if (listener == null) {
+				Util.mensagem(PainelReferencia.this, Util.getString("msg.nao_implementado"));
+			} else if (selecionado.getPai() == null) {
+				Util.mensagem(PainelReferencia.this, Util.getString("msg.objeto_deve_conter_pai"));
+			} else {
+				Tabela tabPai = selecionado.getPai().getTabela(formulario.getTabelas());
 
-		popup.itemPesquisaDialogoAlias.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String aliasTemp = Util.getAliasTemp(PainelReferencia.this, selecionado);
-
-				if (!Util.ehVazio(aliasTemp)) {
-					pesquisa(selecionado, true, aliasTemp);
-				}
-			}
-		});
-
-		popup.itemPesquisaDialogoAliasLimpo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String aliasTemp = Util.getAliasTemp(PainelReferencia.this, selecionado);
-
-				if (!Util.ehVazio(aliasTemp)) {
-					itemPesquisaDialogoAliasLimpo(aliasTemp);
-				}
-			}
-		});
-
-		popup.itemPesquisaMemoriaLimpo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				itemPesquisaMemoriaLimpo();
-			}
-		});
-
-		popup.itemPesquisaMemoria.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				pesquisa(selecionado, false);
-			}
-		});
-
-		popup.itemLimparCampos.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Tabela tabela = selecionado.getTabela(formulario.getTabelas());
-				tabela.limparCampos();
-				atualizarCampoID(true, tabela);
-
-				if (listener != null) {
-					listener.limparCampos(tabela);
-				}
-			}
-		});
-
-		popup.itemLimparId.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Tabela tabela = selecionado.getTabela(formulario.getTabelas());
-				tabela.limparID();
-				atualizarCampoID(true, tabela);
-
-				if (listener != null) {
-					listener.limparID(tabela);
-				}
-			}
-		});
-
-		popup.itemCampos.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new CampoDialog(formulario, selecionado.getTabela(formulario.getTabelas()));
-			}
-		});
-
-		popup.itemPropriedades.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new ReferenciaPropDialog(formulario, selecionado);
-			}
-		});
-
-		popup.itemAgruparTotal.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (listener == null) {
-					Util.mensagem(PainelReferencia.this, Util.getString("msg.nao_implementado"));
-				} else if (selecionado.getPai() == null) {
-					Util.mensagem(PainelReferencia.this, Util.getString("msg.objeto_deve_conter_pai"));
+				if (tabela.getNome().equals(tabPai.getNome())) {
+					try {
+						listener.calcularTotal(selecionado);
+					} catch (Exception ex) {
+						String msg = Util.getStackTrace(PainelReferencia.this.getClass().getName() + ".calcularTotal()",
+								ex);
+						Util.mensagem(PainelReferencia.this, msg);
+					}
 				} else {
-					Tabela tabPai = selecionado.getPai().getTabela(formulario.getTabelas());
+					Util.mensagem(PainelReferencia.this,
+							Util.getString("msg.selecione_tabela_pai") + " [" + selecionado.getAlias() + "]");
+				}
+			}
+		});
 
-					if (tabela.getNome().equals(tabPai.getNome())) {
-						try {
-							listener.calcularTotal(selecionado);
-						} catch (Exception ex) {
-							String msg = Util
-									.getStackTrace(PainelReferencia.this.getClass().getName() + ".calcularTotal()", ex);
-							Util.mensagem(PainelReferencia.this, msg);
+		popup.itemAgruparCampo.addActionListener(e -> {
+			if (listener == null) {
+				Util.mensagem(PainelReferencia.this, Util.getString("msg.nao_implementado"));
+			} else if (selecionado.getPai() == null) {
+				Util.mensagem(PainelReferencia.this, Util.getString("msg.objeto_deve_conter_pai"));
+			} else {
+				Tabela tabPai = selecionado.getPai().getTabela(formulario.getTabelas());
+
+				if (tabela.getNome().equals(tabPai.getNome())) {
+					try {
+						Tabela tabela = selecionado.getTabela(formulario.getTabelas());
+						String nomeCampo = Util.getNomeCampo(PainelReferencia.this, tabela);
+
+						if (!Util.ehVazio(nomeCampo)) {
+							Campo campo = tabela.get(nomeCampo);
+							listener.agruparColuna(selecionado, campo);
 						}
-					} else {
-						Util.mensagem(PainelReferencia.this,
-								Util.getString("msg.selecione_tabela_pai") + " [" + selecionado.getAlias() + "]");
+					} catch (Exception ex) {
+						String msg = Util.getStackTrace(PainelReferencia.this.getClass().getName() + ".agruparColuna()",
+								ex);
+						Util.mensagem(PainelReferencia.this, msg);
+					}
+				} else {
+					Util.mensagem(PainelReferencia.this,
+							Util.getString("msg.selecione_tabela_pai") + " [" + selecionado.getAlias() + "]");
+				}
+			}
+		});
+
+		popup.itemAgruparCampoPai.addActionListener(e -> {
+			if (listener == null) {
+				Util.mensagem(PainelReferencia.this, Util.getString("msg.nao_implementado"));
+			} else if (selecionado.getPai() == null) {
+				Util.mensagem(PainelReferencia.this, Util.getString("msg.objeto_deve_conter_pai"));
+			} else {
+				Referencia pai = Util.getPai(PainelReferencia.this, selecionado);
+
+				if (pai != null) {
+					try {
+						Tabela tabela = selecionado.getTabela(formulario.getTabelas());
+						String nomeCampo = Util.getNomeCampo(PainelReferencia.this, tabela);
+
+						if (!Util.ehVazio(nomeCampo)) {
+							Campo campo = tabela.get(nomeCampo);
+							listener.agruparColuna(selecionado, pai, campo);
+						}
+					} catch (Exception ex) {
+						String msg = Util.getStackTrace(PainelReferencia.this.getClass().getName() + ".agruparColuna()",
+								ex);
+						Util.mensagem(PainelReferencia.this, msg);
 					}
 				}
 			}
 		});
 
-		popup.itemAgruparCampo.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (listener == null) {
-					Util.mensagem(PainelReferencia.this, Util.getString("msg.nao_implementado"));
-				} else if (selecionado.getPai() == null) {
-					Util.mensagem(PainelReferencia.this, Util.getString("msg.objeto_deve_conter_pai"));
-				} else {
-					Tabela tabPai = selecionado.getPai().getTabela(formulario.getTabelas());
+		chkRaizVisivel.addActionListener(e -> arvore.setRootVisible(chkRaizVisivel.isSelected()));
 
-					if (tabela.getNome().equals(tabPai.getNome())) {
-						try {
-							Tabela tabela = selecionado.getTabela(formulario.getTabelas());
-							String nomeCampo = Util.getNomeCampo(PainelReferencia.this, tabela);
+		chkLinhaRaiz.addActionListener(e -> arvore.setShowsRootHandles(chkLinhaRaiz.isSelected()));
 
-							if (!Util.ehVazio(nomeCampo)) {
-								Campo campo = tabela.get(nomeCampo);
-								listener.agruparColuna(selecionado, campo);
-							}
-						} catch (Exception ex) {
-							String msg = Util
-									.getStackTrace(PainelReferencia.this.getClass().getName() + ".agruparColuna()", ex);
-							Util.mensagem(PainelReferencia.this, msg);
-						}
-					} else {
-						Util.mensagem(PainelReferencia.this,
-								Util.getString("msg.selecione_tabela_pai") + " [" + selecionado.getAlias() + "]");
-					}
-				}
-			}
-		});
-
-		popup.itemAgruparCampoPai.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (listener == null) {
-					Util.mensagem(PainelReferencia.this, Util.getString("msg.nao_implementado"));
-				} else if (selecionado.getPai() == null) {
-					Util.mensagem(PainelReferencia.this, Util.getString("msg.objeto_deve_conter_pai"));
-				} else {
-					Referencia pai = Util.getPai(PainelReferencia.this, selecionado);
-
-					if (pai != null) {
-						try {
-							Tabela tabela = selecionado.getTabela(formulario.getTabelas());
-							String nomeCampo = Util.getNomeCampo(PainelReferencia.this, tabela);
-
-							if (!Util.ehVazio(nomeCampo)) {
-								Campo campo = tabela.get(nomeCampo);
-								listener.agruparColuna(selecionado, pai, campo);
-							}
-						} catch (Exception ex) {
-							String msg = Util
-									.getStackTrace(PainelReferencia.this.getClass().getName() + ".agruparColuna()", ex);
-							Util.mensagem(PainelReferencia.this, msg);
-						}
-					}
-				}
-			}
-		});
-
-		chkRaizVisivel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				arvore.setRootVisible(chkRaizVisivel.isSelected());
-			}
-		});
-
-		chkLinhaRaiz.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				arvore.setShowsRootHandles(chkLinhaRaiz.isSelected());
-			}
-		});
-
-		chkTopoHierarquia.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				setModel();
-			}
-		});
+		chkTopoHierarquia.addActionListener(e -> setModel());
 	}
 
 	private void setModel() {
