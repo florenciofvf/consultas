@@ -487,7 +487,7 @@ public class DadosDialog extends Dialogo {
 			String string = Util.getSQL(textArea.getText());
 
 			if (string == null) {
-				Util.mensagem(DadosDialog.this, Util.getString("labe.consulta_vazia"));
+				Util.mensagem(DadosDialog.this, Util.getString("labe.instrucao_vazia"));
 				return;
 			}
 
@@ -518,7 +518,7 @@ public class DadosDialog extends Dialogo {
 			String string = Util.getSQL(textArea.getText());
 
 			if (string == null) {
-				Util.mensagem(DadosDialog.this, Util.getString("labe.consulta_vazia"));
+				Util.mensagem(DadosDialog.this, Util.getString("labe.instrucao_vazia"));
 				return;
 			}
 

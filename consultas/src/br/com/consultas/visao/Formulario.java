@@ -98,19 +98,13 @@ public class Formulario extends JFrame {
 		itemLimparCampos.addActionListener(e -> {
 			tabelas.getTabelas().forEach(Tabela::limparCampos);
 			Util.setEspecialFalse(referencias);
-
-			for (Tabela t : tabelas.getTabelas()) {
-				atualizarCampoIDForm(t);
-			}
+			tabelas.getTabelas().forEach(Formulario.this::atualizarCampoIDForm);
 		});
 
 		itemLimparIds.addActionListener(e -> {
 			tabelas.getTabelas().forEach(Tabela::limparID);
 			Util.setEspecialFalse(referencias);
-
-			for (Tabela t : tabelas.getTabelas()) {
-				atualizarCampoIDForm(t);
-			}
+			tabelas.getTabelas().forEach(Formulario.this::atualizarCampoIDForm);
 		});
 
 		itemLimparSL.addActionListener(e -> tabelas.getTabelas().forEach(Tabela::limparSolenteLeitura));
@@ -192,7 +186,7 @@ public class Formulario extends JFrame {
 		String string = Util.getSQL(textArea.getText());
 
 		if (string == null) {
-			Util.mensagem(this, Util.getString("labe.consulta_vazia"));
+			Util.mensagem(this, Util.getString("labe.instrucao_vazia"));
 			return;
 		}
 
