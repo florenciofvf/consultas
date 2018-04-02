@@ -213,6 +213,30 @@ public class Util {
 		return resposta;
 	}
 
+	public static List<Referencia> pesquisarReferenciasPelaTabela(List<Referencia> referencias, Tabela tabela,
+			Tabelas tabelas) {
+		final String alias = tabela.getAlias().getValor();
+		List<Referencia> resposta = new ArrayList<>();
+
+		for (Referencia ref : referencias) {
+			if (ref.getAlias2().equals(alias)) {
+				resposta.add(ref);
+			}
+			refs2(resposta, ref, alias);
+		}
+
+		return resposta;
+	}
+
+	private static void refs2(List<Referencia> resposta, Referencia ref, String alias) {
+		for (Referencia r : ref.getReferencias()) {
+			if (r.getAlias2().equals(alias)) {
+				resposta.add(r);
+			}
+			refs2(resposta, r, alias);
+		}
+	}
+
 	public static void validarArvore(List<Referencia> referencias, Tabelas tabelas) {
 		for (Referencia r : referencias) {
 			r.validar(tabelas);

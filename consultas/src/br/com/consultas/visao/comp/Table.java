@@ -54,7 +54,7 @@ public class Table extends JTable {
 		Util.ajustar(this, graphics, ajuste);
 	}
 
-	public List<String> getIds(int coluna) {
+	public List<String> getValores(int coluna) {
 		List<String> resposta = new ArrayList<>();
 
 		ModeloOrdenacao atual = (ModeloOrdenacao) getModel();

@@ -223,12 +223,12 @@ public class DadosDialog extends Dialogo {
 			});
 
 			popup.itemCopiar.addActionListener(e -> {
-				List<String> resp = table.getIds(popup.getTag());
+				List<String> resp = table.getValores(popup.getTag());
 				Util.setContentTransfered(Util.getStringLista(resp, false));
 			});
 
 			popup.itemCopiarComAspas.addActionListener(e -> {
-				List<String> resp = table.getIds(popup.getTag());
+				List<String> resp = table.getValores(popup.getTag());
 				Util.setContentTransfered(Util.getStringLista(resp, true));
 			});
 		}
@@ -315,6 +315,7 @@ public class DadosDialog extends Dialogo {
 
 		private void cfg() {
 			popup.copiar();
+			popup.mostrarRegistro();
 
 			tableHeader.addMouseListener(new MouseAdapter() {
 				@Override
@@ -340,13 +341,18 @@ public class DadosDialog extends Dialogo {
 			});
 
 			popup.itemCopiar.addActionListener(e -> {
-				List<String> resp = table.getIds(popup.getTag());
+				List<String> resp = table.getValores(popup.getTag());
 				Util.setContentTransfered(Util.getStringLista(resp, false));
 			});
 
 			popup.itemCopiarComAspas.addActionListener(e -> {
-				List<String> resp = table.getIds(popup.getTag());
+				List<String> resp = table.getValores(popup.getTag());
 				Util.setContentTransfered(Util.getStringLista(resp, true));
+			});
+
+			popup.itemMostrarRegistro.addActionListener(e -> {
+				List<Referencia> lista = Util.pesquisarReferenciasPelaTabela(formulario.getReferencias(), tabela,
+						formulario.getTabelas());
 			});
 		}
 

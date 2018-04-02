@@ -17,6 +17,7 @@ public class Popup extends JPopupMenu {
 	final MenuItem itemPesquisaDialogo = new MenuItem("label.gerar_pesquisa_dialogo");
 	final MenuItem itemPesquisaMemoria = new MenuItem("label.gerar_pesquisa_memoria");
 	public final MenuItem itemCopiarComAspas = new MenuItem("label.copiar_com_aspas");
+	public final MenuItem itemMostrarRegistro = new MenuItem("label.abrir_registro");
 	final MenuItem itemRegistrosDialogo = new MenuItem("label.gerar_dados_dialogo");
 	final MenuItem itemRegistrosMemoria = new MenuItem("label.gerar_dados_memoria");
 	final MenuItem itemPesquisaSelecionados = new MenuItem("label.pesquisa_sel");
@@ -103,6 +104,11 @@ public class Popup extends JPopupMenu {
 		add(itemCopiar);
 		addSeparator();
 		add(itemCopiarComAspas);
+	}
+
+	public void mostrarRegistro() {
+		addSeparator();
+		add(itemMostrarRegistro);
 	}
 
 	public void dml() {
