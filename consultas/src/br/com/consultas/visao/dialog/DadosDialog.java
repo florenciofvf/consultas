@@ -55,9 +55,11 @@ import br.com.consultas.visao.comp.SplitPane;
 import br.com.consultas.visao.comp.TabbedPane;
 import br.com.consultas.visao.comp.Table;
 import br.com.consultas.visao.comp.TextArea;
+import br.com.consultas.visao.modelo.ModeloFK;
 import br.com.consultas.visao.modelo.ModeloOrdenacao;
 import br.com.consultas.visao.modelo.ModeloRSMD;
 import br.com.consultas.visao.modelo.ModeloVazio;
+import br.com.consultas.visao.modelo.PK;
 
 public class DadosDialog extends Dialogo {
 	private static final long serialVersionUID = 1L;
@@ -74,6 +76,7 @@ public class DadosDialog extends Dialogo {
 	private final PainelSELECT painelSELECT;
 	private final PainelUPDATE painelUPDATE;
 	private final PainelDELETE painelDELETE;
+	private final PainelFK painelFK;
 
 	private final Referencia selecionado;
 	private final Formulario formulario;
@@ -113,9 +116,13 @@ public class DadosDialog extends Dialogo {
 		fichario.addTab("label.meta_i", painelMETAINFO);
 
 		if (tabela != null) {
+			painelFK = new PainelFK(this);
+			fichario.addTab("label.foreign_key", painelFK);
+
 			painelREFERENCIA = new PainelREFERENCIA(this);
 			fichario.addTab("label.referencias", painelREFERENCIA);
 		} else {
+			painelFK = null;
 			painelREFERENCIA = null;
 		}
 
@@ -135,6 +142,7 @@ public class DadosDialog extends Dialogo {
 
 		cfg();
 		setVisible(true);
+		SwingUtilities.invokeLater(() -> toFront());
 	}
 
 	private void montarMenu() {
@@ -351,8 +359,41 @@ public class DadosDialog extends Dialogo {
 			});
 
 			popup.itemMostrarRegistro.addActionListener(e -> {
-				List<Referencia> lista = Util.pesquisarReferenciasPelaTabela(formulario.getReferencias(), tabela,
-						formulario.getTabelas());
+				int[] is = table.getSelectedRows();
+
+				if (is == null || is.length != 1) {
+					Util.mensagem(this, Util.getString("label.selecione_uma_linha"));
+					return;
+				}
+
+				int linha = is[0];
+				int coluna = popup.getTag();
+				Object valor = table.getModel().getValueAt(linha, coluna);
+
+				if (valor == null || Util.ehVazio(valor.toString())) {
+					Util.mensagem(this, Util.getString("label.vazio"));
+					return;
+				}
+
+				String nomeColuna = table.getModel().getColumnName(popup.getTag());
+				ModeloOrdenacao modeloOrdenacao = (ModeloOrdenacao) painelFK.table.getModel();
+				ModeloFK modelo = (ModeloFK) modeloOrdenacao.getModel();
+				PK pk = modelo.getPK(nomeColuna);
+
+				if (pk == null) {
+					Util.mensagem(this, Util.getString("label.sem_fk"));
+					return;
+				}
+
+				final String string = "SELECT * FROM " + pk.getTabela() + " WHERE " + pk.getCampo() + " = "
+						+ valor.toString();
+
+				try {
+					new DadosDialog(formulario, null, null, false, string, null);
+				} catch (Exception ex) {
+					String msg = Util.getStackTrace(getClass().getName() + ".itemMostrarRegistro()", ex);
+					Util.mensagem(this, msg);
+				}
 			});
 		}
 
@@ -555,6 +596,21 @@ public class DadosDialog extends Dialogo {
 		}
 	}
 
+	private class PainelFK extends PainelAbas {
+		private static final long serialVersionUID = 1L;
+		private Table table = new Table(new ModeloOrdenacao(new ModeloVazio()));
+
+		PainelFK(Dialogo dialogo) {
+			super(dialogo, false);
+
+			add(BorderLayout.CENTER, new ScrollPane(table));
+		}
+
+		@Override
+		public void executar() {
+		}
+	}
+
 	private class PainelREFERENCIA extends PainelAbas implements PainelReferenciaListener {
 		private static final long serialVersionUID = 1L;
 		private final PainelReferencia painelReferencia;
@@ -715,14 +771,14 @@ public class DadosDialog extends Dialogo {
 		PreparedStatement psmt = conn.prepareStatement(Util.getSQL(string));
 		ResultSet rs = psmt.executeQuery();
 
-		coletar(rs, graphics);
+		coletar(conn, rs, graphics);
 
 		rs.close();
 		psmt.close();
 		conn.close();
 	}
 
-	private void coletar(ResultSet rs, Graphics graphics) throws Exception {
+	private void coletar(Connection conn, ResultSet rs, Graphics graphics) throws Exception {
 		ResultSetMetaData rsmd = rs.getMetaData();
 
 		ModeloRSMD modeloRSMD = new ModeloRSMD(rsmd);
@@ -747,6 +803,12 @@ public class DadosDialog extends Dialogo {
 
 		painelMETAINFO.table.setModel(new ModeloOrdenacao(modeloRSMD));
 		painelMETAINFO.table.ajustar(graphics);
+
+		if (tabela != null) {
+			ModeloFK modeloFK = new ModeloFK(conn.getMetaData(), tabela);
+			painelFK.table.setModel(new ModeloOrdenacao(modeloFK));
+			painelFK.table.ajustar(graphics);
+		}
 	}
 
 	private void largura() {

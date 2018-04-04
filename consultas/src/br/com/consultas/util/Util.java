@@ -58,7 +58,7 @@ public class Util {
 	public static final int LARGURA_ICONE_ORDENAR = 20;
 	private static final boolean LOG_MENSAGEM = true;
 	public static final double DIVISAO2 = 0.65;
-	public static final double DIVISAO3 = 0.70;
+	public static final double DIVISAO3 = 0.67;
 	public static final byte DOIS = 2;
 
 	private Util() {
@@ -338,7 +338,7 @@ public class Util {
 	public static void mensagem(Component componente, String string) {
 		TextArea textArea = new TextArea(string);
 		textArea.setPreferredSize(new Dimension(500, 300));
-		JOptionPane.showMessageDialog(componente, textArea);
+		JOptionPane.showMessageDialog(componente, textArea, getString("label.atencao"), JOptionPane.PLAIN_MESSAGE);
 	}
 
 	public static boolean confirmarUpdate(Component componente) {
