@@ -101,13 +101,13 @@ public class DadosDialog extends Dialogo {
 		painelDELETE = new PainelDELETE(this);
 
 		if (tabela != null) {
-			painelREGISTROS = null;
 			painelREGISTROSReferencia = new PainelREGISTROSReferencia(this);
 			fichario.addTab("label.registros", painelREGISTROSReferencia);
+			painelREGISTROS = null;
 		} else {
-			painelREGISTROSReferencia = null;
 			painelREGISTROS = new PainelREGISTROS(this);
 			fichario.addTab("label.registros", painelREGISTROS);
+			painelREGISTROSReferencia = null;
 		}
 
 		fichario.addTab("label.select", painelSELECT);
@@ -122,8 +122,8 @@ public class DadosDialog extends Dialogo {
 			painelREFERENCIA = new PainelREFERENCIA(this);
 			fichario.addTab("label.referencias", painelREFERENCIA);
 		} else {
-			painelFK = null;
 			painelREFERENCIA = null;
+			painelFK = null;
 		}
 
 		if (selecionado == null) {
