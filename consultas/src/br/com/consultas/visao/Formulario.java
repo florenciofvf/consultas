@@ -136,6 +136,7 @@ public class Formulario extends JFrame {
 				tableConfig.ajustar(getGraphics());
 				tableMsg.ajustar(getGraphics());
 				painelComRegistros.windowOpened();
+				painelSemRegistros.windowOpened();
 				painelDestaques.windowOpened();
 				painelConsultas.windowOpened();
 				painelTabelas.windowOpened();
@@ -147,6 +148,7 @@ public class Formulario extends JFrame {
 				SwingUtilities.invokeLater(() -> {
 					splitPane.setDividerLocation((int) (getHeight() * DIVISAO_TEXT_AREA));
 					painelComRegistros.windowOpened();
+					painelSemRegistros.windowOpened();
 					painelDestaques.windowOpened();
 					painelConsultas.windowOpened();
 					painelTabelas.windowOpened();
