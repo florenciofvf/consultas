@@ -1,5 +1,7 @@
 package br.com.consultas.visao.comp;
 
+import java.awt.Insets;
+
 import javax.swing.Icon;
 import javax.swing.JButton;
 
@@ -10,9 +12,11 @@ public class Button extends JButton {
 
 	public Button(String chaveRotulo) {
 		super(Util.getString(chaveRotulo));
+		setMargin(new Insets(1, 1, 1, 1));
 	}
 
 	public Button(String chaveRotulo, Icon icon) {
 		super(Util.getString(chaveRotulo), icon);
+		setMargin(new Insets(1, 1, 1, 1));
 	}
 }
