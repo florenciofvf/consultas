@@ -46,19 +46,21 @@ public class Formulario extends JFrame {
 	private final MenuItem itemLimparSL = new MenuItem("label.limpar_somente_leitura", Icones.LIMPAR);
 	private final MenuItem itemLimparCampos = new MenuItem("label.limpar_campos", Icones.LIMPAR);
 	private final MenuItem itemLimparIds = new MenuItem("label.limpar_ids", Icones.LIMPAR);
+	private final MenuItem itemBanco = new MenuItem("label.atualizar_total", Icones.BANCO);
 	private final MenuItem itemFechar = new MenuItem("label.fechar", Icones.SAIR);
 	private final SplitPane splitPane = new SplitPane(SplitPane.VERTICAL_SPLIT);
+	private final ProgressoDialog progresso = new ProgressoDialog();
 	private final List<Referencia> referencias = new ArrayList<>();
-	protected ProgressoDialog progresso = new ProgressoDialog();
 	private final Menu menuArquivo = new Menu("label.arquivo");
 	private static final double DIVISAO_TEXT_AREA = 0.80;
 	private final TabbedPane fichario = new TabbedPane();
 	protected final TextArea textArea = new TextArea();
 	private final JMenuBar menuBar = new JMenuBar();
+	private final PainelTabelas painelComRegistros;
+	private final PainelTabelas painelSemRegistros;
 	private final Tabelas tabelas = new Tabelas();
-	private final PainelTabelas painelRegistros;
+	private final PainelConsultas painelConsultas;
 	private final PainelTabelas painelDestaques;
-	private final PainelConsultas abaConsultas;
 	private final PainelTabelas painelTabelas;
 	private int janelas;
 
@@ -68,10 +70,13 @@ public class Formulario extends JFrame {
 		XML.processar(file, tabelas, referencias);
 		Util.validarArvore(referencias, tabelas);
 
-		painelRegistros = new PainelTabelas(this, false, true);
-		painelDestaques = new PainelTabelas(this, true, false);
-		painelTabelas = new PainelTabelas(this, false, false);
-		abaConsultas = new PainelConsultas(this);
+		atualizarTotalRegistros();
+
+		painelComRegistros = new PainelTabelas(this, PainelTabelas.PAINEL_COM_REGISTROS);
+		painelSemRegistros = new PainelTabelas(this, PainelTabelas.PAINEL_SEM_REGISTROS);
+		painelDestaques = new PainelTabelas(this, PainelTabelas.PAINEL_DESTAQUES);
+		painelTabelas = new PainelTabelas(this, PainelTabelas.PAINEL_TABELAS);
+		painelConsultas = new PainelConsultas(this);
 
 		setExtendedState(Formulario.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -81,6 +86,18 @@ public class Formulario extends JFrame {
 
 		cfg();
 		setVisible(true);
+	}
+
+	private void atualizarTotalRegistros() {
+		try {
+			List<Tabela> _tabelas = tabelas.getTabelas();
+			progresso.exibir(_tabelas.size());
+			Persistencia.atualizarTotalRegistros(_tabelas, progresso);
+			progresso.esconder();
+		} catch (Exception e) {
+			String msg = Util.getStackTrace(getClass().getName() + ".atualizarTotalRegistros()", e);
+			Util.mensagem(this, msg);
+		}
 	}
 
 	private void cfg() {
@@ -107,6 +124,8 @@ public class Formulario extends JFrame {
 			tabelas.getTabelas().forEach(Formulario.this::atualizarCampoIDForm);
 		});
 
+		itemBanco.addActionListener(e -> atualizarTotalRegistros());
+
 		itemLimparSL.addActionListener(e -> tabelas.getTabelas().forEach(Tabela::limparSolenteLeitura));
 
 		itemFechar.addActionListener(e -> System.exit(0));
@@ -116,9 +135,9 @@ public class Formulario extends JFrame {
 			public void windowOpened(WindowEvent e) {
 				tableConfig.ajustar(getGraphics());
 				tableMsg.ajustar(getGraphics());
-				painelRegistros.windowOpened();
+				painelComRegistros.windowOpened();
 				painelDestaques.windowOpened();
-				abaConsultas.windowOpened();
+				painelConsultas.windowOpened();
 				painelTabelas.windowOpened();
 			}
 		});
@@ -127,9 +146,9 @@ public class Formulario extends JFrame {
 			if ((e.getNewState() & MAXIMIZED_BOTH) == MAXIMIZED_BOTH) {
 				SwingUtilities.invokeLater(() -> {
 					splitPane.setDividerLocation((int) (getHeight() * DIVISAO_TEXT_AREA));
-					painelRegistros.windowOpened();
+					painelComRegistros.windowOpened();
 					painelDestaques.windowOpened();
-					abaConsultas.windowOpened();
+					painelConsultas.windowOpened();
 					painelTabelas.windowOpened();
 				});
 			}
@@ -145,16 +164,17 @@ public class Formulario extends JFrame {
 	}
 
 	public void atualizarCampoIDForm(Tabela tabela) {
-		abaConsultas.atualizarCampoID(tabela);
+		painelConsultas.atualizarCampoID(tabela);
 	}
 
 	private void montarLayout() {
 		setLayout(new BorderLayout());
 
 		fichario.addTab("label.destaques", painelDestaques);
-		fichario.addTab("label.tabRegtros", painelRegistros);
+		fichario.addTab("label.tab_com_registros", painelComRegistros);
+		fichario.addTab("label.tab_sem_registros", painelSemRegistros);
 		fichario.addTab("label.tabelas", painelTabelas);
-		fichario.addTab("label.referencias", abaConsultas);
+		fichario.addTab("label.referencias", painelConsultas);
 		fichario.addTab("label.config", new ScrollPane(tableConfig));
 		fichario.addTab("label.mensagens", new ScrollPane(tableMsg));
 
@@ -171,14 +191,17 @@ public class Formulario extends JFrame {
 		menuArquivo.addSeparator();
 		menuArquivo.add(itemLimparSL);
 		menuArquivo.addSeparator();
+		menuArquivo.add(itemBanco);
+		menuArquivo.addSeparator();
 		menuArquivo.add(itemFechar);
 		setJMenuBar(menuBar);
 	}
 
 	public void divisao(int i) {
-		painelRegistros.splitPane.setDividerLocation(i);
+		painelComRegistros.splitPane.setDividerLocation(i);
+		painelSemRegistros.splitPane.setDividerLocation(i);
 		painelDestaques.splitPane.setDividerLocation(i);
-		abaConsultas.splitPane.setDividerLocation(i);
+		painelConsultas.splitPane.setDividerLocation(i);
 		painelTabelas.splitPane.setDividerLocation(i);
 	}
 
@@ -262,7 +285,7 @@ public class Formulario extends JFrame {
 			labelValorTabelas.setText("" + tabelas.getTotalTabelas());
 			labelValorTabelas.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent e) {
-					fichario.setSelectedIndex(2);
+					fichario.setSelectedIndex(3);
 				}
 			});
 

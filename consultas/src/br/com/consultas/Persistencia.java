@@ -37,18 +37,17 @@ public class Persistencia {
 		return i;
 	}
 
-	public static void atualizarTotalRegistros(List<Referencia> referencias, Tabelas tabelas, ProgressoDialog progresso)
-			throws Exception {
+	public static void atualizarTotalRegistros(List<Tabela> tabelas, ProgressoDialog progresso) throws Exception {
 		Connection conn = getConnection();
 
 		int i = 0;
 
-		for (Referencia ref : referencias) {
-			PreparedStatement psmt = conn.prepareStatement(ref.getConsultaCount(tabelas));
+		for (Tabela tab : tabelas) {
+			PreparedStatement psmt = conn.prepareStatement(tab.getConsultaCount());
 			ResultSet rs = psmt.executeQuery();
 			rs.next();
 
-			ref.setTotalRegistros(rs.getInt("total"));
+			tab.setTotalRegistros(rs.getInt("total"));
 
 			progresso.atualizar(++i);
 

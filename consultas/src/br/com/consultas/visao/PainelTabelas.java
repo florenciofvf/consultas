@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.swing.tree.TreePath;
 
-import br.com.consultas.Persistencia;
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
 import br.com.consultas.util.Icones;
@@ -30,41 +29,29 @@ import br.com.consultas.visao.modelo.ModeloOrdenacao;
 
 public class PainelTabelas extends PanelBorderLayout {
 	private static final long serialVersionUID = 1L;
+
 	private final CheckBox chkRaizVisivel = new CheckBox("label.raiz_visivel", "tabelas.raiz_visivel");
 	private final Table table = new Table(new ModeloOrdenacao(new ModeloCampo(Util.criarTabela())));
 	private final CheckBox chkLinhaRaiz = new CheckBox("label.raiz_linha", "tabelas.raiz_linha");
 	private final Button buttonAtualizar = new Button("label.atualizar", Icones.ATUALIZAR);
 	protected final SplitPane splitPane = new SplitPane(SplitPane.HORIZONTAL_SPLIT);
+	public static final byte PAINEL_COM_REGISTROS = 0;
+	public static final byte PAINEL_SEM_REGISTROS = 1;
+	public static final byte PAINEL_DESTAQUES = 2;
+	public static final byte PAINEL_TABELAS = 3;
 	private final Popup popup = new Popup();
 	private final Formulario formulario;
-	private final boolean comRegistros;
 	private Referencia selecionado;
 	private final Arvore arvore;
+	private final byte tipo;
 
-	public PainelTabelas(Formulario formulario, boolean destaque, boolean comRegistros) {
-		this.comRegistros = comRegistros;
+	public PainelTabelas(Formulario formulario, byte tipo) {
 		this.formulario = formulario;
+		this.tipo = tipo;
 
 		List<Referencia> referencias = Util.criarReferencias(formulario.getTabelas().getTabelas());
 
-		if (destaque) {
-			Util.filtrarDestaques(referencias, formulario.getTabelas());
-		}
-
-		try {
-			formulario.progresso.exibir(referencias.size());
-			Persistencia.atualizarTotalRegistros(referencias, formulario.getTabelas(), formulario.progresso);
-			formulario.progresso.esconder();
-		} catch (Exception e) {
-			String msg = Util.getStackTrace(getClass().getName() + ".atualizarTotalRegistros()", e);
-			Util.mensagem(this, msg);
-		}
-
-		if (comRegistros) {
-			Util.filtrarRegistros(referencias, formulario.getTabelas());
-		}
-
-		Util.ordenar(referencias);
+		aplicarFiltros(referencias);
 
 		arvore = new Arvore(new ModeloArvore(referencias, Util.getString("label.tabelas")));
 		arvore.setCellRenderer(new TreeCellRenderer(Icones.TABELA));
@@ -85,6 +72,20 @@ public class PainelTabelas extends PanelBorderLayout {
 		add(BorderLayout.CENTER, splitPane);
 
 		cfg();
+	}
+
+	private void aplicarFiltros(List<Referencia> referencias) {
+		if (PAINEL_DESTAQUES == tipo) {
+			Util.somenteDestaques(referencias, formulario.getTabelas());
+
+		} else if (PAINEL_COM_REGISTROS == tipo) {
+			Util.somenteComRegistros(referencias);
+
+		} else if (PAINEL_SEM_REGISTROS == tipo) {
+			Util.somenteSemRegistros(referencias);
+		}
+
+		Util.ordenar(referencias);
 	}
 
 	private void itemRegistrosDialogoLimpo(Referencia selecionado) {
@@ -154,38 +155,9 @@ public class PainelTabelas extends PanelBorderLayout {
 		});
 
 		buttonAtualizar.addActionListener(e -> {
-			if (comRegistros) {
-				try {
-					List<Referencia> referencias = Util.criarReferencias(formulario.getTabelas().getTabelas());
-
-					formulario.progresso.exibir(referencias.size());
-					Persistencia.atualizarTotalRegistros(referencias, formulario.getTabelas(), formulario.progresso);
-					formulario.progresso.esconder();
-
-					Util.filtrarRegistros(referencias, formulario.getTabelas());
-					Util.ordenar(referencias);
-
-					arvore.setModel(new ModeloArvore(referencias, Util.getString("label.tabelas")));
-				} catch (Exception ex) {
-					String msg = Util.getStackTrace(getClass().getName() + ".atualizarTotalRegistros()", ex);
-					Util.mensagem(PainelTabelas.this, msg);
-				}
-			} else {
-				try {
-					ModeloArvore modelo = (ModeloArvore) arvore.getModel();
-					List<Referencia> referencias = modelo.getReferencias();
-
-					formulario.progresso.exibir(referencias.size());
-					Persistencia.atualizarTotalRegistros(referencias, formulario.getTabelas(), formulario.progresso);
-					formulario.progresso.esconder();
-
-					Util.atualizarTodaEstrutura(arvore);
-					arvore.repaint();
-				} catch (Exception ex) {
-					String msg = Util.getStackTrace(getClass().getName() + ".atualizarTotalRegistros()", ex);
-					Util.mensagem(PainelTabelas.this, msg);
-				}
-			}
+			List<Referencia> referencias = Util.criarReferencias(formulario.getTabelas().getTabelas());
+			aplicarFiltros(referencias);
+			arvore.setModel(new ModeloArvore(referencias, Util.getString("label.tabelas")));
 		});
 	}
 

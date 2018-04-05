@@ -296,11 +296,6 @@ public class Referencia {
 		return tab.isDestaque();
 	}
 
-	public String getConsultaCount(Tabelas tabelas) {
-		Tabela tab = tabelas.get(alias);
-		return "SELECT COUNT(*) AS total FROM " + tab.getNome();
-	}
-
 	public String gerarDelete(Tabelas tabelas) {
 		Tabela tab = tabelas.get(alias);
 

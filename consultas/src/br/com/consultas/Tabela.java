@@ -7,6 +7,7 @@ import br.com.consultas.util.Util;
 
 public class Tabela {
 	private final List<Campo> campos;
+	private int totalRegistros;
 	private final String nome;
 	private boolean destaque;
 	private Campo alias;
@@ -98,6 +99,18 @@ public class Tabela {
 		}
 
 		return null;
+	}
+
+	public int getTotalRegistros() {
+		return totalRegistros;
+	}
+
+	public void setTotalRegistros(int totalRegistros) {
+		this.totalRegistros = totalRegistros;
+	}
+
+	public String getConsultaCount() {
+		return "SELECT COUNT(*) AS total FROM " + getNome();
 	}
 
 	@Override

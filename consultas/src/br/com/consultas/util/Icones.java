@@ -23,6 +23,7 @@ public class Icones {
 	public static final Icon CAMPOS = criarImagem("campos");
 	public static final Icon BAIXAR = criarImagem("baixar");
 	public static final Icon LIMPAR = criarImagem("limpar");
+	public static final Icon BANCO = criarImagem("banco");
 	public static final Icon SAIR = criarImagem("sair");
 	public static final Icon DML = criarImagem("dml");
 

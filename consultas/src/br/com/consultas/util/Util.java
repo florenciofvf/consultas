@@ -156,6 +156,7 @@ public class Util {
 
 		for (Tabela tabela : tabelas) {
 			Referencia ref = Referencia.criarReferenciaDados(tabela);
+			ref.setTotalRegistros(tabela.getTotalRegistros());
 			ref.setExibirTotalRegistros(true);
 			resposta.add(ref);
 		}
@@ -163,7 +164,7 @@ public class Util {
 		return resposta;
 	}
 
-	public static void filtrarDestaques(List<Referencia> referencias, Tabelas tabelas) {
+	public static void somenteDestaques(List<Referencia> referencias, Tabelas tabelas) {
 		Iterator<Referencia> it = referencias.iterator();
 
 		while (it.hasNext()) {
@@ -174,12 +175,23 @@ public class Util {
 		}
 	}
 
-	public static void filtrarRegistros(List<Referencia> referencias, Tabelas tabelas) {
+	public static void somenteComRegistros(List<Referencia> referencias) {
 		Iterator<Referencia> it = referencias.iterator();
 
 		while (it.hasNext()) {
 			Referencia ref = it.next();
 			if (ref.getTotalRegistros() == 0) {
+				it.remove();
+			}
+		}
+	}
+
+	public static void somenteSemRegistros(List<Referencia> referencias) {
+		Iterator<Referencia> it = referencias.iterator();
+
+		while (it.hasNext()) {
+			Referencia ref = it.next();
+			if (ref.getTotalRegistros() > 0) {
 				it.remove();
 			}
 		}
