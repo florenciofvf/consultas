@@ -270,7 +270,10 @@ public class DadosDialog extends Dialogo {
 			scroll = new ScrollPane(table);
 			splitPane.setLeftComponent(scroll);
 			splitPane.setRightComponent(painelReferencia);
-			setLocationSplitPane();
+
+			SwingUtilities.invokeLater(() -> {
+				setLocationSplitPane();
+			});
 
 			labelLimpar.addMouseListener(new MouseAdapter() {
 				@Override
@@ -301,7 +304,7 @@ public class DadosDialog extends Dialogo {
 		}
 
 		private void setLocationSplitPane() {
-			final int largura = (int) (formulario.getWidth() * Util.DIVISAO3);
+			final int largura = (int) (DadosDialog.this.getWidth() * Util.DIVISAO3);
 			splitPane.setDividerLocation(largura);
 		}
 

@@ -51,6 +51,7 @@ public class Referencia {
 	public Referencia clonar() {
 		Referencia r = new Referencia(alias, aliasAlt, inverso, pk, pkNome, fk, fkNome, preJoin, resumo, cloneCompleto);
 		r.especial = especial;
+		r.icone = icone;
 
 		return r;
 	}
@@ -58,6 +59,7 @@ public class Referencia {
 	public Referencia clonarCompleto() {
 		Referencia r = new Referencia(alias, aliasAlt, inverso, pk, pkNome, fk, fkNome, preJoin, resumo, cloneCompleto);
 		r.especial = especial;
+		r.icone = icone;
 
 		for (Referencia ref : referencias) {
 			r.add(ref.clonarCompleto());
