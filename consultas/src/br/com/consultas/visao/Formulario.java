@@ -69,6 +69,7 @@ public class Formulario extends JFrame {
 
 		XML.processar(file, tabelas, referencias);
 		Util.validarArvore(referencias, tabelas);
+		Util.setIcone(referencias, tabelas);
 
 		atualizarTotalRegistros();
 

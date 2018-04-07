@@ -47,7 +47,7 @@ public class PainelConsultas extends PanelBorderLayout {
 		this.formulario = formulario;
 
 		arvore = new Arvore(new ModeloArvore(formulario.getReferencias(), Util.getString("label.consultas")));
-		arvore.setCellRenderer(new TreeCellRenderer(Icones.REFERENCIA));
+		arvore.setCellRenderer(new TreeCellRenderer());
 		arvore.addMouseListener(new OuvinteArvore());
 
 		splitPane.setLeftComponent(new ScrollPane(arvore));

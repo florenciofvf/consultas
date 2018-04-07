@@ -3,6 +3,9 @@ package br.com.consultas;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Icon;
+
+import br.com.consultas.util.Icones;
 import br.com.consultas.util.Util;
 
 public class Tabela {
@@ -11,6 +14,7 @@ public class Tabela {
 	private final String nome;
 	private boolean destaque;
 	private Campo alias;
+	private Icon icone;
 
 	public Tabela(String nome) {
 		Util.checarVazio(nome, "nome.tabela.invalido", true);
@@ -26,8 +30,13 @@ public class Tabela {
 		if (campo.isAlias()) {
 			Util.checarVazio(campo.getValor(), "valor.campo.invalido", true, nome + "[" + campo.getNome() + "]");
 			alias = campo;
+
 		} else if (campo.isDestaque()) {
 			destaque = Boolean.parseBoolean(campo.getValor());
+
+		} else if (campo.isIcone()) {
+			icone = Icones.getIcon(campo.getValor());
+
 		} else {
 			campos.add(campo);
 		}
@@ -125,5 +134,9 @@ public class Tabela {
 	@Override
 	public String toString() {
 		return nome;
+	}
+
+	public Icon getIcone() {
+		return icone;
 	}
 }

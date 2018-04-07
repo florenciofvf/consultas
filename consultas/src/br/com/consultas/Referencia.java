@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
+import br.com.consultas.util.Icones;
 import br.com.consultas.util.Util;
 
 public class Referencia {
@@ -25,6 +29,7 @@ public class Referencia {
 	private String resumo;
 	private final int pk;
 	private final int fk;
+	private Icon icone;
 
 	public Referencia(String alias, String aliasAlt, boolean inverso, int pk, String pkNome, int fk, String fkNome,
 			String preJoin, String resumo, boolean cloneCompleto) {
@@ -121,6 +126,30 @@ public class Referencia {
 		for (Referencia r : referencias) {
 			r.setCampoID(tabelas);
 		}
+	}
+
+	public void setIcone(Tabelas tabelas) {
+		Tabela tab = tabelas.get(alias);
+
+		ImageIcon icon = (ImageIcon) tab.getIcone();
+
+		if ("tabela".equals(icon.getDescription())) {
+			setIcone(Icones.getIcon("seta_direita"));
+		} else {
+			setIcone(tab.getIcone());
+		}
+
+		for (Referencia r : referencias) {
+			r.setIcone(tabelas);
+		}
+	}
+
+	public void setIcone(Icon icone) {
+		this.icone = icone;
+	}
+
+	public Icon getIcone() {
+		return icone;
 	}
 
 	public void validar(Tabelas tabelas) {

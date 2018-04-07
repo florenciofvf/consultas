@@ -40,6 +40,10 @@ public class Tabelas {
 		}
 
 		tabelas.put(alias, tabela);
+
+		if (tabela.getIcone() == null) {
+			tabela.add(new Campo("icone-f", "tabela"));
+		}
 	}
 
 	public Tabela get(String alias) {

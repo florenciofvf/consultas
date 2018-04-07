@@ -45,7 +45,7 @@ public class PainelReferencia extends PanelBorderLayout {
 		boolean filtro = !caminhosFiltro.isEmpty();
 
 		arvore = new Arvore(new ModeloArvore(filtro ? caminhosFiltro : caminhos, Util.getString("label.caminho")));
-		arvore.setCellRenderer(new TreeCellRenderer(Icones.REFERENCIA));
+		arvore.setCellRenderer(new TreeCellRenderer());
 		arvore.addMouseListener(new OuvinteArvore());
 		chkTopoHierarquia.setSelected(filtro);
 

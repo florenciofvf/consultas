@@ -57,8 +57,8 @@ public class Util {
 	private static final String SUFIXO_FILTRO_CAMPO = "}";
 	public static final int LARGURA_ICONE_ORDENAR = 20;
 	private static final boolean LOG_MENSAGEM = true;
-	public static final double DIVISAO2 = 0.65;
-	public static final double DIVISAO3 = 0.67;
+	public static final double DIVISAO2 = 0.70;
+	public static final double DIVISAO3 = 0.70;
 	public static final byte DOIS = 2;
 
 	private Util() {
@@ -158,6 +158,8 @@ public class Util {
 			Referencia ref = Referencia.criarReferenciaDados(tabela);
 			ref.setTotalRegistros(tabela.getTotalRegistros());
 			ref.setExibirTotalRegistros(true);
+			ref.setIcone(tabela.getIcone());
+
 			resposta.add(ref);
 		}
 
@@ -280,6 +282,12 @@ public class Util {
 	public static void atualizarCampoID(List<Referencia> referencias, Tabelas tabelas) {
 		for (Referencia ref : referencias) {
 			ref.setCampoID(tabelas);
+		}
+	}
+
+	public static void setIcone(List<Referencia> referencias, Tabelas tabelas) {
+		for (Referencia ref : referencias) {
+			ref.setIcone(tabelas);
 		}
 	}
 

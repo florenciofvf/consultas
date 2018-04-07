@@ -50,11 +50,10 @@ public class PainelTabelas extends PanelBorderLayout {
 		this.tipo = tipo;
 
 		List<Referencia> referencias = Util.criarReferencias(formulario.getTabelas().getTabelas());
-
 		aplicarFiltros(referencias);
 
 		arvore = new Arvore(new ModeloArvore(referencias, Util.getString("label.tabelas")));
-		arvore.setCellRenderer(new TreeCellRenderer(Icones.TABELA));
+		arvore.setCellRenderer(new TreeCellRenderer());
 		arvore.addMouseListener(new OuvinteArvore());
 
 		splitPane.setLeftComponent(new ScrollPane(arvore));

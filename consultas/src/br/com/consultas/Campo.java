@@ -15,12 +15,16 @@ public class Campo {
 		this.valor = valor;
 	}
 
+	public boolean isDestaque() {
+		return "destaque-f".equals(nome.toLowerCase());
+	}
+
 	public boolean isAlias() {
 		return "alias-f".equals(nome.toLowerCase());
 	}
 
-	public boolean isDestaque() {
-		return "destaque-f".equals(nome.toLowerCase());
+	public boolean isIcone() {
+		return "icone-f".equals(nome.toLowerCase());
 	}
 
 	public String getNome() {
