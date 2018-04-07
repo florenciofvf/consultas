@@ -1,4 +1,4 @@
-package br.com.consultas;
+package br.com.consultas.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,7 +7,10 @@ import java.sql.ResultSet;
 import java.util.List;
 import java.util.Vector;
 
-import br.com.consultas.util.Util;
+import br.com.consultas.Campo;
+import br.com.consultas.Referencia;
+import br.com.consultas.Tabela;
+import br.com.consultas.Tabelas;
 import br.com.consultas.visao.dialog.ProgressoDialog;
 
 public class Persistencia {

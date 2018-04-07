@@ -32,11 +32,11 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import br.com.consultas.Campo;
-import br.com.consultas.Persistencia;
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
 import br.com.consultas.util.CellColor;
 import br.com.consultas.util.Icones;
+import br.com.consultas.util.Persistencia;
 import br.com.consultas.util.SQL;
 import br.com.consultas.util.Util;
 import br.com.consultas.visao.Formulario;

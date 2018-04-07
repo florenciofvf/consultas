@@ -17,11 +17,11 @@ import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.SwingUtilities;
 
-import br.com.consultas.Persistencia;
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
 import br.com.consultas.Tabelas;
 import br.com.consultas.util.Icones;
+import br.com.consultas.util.Persistencia;
 import br.com.consultas.util.Util;
 import br.com.consultas.visao.comp.Button;
 import br.com.consultas.visao.comp.Label;
