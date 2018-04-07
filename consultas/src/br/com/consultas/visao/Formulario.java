@@ -15,7 +15,10 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 import br.com.consultas.Referencia;
 import br.com.consultas.Tabela;
@@ -51,6 +54,7 @@ public class Formulario extends JFrame {
 	private final SplitPane splitPane = new SplitPane(SplitPane.VERTICAL_SPLIT);
 	private final ProgressoDialog progresso = new ProgressoDialog();
 	private final List<Referencia> referencias = new ArrayList<>();
+	private final Menu menuAparencia = new Menu("label.aparencia");
 	private final Menu menuArquivo = new Menu("label.arquivo");
 	private static final double DIVISAO_TEXT_AREA = 0.80;
 	private final TabbedPane fichario = new TabbedPane();
@@ -188,6 +192,7 @@ public class Formulario extends JFrame {
 		add(BorderLayout.SOUTH, new PainelControle());
 
 		menuBar.add(menuArquivo);
+		menuBar.add(menuAparencia);
 		menuArquivo.add(itemLimparIds);
 		menuArquivo.addSeparator();
 		menuArquivo.add(itemLimparCampos);
@@ -197,7 +202,34 @@ public class Formulario extends JFrame {
 		menuArquivo.add(itemBanco);
 		menuArquivo.addSeparator();
 		menuArquivo.add(itemFechar);
+		configMenuAparencia();
 		setJMenuBar(menuBar);
+	}
+
+	private void configMenuAparencia() {
+		LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
+		for (LookAndFeelInfo lookAndFeelInfo : installedLookAndFeels) {
+			menuAparencia.add(new ItemMenu(lookAndFeelInfo));
+		}
+	}
+
+	private class ItemMenu extends JMenuItem {
+		private static final long serialVersionUID = 1L;
+		private final String classe;
+
+		public ItemMenu(LookAndFeelInfo info) {
+			super(info.getName());
+			classe = info.getClassName();
+			addActionListener(e -> {
+				try {
+					UIManager.setLookAndFeel(classe);
+					SwingUtilities.updateComponentTreeUI(Formulario.this);
+				} catch (Exception ex) {
+					String msg = Util.getStackTrace(getClass().getName() + ".ItemMenu()", ex);
+					Util.mensagem(Formulario.this, msg);
+				}
+			});
+		}
 	}
 
 	public void divisao(int i) {
