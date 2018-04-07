@@ -264,9 +264,9 @@ public class Formulario extends JFrame {
 
 	private class PainelControle extends PanelLeft {
 		private static final long serialVersionUID = 1L;
+		private final Button buttonUpdate = new Button("label.execute_update", Icones.EXECUTAR2);
 		private final Label labelValorVersao = new Label("versao_valor", new Color(0x99949991));
 		private final Button buttonGetContent = new Button("label.get_content", Icones.BAIXAR);
-		private final Button buttonUpdate = new Button("label.execute_update", Icones.EXECUTAR);
 		private final Button buttonQuery = new Button("label.execute_query", Icones.EXECUTAR);
 		private final Button buttonLimpar = new Button("label.limpar", Icones.LIMPAR);
 		private final Label labelTabelas = new Label("label.total_tabelas");
@@ -276,7 +276,7 @@ public class Formulario extends JFrame {
 			final String espacamento = "              ";
 
 			adicionar(new Label("versao"), labelValorVersao, new JLabel(espacamento), labelTabelas, labelValorTabelas,
-					new JLabel(espacamento), buttonLimpar, buttonUpdate, buttonQuery, buttonGetContent);
+					new JLabel(espacamento), buttonLimpar, buttonQuery, buttonUpdate, buttonGetContent);
 
 			labelValorVersao.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent e) {

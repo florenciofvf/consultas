@@ -528,7 +528,7 @@ public class DadosDialog extends Dialogo {
 
 		PainelUPDATE(Dialogo dialogo) {
 			super(dialogo, true);
-
+			buttonExecutar.setIcon(Icones.EXECUTAR2);
 			add(BorderLayout.CENTER, textArea);
 		}
 
@@ -559,7 +559,7 @@ public class DadosDialog extends Dialogo {
 
 		PainelDELETE(Dialogo dialogo) {
 			super(dialogo, true);
-
+			buttonExecutar.setIcon(Icones.EXECUTAR2);
 			add(BorderLayout.CENTER, textArea);
 		}
 

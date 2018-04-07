@@ -16,6 +16,7 @@ public class Icones {
 	public static final Icon CALCULADO = criarImagem("calculado");
 	public static final Icon ATUALIZAR = criarImagem("atualizar");
 	public static final Icon ASC_TEXTO = criarImagem("asc_texto");
+	public static final Icon EXECUTAR2 = criarImagem("executar2");
 	public static final Icon EXECUTAR = criarImagem("executar");
 	public static final Icon EXPANDIR = criarImagem("expandir");
 	public static final Icon LARGURA = criarImagem("largura");
