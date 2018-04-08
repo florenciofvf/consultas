@@ -409,7 +409,7 @@ public class Util {
 		}
 
 		Object selecionado = JOptionPane.showInputDialog(componente, "Selecione o Pai", getString("label.opcoes"),
-				JOptionPane.INFORMATION_MESSAGE, null, opcoes, opcoes[opcoes.length - 1]);
+				JOptionPane.INFORMATION_MESSAGE, null, opcoes, opcoes[0]);
 
 		if (selecionado == null) {
 			return null;

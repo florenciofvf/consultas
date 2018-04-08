@@ -89,11 +89,9 @@ public class Popup extends JPopupMenu {
 
 	public void calculado() {
 		menuCalculado.add(itemAgruparTotal);
-		menuCalculado.addSeparator();
-		menuCalculado.add(itemAgruparTotalPai);
-		menuCalculado.addSeparator();
 		menuCalculado.add(itemAgruparCampo);
 		menuCalculado.addSeparator();
+		menuCalculado.add(itemAgruparTotalPai);
 		menuCalculado.add(itemAgruparCampoPai);
 
 		add(menuCalculado);

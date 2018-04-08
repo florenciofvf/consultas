@@ -12,10 +12,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -208,12 +209,16 @@ public class Formulario extends JFrame {
 
 	private void configMenuAparencia() {
 		LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
+		ButtonGroup grupo = new ButtonGroup();
+
 		for (LookAndFeelInfo lookAndFeelInfo : installedLookAndFeels) {
-			menuAparencia.add(new ItemMenu(lookAndFeelInfo));
+			ItemMenu itemMenu = new ItemMenu(lookAndFeelInfo);
+			menuAparencia.add(itemMenu);
+			grupo.add(itemMenu);
 		}
 	}
 
-	private class ItemMenu extends JMenuItem {
+	private class ItemMenu extends JRadioButtonMenuItem {
 		private static final long serialVersionUID = 1L;
 		private final String classe;
 
