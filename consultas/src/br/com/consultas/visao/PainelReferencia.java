@@ -271,6 +271,32 @@ public class PainelReferencia extends PanelBorderLayout {
 			}
 		});
 
+		popup.itemAgruparTotalPai.addActionListener(e -> {
+			if (listener == null) {
+				Util.mensagem(PainelReferencia.this, Util.getString("msg.nao_implementado"));
+			} else if (selecionado.getPai() == null) {
+				Util.mensagem(PainelReferencia.this, Util.getString("msg.objeto_deve_conter_pai"));
+			} else {
+				Referencia pai = Util.getPai(PainelReferencia.this, selecionado);
+
+				if (pai != null) {
+					try {
+						Tabela tabela = selecionado.getTabela(formulario.getTabelas());
+						String nomeCampo = Util.getNomeCampo(PainelReferencia.this, tabela);
+
+						if (!Util.ehVazio(nomeCampo)) {
+							Campo campo = tabela.get(nomeCampo);
+							listener.calcularTotal(selecionado, pai, campo);
+						}
+					} catch (Exception ex) {
+						String msg = Util.getStackTrace(PainelReferencia.this.getClass().getName() + ".agruparColuna()",
+								ex);
+						Util.mensagem(PainelReferencia.this, msg);
+					}
+				}
+			}
+		});
+
 		chkRaizVisivel.addActionListener(e -> arvore.setRootVisible(chkRaizVisivel.isSelected()));
 
 		chkLinhaRaiz.addActionListener(e -> arvore.setShowsRootHandles(chkLinhaRaiz.isSelected()));

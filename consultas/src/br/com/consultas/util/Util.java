@@ -740,6 +740,10 @@ public class Util {
 		return ref.getPai().getAlias() + " >> " + ref.getAlias() + "." + nome;
 	}
 
+	public static String getTituloCampoAgregado(Referencia pai, Referencia ref, String nome) {
+		return pai.getAlias() + " >> " + ref.getAlias() + "." + nome;
+	}
+
 	public static void selecionarLinhas(int[] is, Vector<Vector<String>> dados, Table table) {
 		if (is != null) {
 			for (int i : is) {

@@ -510,6 +510,25 @@ public class Referencia {
 		return sb.toString();
 	}
 
+	public String getConsultaGroupByCount(Referencia pai, Tabelas tabelas, Campo campo) {
+		Tabela tabParent = tabelas.get(pai.alias);
+
+		Campo campoPK = tabParent.get(0);
+
+		StringBuilder sb = new StringBuilder("SELECT ");
+		sb.append(pai.getAlias() + "." + campoPK.getNome() + ", COUNT(" + getAlias() + "." + campo.getNome()
+				+ ") AS total FROM");
+		completarConsulta(sb, tabelas);
+
+		sb.append(" WHERE 1=1" + QL);
+		filtros(sb, tabelas);
+
+		sb.append(" GROUP BY " + pai.getAlias() + "." + campoPK.getNome() + QL);
+		sb.append(" ORDER BY " + pai.getAlias() + "." + campoPK.getNome() + aux(Util.getStringConfig("order_by")) + QL);
+
+		return sb.toString();
+	}
+
 	public String getConsultaAgregada(Tabelas tabelas, Campo campo) {
 		Tabela tabParent = tabelas.get(pai.alias);
 

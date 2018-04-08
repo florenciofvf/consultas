@@ -114,6 +114,32 @@ public class Persistencia {
 		return vector;
 	}
 
+	public static Vector<Object[]> getRegistrosAgrupadosCOUNT(Referencia ref, Referencia pai, Tabelas tabelas,
+			Campo campo) throws Exception {
+		Vector<Object[]> vector = new Vector<Object[]>();
+		Connection conn = getConnection();
+
+		String consulta = ref.getConsultaGroupByCount(pai, tabelas, campo);
+
+		if (Util.getBooleanConfig("consultas.area_transferencia")) {
+			Util.setContentTransfered(consulta);
+		}
+
+		PreparedStatement psmt = conn.prepareStatement(consulta);
+		ResultSet rs = psmt.executeQuery();
+
+		while (rs.next()) {
+			Object[] array = { rs.getString(1), rs.getString(2) };
+			vector.add(array);
+		}
+
+		rs.close();
+		psmt.close();
+		conn.close();
+
+		return vector;
+	}
+
 	public static Vector<Vector<String>> getDados(ResultSet rs, int qtdColunas) throws Exception {
 		Vector<Vector<String>> dados = new Vector<>();
 

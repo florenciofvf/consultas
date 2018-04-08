@@ -22,6 +22,7 @@ public class Popup extends JPopupMenu {
 	final MenuItem itemRegistrosMemoria = new MenuItem("label.gerar_dados_memoria");
 	final MenuItem itemPesquisaSelecionados = new MenuItem("label.pesquisa_sel");
 	final MenuItem itemAgruparCampoPai = new MenuItem("label.agrupar_campo_pai");
+	final MenuItem itemAgruparTotalPai = new MenuItem("label.agrupar_total_pai");
 	final Menu menuCalculado = new Menu("label.calculado", Icones.CALCULADO);
 	final MenuItem itemAgruparTotal = new MenuItem("label.agrupar_total");
 	final MenuItem itemAgruparCampo = new MenuItem("label.agrupar_campo");
@@ -88,6 +89,8 @@ public class Popup extends JPopupMenu {
 
 	public void calculado() {
 		menuCalculado.add(itemAgruparTotal);
+		menuCalculado.addSeparator();
+		menuCalculado.add(itemAgruparTotalPai);
 		menuCalculado.addSeparator();
 		menuCalculado.add(itemAgruparCampo);
 		menuCalculado.addSeparator();

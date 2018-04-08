@@ -469,7 +469,29 @@ public class DadosDialog extends Dialogo {
 
 			Vector<Object> dados = Util.criarDados(resp, (ModeloOrdenacao) table.getModel());
 
-			table.addColuna(Util.getTituloCampoAgregado(ref, campo.getNome()), dados, Boolean.FALSE);
+			table.addColuna(Util.getTituloCampoAgregado(pai, ref, campo.getNome()), dados, Boolean.FALSE);
+			configTable(table);
+			table.ajustar(getGraphics());
+
+			if (painelREGISTROSReferencia != null) {
+				SwingUtilities.invokeLater(() -> painelREGISTROSReferencia.finalScroll());
+			}
+		}
+
+		@Override
+		public void calcularTotal(Referencia ref, Referencia pai, Campo campo) throws Exception {
+			Vector<Object[]> resp = Persistencia.getRegistrosAgrupadosCOUNT(ref, pai, formulario.getTabelas(), campo);
+
+			String mensagemErro = Util.getMensagemErro(resp, table);
+
+			if (!Util.ehVazio(mensagemErro)) {
+				Util.mensagem(this, mensagemErro);
+				return;
+			}
+
+			Vector<Object> dados = Util.criarDados(resp, (ModeloOrdenacao) table.getModel());
+
+			table.addColuna(Util.getTituloCampoAgregado(pai, ref, "COUNT"), dados, Boolean.TRUE);
 			configTable(table);
 			table.ajustar(getGraphics());
 
@@ -644,6 +666,12 @@ public class DadosDialog extends Dialogo {
 		@Override
 		public void agruparColuna(Referencia ref, Referencia pai, Campo campo) throws Exception {
 			painelREGISTROSReferencia.agruparColuna(ref, pai, campo);
+			fichario.setSelectedIndex(PRIMEIRA_ABA);
+		}
+
+		@Override
+		public void calcularTotal(Referencia ref, Referencia pai, Campo campo) throws Exception {
+			painelREGISTROSReferencia.calcularTotal(ref, pai, campo);
 			fichario.setSelectedIndex(PRIMEIRA_ABA);
 		}
 
