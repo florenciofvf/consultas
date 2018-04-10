@@ -31,8 +31,12 @@ public class Icones {
 	public static final Icon DML = criarImagem("dml");
 
 	private static ImageIcon criarImagem(String nome) {
-		URL url = Icones.class.getResource("/resources/" + nome + ".png");
-		return new ImageIcon(url, nome);
+		try {
+			URL url = Icones.class.getResource("/resources/" + nome + ".png");
+			return new ImageIcon(url, nome);
+		} catch (Exception e) {
+			throw new IllegalStateException("Erro imagem! " + nome);
+		}
 	}
 
 	public static Icon getIcon(String nome) {

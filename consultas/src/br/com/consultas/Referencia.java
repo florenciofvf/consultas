@@ -136,7 +136,7 @@ public class Referencia {
 		ImageIcon icon = (ImageIcon) tab.getIcone();
 
 		if ("tabela".equals(icon.getDescription())) {
-			setIcone(Icones.getIcon("seta_direita"));
+			setIcone(Icones.getIcon("um_pixel"));
 		} else {
 			setIcone(tab.getIcone());
 		}

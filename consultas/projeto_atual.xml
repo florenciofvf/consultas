@@ -5,7 +5,7 @@
 	<tabelas>
 		<endereco		ID=""	ID_CANDIDATO=""		LOGRADOURO=""		alias-f="endereco" icone-f="home" />
 		<eleicao		ID=""						alias-f="eleicao"	destaque-f="true" />
-		<candidato		ID=""	ELEICAO_ID=""		alias-f="candidato" icone-f="pessoa" />
+		<candidato		ID=""	ELEICAO_ID=""		alias-f="candidato" icone-f="pessoaX" />
 	</tabelas>
 
 	<refs>
