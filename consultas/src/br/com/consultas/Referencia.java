@@ -172,6 +172,14 @@ public class Referencia {
 		}
 	}
 
+	public void selecionarPeloNome(String nome) {
+		setEspecial(nome.trim().length() > 0 && getAlias().indexOf(nome) != -1);
+
+		for (Referencia ref : getReferencias()) {
+			ref.selecionarPeloNome(nome);
+		}
+	}
+
 	public void atualizar(List<Referencia> referencias, Tabelas tabelas, Tabela tabela) {
 		Tabela tab = tabelas.get(alias);
 

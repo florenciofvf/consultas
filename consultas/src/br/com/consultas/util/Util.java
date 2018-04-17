@@ -199,6 +199,12 @@ public class Util {
 		}
 	}
 
+	public static void selecionarPeloNome(List<Referencia> referencias, String nome) {
+		for (Referencia ref : referencias) {
+			ref.selecionarPeloNome(nome);
+		}
+	}
+
 	public static List<Referencia> pesquisarReferencias(List<Referencia> referencias, Tabela tabela, Tabelas tabelas) {
 		final String alias = tabela.getAlias().getValor();
 		List<Referencia> container = new ArrayList<>();

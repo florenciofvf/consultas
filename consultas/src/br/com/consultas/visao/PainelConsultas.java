@@ -24,6 +24,7 @@ import br.com.consultas.visao.comp.PanelLeft;
 import br.com.consultas.visao.comp.ScrollPane;
 import br.com.consultas.visao.comp.SplitPane;
 import br.com.consultas.visao.comp.Table;
+import br.com.consultas.visao.comp.TextField;
 import br.com.consultas.visao.dialog.CampoDialog;
 import br.com.consultas.visao.dialog.DadosDialog;
 import br.com.consultas.visao.dialog.ReferenciaPropDialog;
@@ -38,6 +39,7 @@ public class PainelConsultas extends PanelBorderLayout {
 	private final CheckBox chkLinhaRaiz = new CheckBox("label.raiz_linha", "consultas.raiz_linha");
 	private final Table table = new Table(new ModeloOrdenacao(new ModeloReferencia(null)));
 	protected final SplitPane splitPane = new SplitPane(SplitPane.HORIZONTAL_SPLIT);
+	private final TextField textFieldConsulta = new TextField();
 	private final Popup popup = new Popup();
 	private final Formulario formulario;
 	private Referencia selecionado;
@@ -65,7 +67,12 @@ public class PainelConsultas extends PanelBorderLayout {
 		Button retrair = new Button("label.retrair", Icones.RETRAIR);
 		retrair.addActionListener(e -> Util.expandirRetrairTodos(arvore, false));
 
-		panelNorte.adicionar(expandir, retrair);
+		textFieldConsulta.addActionListener(e -> {
+			Util.selecionarPeloNome(formulario.getReferencias(), textFieldConsulta.getText());
+			Util.atualizarTodaEstrutura(arvore);
+		});
+
+		panelNorte.adicionar(expandir, retrair, textFieldConsulta);
 
 		add(BorderLayout.NORTH, panelNorte);
 		add(BorderLayout.CENTER, splitPane);
