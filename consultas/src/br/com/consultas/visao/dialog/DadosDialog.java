@@ -806,7 +806,6 @@ public class DadosDialog extends Dialogo {
 
 		rs.close();
 		psmt.close();
-		conn.close();
 	}
 
 	private void coletar(Connection conn, ResultSet rs, Graphics graphics) throws Exception {

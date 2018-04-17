@@ -14,17 +14,26 @@ import br.com.consultas.Tabelas;
 import br.com.consultas.visao.dialog.ProgressoDialog;
 
 public class Persistencia {
+	private static Connection conn;
 
 	public static Connection getConnection() throws Exception {
-		Class.forName(Util.getStringConfig("driver"));
+		if (conn == null || conn.isClosed()) {
+			Class.forName(Util.getStringConfig("driver"));
 
-		String url = Util.getStringConfig("url");
-		String usr = Util.getStringConfig("login");
-		String psw = Util.getStringConfig("senha");
+			String url = Util.getStringConfig("url");
+			String usr = Util.getStringConfig("login");
+			String psw = Util.getStringConfig("senha");
 
-		Connection conn = DriverManager.getConnection(url, usr, psw);
+			conn = DriverManager.getConnection(url, usr, psw);
+		}
 
 		return conn;
+	}
+
+	public static void close() throws Exception {
+		if (conn != null && !conn.isClosed()) {
+			conn.close();
+		}
 	}
 
 	public static int executeUpdate(String string) throws Exception {
@@ -35,7 +44,6 @@ public class Persistencia {
 		int i = psmt.executeUpdate();
 
 		psmt.close();
-		conn.close();
 
 		return i;
 	}
@@ -57,8 +65,6 @@ public class Persistencia {
 			rs.close();
 			psmt.close();
 		}
-
-		conn.close();
 	}
 
 	public static Vector<Object[]> getRegistrosAgrupados(Referencia ref, Tabelas tabelas, Campo campo)
@@ -83,7 +89,6 @@ public class Persistencia {
 
 		rs.close();
 		psmt.close();
-		conn.close();
 
 		return vector;
 	}
@@ -109,7 +114,6 @@ public class Persistencia {
 
 		rs.close();
 		psmt.close();
-		conn.close();
 
 		return vector;
 	}
@@ -135,7 +139,6 @@ public class Persistencia {
 
 		rs.close();
 		psmt.close();
-		conn.close();
 
 		return vector;
 	}

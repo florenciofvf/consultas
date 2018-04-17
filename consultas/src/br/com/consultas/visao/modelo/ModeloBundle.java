@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
+import br.com.consultas.util.Persistencia;
 import br.com.consultas.util.Util;
 
 public class ModeloBundle implements TableModel {
@@ -80,6 +81,11 @@ public class ModeloBundle implements TableModel {
 
 		if (atualizarBundle) {
 			Util.bundleConfig = new Recurso(listagem);
+			try {
+				Persistencia.close();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
 

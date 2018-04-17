@@ -147,6 +147,14 @@ public class Formulario extends JFrame {
 				painelConsultas.windowOpened();
 				painelTabelas.windowOpened();
 			}
+
+			public void windowClosing(WindowEvent e) {
+				try {
+					Persistencia.close();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			};
 		});
 
 		addWindowStateListener(e -> {
