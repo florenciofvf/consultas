@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 
 import br.com.consultas.Tabela;
 import br.com.consultas.util.Util;
@@ -28,6 +29,7 @@ public class ReferenciaDialog extends Dialogo {
 
 		cfg();
 		setVisible(true);
+		SwingUtilities.invokeLater(() -> toFront());
 	}
 
 	private void cfg() {

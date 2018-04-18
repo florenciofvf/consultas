@@ -579,7 +579,7 @@ public class Referencia {
 			return "NENHUM CAMPO SELECIONADO!";
 		}
 
-		StringBuilder sb = new StringBuilder("SELECT " + sbCampos.toString() + " FROM");
+		StringBuilder sb = new StringBuilder("SELECT" + sbCampos.toString() + " FROM");
 		completarConsulta(sb, tabelas);
 
 		sb.append(" WHERE 1=1" + QL);

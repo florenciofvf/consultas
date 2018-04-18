@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 
 import br.com.consultas.Tabela;
 import br.com.consultas.util.Util;
@@ -33,6 +34,7 @@ public class CampoDialog extends Dialogo {
 
 		cfg(formulario);
 		setVisible(true);
+		SwingUtilities.invokeLater(() -> toFront());
 	}
 
 	private void cfg(Formulario formulario) {
