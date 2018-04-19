@@ -102,7 +102,7 @@ public class Tabela {
 
 	public Campo get(String nome) {
 		for (Campo c : campos) {
-			if (c.getNome().equals(nome)) {
+			if (c.getNome().equalsIgnoreCase(nome)) {
 				return c;
 			}
 		}

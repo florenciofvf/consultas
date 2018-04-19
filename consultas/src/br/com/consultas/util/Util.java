@@ -394,6 +394,12 @@ public class Util {
 		return selecionado == null ? null : selecionado.toString();
 	}
 
+	public static String getValorInputDialog(Component componente, Tabela tabela, Campo campo) {
+		Object objeto = JOptionPane.showInputDialog(componente, tabela.getNome() + "." + campo.getNome(),
+				tabela.getNome(), JOptionPane.PLAIN_MESSAGE, null, null, campo.getValor());
+		return objeto != null ? objeto.toString() : null;
+	}
+
 	public static String getNomeCampo(Component componente, Tabela tabela) {
 		Object[] opcoes = tabela.getNomeCampos().toArray();
 		Object selecionado = JOptionPane.showInputDialog(componente, "Selecione", getString("label.opcoes"),

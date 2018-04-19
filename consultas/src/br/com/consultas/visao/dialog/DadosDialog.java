@@ -205,7 +205,7 @@ public class DadosDialog extends Dialogo {
 		}
 
 		private void cfg() {
-			popup.copiar();
+			popup.copiar(false);
 
 			tableHeader.addMouseListener(new MouseAdapter() {
 				@Override
@@ -316,7 +316,7 @@ public class DadosDialog extends Dialogo {
 			labelValor.setVisible(visivel);
 
 			labelStatus.setText(status);
-			labelValor.setText(valor);
+			labelValor.setText("[" + valor + "]");
 		}
 
 		void finalScroll() {
@@ -325,7 +325,7 @@ public class DadosDialog extends Dialogo {
 		}
 
 		private void cfg() {
-			popup.copiar();
+			popup.copiar(true);
 			popup.mostrarRegistro();
 
 			tableHeader.addMouseListener(new MouseAdapter() {
@@ -359,6 +359,31 @@ public class DadosDialog extends Dialogo {
 			popup.itemCopiarComAspas.addActionListener(e -> {
 				List<String> resp = table.getValores(popup.getTag());
 				Util.setContentTransfered(Util.getStringLista(resp, true));
+			});
+
+			popup.itemFiltrarCampo.addActionListener(e -> {
+				String nomeColuna = table.getModel().getColumnName(popup.getTag());
+				Campo campo = tabela.get(nomeColuna);
+
+				if (campo == null) {
+					campo = new Campo(nomeColuna, "");
+					tabela.add(campo);
+				}
+
+				String valor = Util.getValorInputDialog(DadosDialog.this, tabela, campo);
+
+				if (valor == null) {
+					return;
+				}
+
+				campo.setValor(valor);
+				painelREGISTROSReferencia.atualizarViews(tabela);
+
+				Campo campoPK = tabela.get(0);
+				valor = campoPK.getNome().equalsIgnoreCase(campo.getNome()) ? campo.getValor() : null;
+
+				painelREGISTROSReferencia.setInfo(TITLE + "." + campo.getNome(), valor);
+				painelSELECT.executar();
 			});
 
 			popup.itemMostrarRegistro.addActionListener(e -> {
@@ -757,7 +782,7 @@ public class DadosDialog extends Dialogo {
 
 			painelREGISTROSReferencia.atualizarViews(tabela);
 
-			painelREGISTROSReferencia.setInfo(TITLE + "." + campo.getNome(), "[" + campo.getValor() + "]");
+			painelREGISTROSReferencia.setInfo(TITLE + "." + campo.getNome(), campo.getValor());
 
 			Component c = getTableCellRendererComponent(table, value, isSelected, true, row, column);
 			c.setForeground(table.getSelectionForeground());

@@ -23,6 +23,7 @@ public class Popup extends JPopupMenu {
 	final MenuItem itemPesquisaSelecionados = new MenuItem("label.pesquisa_sel");
 	final MenuItem itemAgruparCampoPai = new MenuItem("label.agrupar_campo_pai");
 	final MenuItem itemAgruparTotalPai = new MenuItem("label.agrupar_total_pai");
+	public final MenuItem itemFiltrarCampo = new MenuItem("label.filtrar_campo");
 	final Menu menuCalculado = new Menu("label.calculado", Icones.CALCULADO);
 	final MenuItem itemAgruparTotal = new MenuItem("label.agrupar_total");
 	final MenuItem itemAgruparCampo = new MenuItem("label.agrupar_campo");
@@ -101,10 +102,15 @@ public class Popup extends JPopupMenu {
 		add(itemPropriedades);
 	}
 
-	public void copiar() {
+	public void copiar(boolean filtrar) {
 		add(itemCopiar);
 		addSeparator();
 		add(itemCopiarComAspas);
+
+		if (filtrar) {
+			addSeparator();
+			add(itemFiltrarCampo);
+		}
 	}
 
 	public void mostrarRegistro() {

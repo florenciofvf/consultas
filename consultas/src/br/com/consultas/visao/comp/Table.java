@@ -56,15 +56,36 @@ public class Table extends JTable {
 
 	public List<String> getValores(int coluna) {
 		List<String> resposta = new ArrayList<>();
+		int[] is = getSelectedRows();
 
 		ModeloOrdenacao atual = (ModeloOrdenacao) getModel();
 		int total = atual.getRowCount();
 
 		for (int i = 0; i < total; i++) {
-			Object obj = atual.getValueAt(i, coluna);
+			Object obj = null;
 
-			if (obj != null && !Util.ehVazio(obj.toString())) {
-				resposta.add(obj.toString());
+			if (is == null || is.length == 0) {
+				obj = atual.getValueAt(i, coluna);
+
+				if (obj != null && !Util.ehVazio(obj.toString())) {
+					resposta.add(obj.toString());
+				}
+			} else {
+				boolean contem = false;
+
+				for (int j : is) {
+					if (j == i) {
+						contem = true;
+					}
+				}
+
+				if (contem) {
+					obj = atual.getValueAt(i, coluna);
+
+					if (obj != null && !Util.ehVazio(obj.toString())) {
+						resposta.add(obj.toString());
+					}
+				}
 			}
 		}
 
