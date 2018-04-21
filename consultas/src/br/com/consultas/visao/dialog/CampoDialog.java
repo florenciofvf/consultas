@@ -11,6 +11,7 @@ import br.com.consultas.Tabela;
 import br.com.consultas.util.Util;
 import br.com.consultas.visao.Formulario;
 import br.com.consultas.visao.PainelAbas;
+import br.com.consultas.visao.comp.CheckBox;
 import br.com.consultas.visao.comp.ScrollPane;
 import br.com.consultas.visao.comp.Table;
 import br.com.consultas.visao.modelo.ModeloCampo;
@@ -18,6 +19,7 @@ import br.com.consultas.visao.modelo.ModeloOrdenacao;
 
 public class CampoDialog extends Dialogo {
 	private static final long serialVersionUID = 1L;
+	private final CheckBox chkDestaque = new CheckBox("label.destaque", "false");
 	private final Table table;
 
 	public CampoDialog(Formulario formulario, Tabela tabela) {
@@ -26,11 +28,15 @@ public class CampoDialog extends Dialogo {
 		table.ajustar(formulario.getGraphics());
 		setTitle(tabela.getNome() + " - REGISTROS [" + modelo.getRowCount() + "]");
 
+		add(BorderLayout.NORTH, chkDestaque);
 		add(BorderLayout.CENTER, new ScrollPane(table));
 		add(BorderLayout.SOUTH, new PainelControle(this));
 
 		setSize(400, 400);
 		setLocationRelativeTo(formulario);
+
+		chkDestaque.setSelected(tabela.isDestaque());
+		chkDestaque.addActionListener(e -> tabela.setDestaque(chkDestaque.isSelected()));
 
 		cfg(formulario);
 		setVisible(true);

@@ -96,6 +96,10 @@ public class Tabela {
 		return destaque;
 	}
 
+	public void setDestaque(boolean destaque) {
+		this.destaque = destaque;
+	}
+
 	public Campo get(int i) {
 		return campos.get(i);
 	}
